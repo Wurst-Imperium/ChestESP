@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "chestesp",
+  "version": "${version}",
+
+  "name": "ChestESP",
+  "description": "This mod highlights nearby chests so you can see them through walls. It's based on a Wurst Client feature of the same name.",
+  "authors": [
+    "Alexander01998"
+  ],
+  "contact": {
+    "homepage": "https://www.wimods.net/chestesp/?utm_source=ChestESP&utm_medium=ModMenu&utm_content=Website",
+    "sources": "https://github.com/Wurst-Imperium/ChestESP",
+    "email": "contact.wurstimperium@gmail.com",
+    "issues": "https://github.com/Wurst-Imperium/ChestESP/issues",
+    "twitter": "https://twitter.com/Wurst_Imperium"
+  },
+
+  "license": "GPL-3.0-or-later",
+  "icon": "assets/chestesp/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "net.wimods.chestesp.ChestEspModInitializer"
+    ],
+    "modmenu": [
+      "net.wimods.chestesp.ChestEspModMenuApi"
+    ]
+  },
+  "mixins": [
+    "chestesp.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.19",
+    "fabric-api": "*",
+    "modmenu": "^6.0.0",
+    "cloth-config": "^10.0.0",
+    "minecraft": "~1.19.4",
+    "java": ">=17"
+  },
+  "suggests": {
+    "wi_zoom": "*",
+    "cameranoclip": "*",
+    "mo_glass": "*"
+  },
+  "breaks": {
+    "wurst": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "Donate": "https://www.wurstclient.net/donate/?utm_source=ChestESP&utm_medium=ModMenu&utm_content=Donate"
+      }
+    }
+  }
+}
