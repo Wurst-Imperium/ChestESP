@@ -5,7 +5,7 @@ This mod highlights nearby chests so you can see them through walls. It's based 
 ![A screenshot showing all of the different containers that ChestESP supports](https://github.com/Wurst-Imperium/ChestESP/assets/10100202/5b77efdd-4a6b-49ea-8fed-1b1c18d13d7a)
 
 ## Downloads (for users)
-[![Download ChestESP](https://github.com/Wurst-Imperium/ChestESP/assets/10100202/d1cdd39d-9bda-45cf-98bb-5c6a2ae01789)](https://www.wimods.net/chestesp/download/?utm_source=GitHub&utm_medium=ChestESP&utm_campaign=README.md&utm_content=Download+ChestESP)
+[![Download ChestESP](https://wurst.wiki/_media/icon/chestesp/download_chestesp_326x80.png)](https://www.wimods.net/chestesp/download/?utm_source=GitHub&utm_medium=ChestESP&utm_campaign=README.md&utm_content=Download+ChestESP)
 
 ## Setup (for developers)
 (This assumes that you are using Windows with [Eclipse](https://www.eclipse.org/downloads/) and [Java Development Kit 17](https://adoptium.net/?variant=openjdk17&jvmVariant=hotspot) already installed.)
