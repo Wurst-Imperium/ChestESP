@@ -52,4 +52,4 @@ In the settings menu, you can:
 Additionally, there's a "Toggle ChestESP" entry in the Options > Controls > Key Binds menu that allows you to quickly enable/disable the mod at the press of a button. This feature is not bound to any key by default.
 
 ## Supported Versions
-At the moment, ChestESP only supports Fabric and is only available for Minecraft 1.19.4. Support for Forge and older Minecraft versions might be added in the future, depending on demand.
+At the moment, ChestESP only supports Fabric and is only available for Minecraft 1.20 - 1.19.4. Support for Forge and older Minecraft versions might be added in the future, depending on demand.
