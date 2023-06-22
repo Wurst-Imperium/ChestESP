@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import dev.architectury.event.events.client.ClientTickEvent;
+import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.block.entity.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
@@ -33,12 +33,14 @@ import net.wimods.chestesp.util.RenderUtils;
 
 public final class ChestEspMod
 {
+	public static final String MOD_ID = "chestesp";
+
 	private static final MinecraftClient MC = MinecraftClient.getInstance();
 	
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
-	public static final Logger LOGGER = LoggerFactory.getLogger("ChestESP");
+	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	
 	private final ConfigHolder<ChestEspConfig> configHolder;
 	private final ChestEspGroupManager groups;
@@ -54,12 +56,12 @@ public final class ChestEspMod
 			GsonConfigSerializer::new);
 		
 		groups = new ChestEspGroupManager(configHolder);
+
+		toggleKey = new KeyBinding("key.chestesp.toggle",
+				InputUtil.UNKNOWN_KEY.getCode(), "ChestESP");
+		KeyMappingRegistry.register(toggleKey);
 		
-		toggleKey = KeyBindingHelper
-			.registerKeyBinding(new KeyBinding("key.chestesp.toggle",
-				InputUtil.UNKNOWN_KEY.getCode(), "ChestESP"));
-		
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+		ClientTickEvent.CLIENT_POST.register(client -> {
 			boolean enabled = configHolder.get().enable;
 			while(toggleKey.wasPressed())
 				setEnabled(!enabled);
@@ -153,14 +155,14 @@ public final class ChestEspMod
 		
 		if(style.hasBoxes())
 		{
-			RenderSystem.setShader(GameRenderer::getPositionProgram);
+			RenderSystem.setShader(GameRenderer::getPositionShader);
 			groups.allGroups.stream().filter(ChestEspGroup::isEnabled)
 				.forEach(espRenderer::renderBoxes);
 		}
 		
 		if(style.hasLines())
 		{
-			RenderSystem.setShader(GameRenderer::getPositionProgram);
+			RenderSystem.setShader(GameRenderer::getPositionShader);
 			groups.allGroups.stream().filter(ChestEspGroup::isEnabled)
 				.forEach(espRenderer::renderLines);
 		}

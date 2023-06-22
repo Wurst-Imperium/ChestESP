@@ -17,30 +17,30 @@
   },
 
   "license": "GPL-3.0-or-later",
-  "icon": "assets/chestesp/icon.png",
+  "icon": "icon.png",
 
   "environment": "client",
   "entrypoints": {
     "main": [
-      "net.wimods.chestesp.ChestEspModInitializer"
+      "net.wimods.chestesp.fabric.ChestEspModFabric"
     ],
     "modmenu": [
-      "net.wimods.chestesp.ChestEspModMenuApi"
+      "net.wimods.chestesp.fabric.ChestEspModMenuApi"
     ]
   },
   "mixins": [
-    "chestesp.mixins.json"
+    "chestesp-common.mixins.json"
   ],
 
   "depends": {
-    "fabricloader": ">=0.14.19",
-    "fabric-api": "*",
-    "modmenu": "^7.0.0",
-    "cloth-config": "^11.0.0",
-    "minecraft": "~1.20",
-    "java": ">=17"
+    "fabricloader": "*",
+    "fabric": "*",
+    "minecraft": "~1.19.2",
+    "architectury": ">=6.5.85",
+    "cloth-config": ">=8.2.88"
   },
   "suggests": {
+    "modmenu": ">=4.2.0-beta.2",
     "wi_zoom": "*",
     "cameranoclip": "*",
     "mo_glass": "*"

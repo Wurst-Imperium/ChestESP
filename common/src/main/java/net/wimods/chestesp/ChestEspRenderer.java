@@ -7,19 +7,17 @@
  */
 package net.wimods.chestesp;
 
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-
-import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.gl.VertexBuffer;
 import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Shader;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
 import net.wimods.chestesp.util.RenderUtils;
 import net.wimods.chestesp.util.RotationUtils;
@@ -62,7 +60,7 @@ public final class ChestEspRenderer
 			
 			Matrix4f viewMatrix = matrixStack.peek().getPositionMatrix();
 			Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
-			ShaderProgram shader = RenderSystem.getShader();
+			Shader shader = RenderSystem.getShader();
 			
 			RenderSystem.setShaderColor(colorF[0], colorF[1], colorF[2], 0.25F);
 			solidBox.bind();
@@ -109,8 +107,8 @@ public final class ChestEspRenderer
 	public static void prepareBuffers()
 	{
 		closeBuffers();
-		solidBox = new VertexBuffer(VertexBuffer.Usage.STATIC);
-		outlinedBox = new VertexBuffer(VertexBuffer.Usage.STATIC);
+		solidBox = new VertexBuffer();
+		outlinedBox = new VertexBuffer();
 		
 		Box box = new Box(BlockPos.ORIGIN);
 		RenderUtils.drawSolidBox(box, solidBox);

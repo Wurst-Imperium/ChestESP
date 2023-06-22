@@ -12,7 +12,7 @@ import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.EnumHandler.EnumDisplayOption;
 
-@Config(name = "chestesp")
+@Config(name = ChestEspMod.MOD_ID)
 public final class ChestEspConfig implements ConfigData
 {
 	@ConfigEntry.Gui.Tooltip

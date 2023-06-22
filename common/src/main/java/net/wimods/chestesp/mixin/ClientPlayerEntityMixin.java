@@ -7,6 +7,7 @@
  */
 package net.wimods.chestesp.mixin;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,17 +18,16 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.wimods.chestesp.ChestEspMod;
 
 @Mixin(ClientPlayerEntity.class)
 public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 {
-	public ClientPlayerEntityMixin(ChestEspMod chestEspMod, ClientWorld world,
-		GameProfile profile)
-	{
-		super(world, profile);
+	public ClientPlayerEntityMixin(ChestEspMod chestEspMod, ClientWorld world, GameProfile profile, @Nullable PlayerPublicKey publicKey) {
+		super(world, profile, publicKey);
 	}
-	
+
 	@Inject(at = @At(value = "INVOKE",
 		target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tick()V",
 		ordinal = 0), method = "tick()V")
