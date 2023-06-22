@@ -1,161 +1,42 @@
-buildscript {
-	dependencies {
-		classpath 'org.kohsuke:github-api:1.135'
-	}
-}
-
 plugins {
-	id 'fabric-loom' version '1.2-SNAPSHOT'
-	id 'maven-publish'
-	id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "dev.architectury.loom" version "1.1-SNAPSHOT" apply false
+    id "io.github.juuxel.loom-quiltflower" version "1.10.0" apply false
 }
 
-def ENV = System.getenv()
-
-version = project.mod_version
-group = project.maven_group
-
-repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-	maven { url "https://maven.shedaniel.me/" }
-	maven { url "https://maven.terraformersmc.com/releases/" }
+architectury {
+    minecraft = rootProject.minecraft_version
 }
 
-dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+subprojects {
+    apply plugin: "dev.architectury.loom"
+    apply plugin: "io.github.juuxel.loom-quiltflower"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	// Mod Menu
-	modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
-
-	// Cloth Config
-	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
+    dependencies {
+        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+    }
 }
 
-base {
-	archivesName = project.archives_base_name
-}
+allprojects {
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
+    apply plugin: "maven-publish"
 
-processResources {
-	inputs.property "version", project.version
+    archivesBaseName = "${rootProject.archives_base_name}-${project.name}"
+    version = "${rootProject.mod_version}+${rootProject.minecraft_version}"
+    group = rootProject.maven_group
 
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
-}
+    repositories {
+        maven { url "https://maven.shedaniel.me/" }
+    }
 
-tasks.withType(JavaCompile).configureEach {
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 17
-}
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+        options.release = 17
+    }
 
-java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
-}
-
-jar {
-	from("LICENSE") {
-		rename { "${it}_${base.archivesName.get()}"}
-	}
-}
-
-// configure the maven publication
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
-		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
-	}
-}
-
-curseforge {
-	if (ENV.CURSEFORGE_API_KEY) {
-		apiKey = ENV.CURSEFORGE_API_KEY
-	}
-
-	project {
-		id = "870203"
-		changelogType = "html"
-		changelog = file("changelog.txt")
-		releaseType = "release"
-		addGameVersion "1.20.1"
-		addGameVersion "Fabric"
-
-		mainArtifact(file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
-		addArtifact file("${project.buildDir}/libs/${archivesBaseName}-${version}-sources.jar")
-		addArtifact file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
-		addArtifact file("${project.buildDir}/libs/${archivesBaseName}-${version}-sources-dev.jar")
-
-		relations {
-			requiredDependency "fabric-api"
-			requiredDependency "modmenu"
-			requiredDependency "cloth-config"
-		}
-	}
-
-	options {
-		forgeGradleIntegration = false
-	}
-}
-
-afterEvaluate {
-	tasks.curseforge870203.dependsOn moveDevLibs
-}
-
-task moveDevLibs(dependsOn: [remapJar, remapSourcesJar]) {
-	doLast {
-		ant.move(file:"${project.buildDir}/devlibs/${archivesBaseName}-${version}-dev.jar", tofile:"${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
-		ant.move(file:"${project.buildDir}/devlibs/${archivesBaseName}-${version}-sources.jar", tofile:"${project.buildDir}/libs/${archivesBaseName}-${version}-sources-dev.jar")
-	}
-}
-
-import org.kohsuke.github.GHReleaseBuilder
-import org.kohsuke.github.GitHub
-
-task github(dependsOn: moveDevLibs) {
-	onlyIf {
-		ENV.GITHUB_TOKEN
-	}
-
-	doLast {
-		def github = GitHub.connectUsingOAuth(ENV.GITHUB_TOKEN as String)
-		def repository = github.getRepository("Wurst-Imperium-MCX/ChestESP")
-		def ghVersion = "v" + version.substring(0, version.indexOf("-"))
-
-		def ghRelease = repository.getReleaseByTagName(ghVersion as String);
-		if(ghRelease == null) {
-			def releaseBuilder = new GHReleaseBuilder(repository, ghVersion as String)
-			ghRelease = releaseBuilder.create()
-		}
-
-		ghRelease.uploadAsset(remapJar.archiveFile.get().getAsFile(), "application/java-archive");
-		ghRelease.uploadAsset(remapSourcesJar.archiveFile.get().getAsFile(), "application/java-archive")
-		ghRelease.uploadAsset(new File("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar"), "application/java-archive")
-		ghRelease.uploadAsset(new File("${project.buildDir}/libs/${archivesBaseName}-${version}-sources-dev.jar"), "application/java-archive")
-	}
+    java {
+        withSourcesJar()
+    }
 }

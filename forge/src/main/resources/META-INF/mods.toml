@@ -1,0 +1,42 @@
+modLoader = "javafml"
+loaderVersion = "[43,)"
+issueTrackerURL = "https://github.com/Wurst-Imperium/ChestESP/issues"
+license = "GPL-3.0-or-later"
+
+[[mods]]
+modId = "chestesp"
+version = "${version}"
+displayName = "ChestESP"
+authors = "Alexander01998"
+description = '''
+This mod highlights nearby chests so you can see them through walls. It's based on a Wurst Client feature of the same name.
+'''
+logoFile = "icon.png"
+
+[[dependencies.chestesp]]
+modId = "forge"
+mandatory = true
+versionRange = "[43,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.chestesp]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19.2,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.chestesp]]
+modId = "architectury"
+mandatory = true
+versionRange = "[6.5.85,)"
+ordering = "AFTER"
+side = "CLIENT"
+
+[[dependencies.chestesp]]
+modId = "cloth_config"
+mandatory = true
+versionRange = "[8.2.88,)"
+ordering = "AFTER"
+side = "CLIENT"

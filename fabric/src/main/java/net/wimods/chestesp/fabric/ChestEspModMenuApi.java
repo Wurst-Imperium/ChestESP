@@ -5,12 +5,13 @@
  * License, version 3. If a copy of the GPL was not distributed with this
  * file, You can obtain one at: https://www.gnu.org/licenses/gpl-3.0.txt
  */
-package net.wimods.chestesp;
+package net.wimods.chestesp.fabric;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 
 import me.shedaniel.autoconfig.AutoConfig;
+import net.wimods.chestesp.ChestEspConfig;
 
 public final class ChestEspModMenuApi implements ModMenuApi
 {

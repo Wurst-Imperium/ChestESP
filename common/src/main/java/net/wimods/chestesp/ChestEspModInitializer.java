@@ -7,14 +7,11 @@
  */
 package net.wimods.chestesp;
 
-import net.fabricmc.api.ModInitializer;
-
-public final class ChestEspModInitializer implements ModInitializer
+public final class ChestEspModInitializer
 {
 	private static ChestEspMod instance;
 	
-	@Override
-	public void onInitialize()
+	public static void init()
 	{
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
