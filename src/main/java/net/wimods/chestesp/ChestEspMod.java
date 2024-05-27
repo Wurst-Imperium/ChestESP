@@ -109,12 +109,16 @@ public final class ChestEspMod
 				groups.shulkerBoxes.add(blockEntity);
 			else if(blockEntity instanceof BarrelBlockEntity)
 				groups.barrels.add(blockEntity);
+			else if(blockEntity instanceof DecoratedPotBlockEntity)
+				groups.pots.add(blockEntity);
 			else if(blockEntity instanceof HopperBlockEntity)
 				groups.hoppers.add(blockEntity);
 			else if(blockEntity instanceof DropperBlockEntity)
 				groups.droppers.add(blockEntity);
 			else if(blockEntity instanceof DispenserBlockEntity)
 				groups.dispensers.add(blockEntity);
+			else if(blockEntity instanceof CrafterBlockEntity)
+				groups.crafters.add(blockEntity);
 			else if(blockEntity instanceof AbstractFurnaceBlockEntity)
 				groups.furnaces.add(blockEntity);
 		});

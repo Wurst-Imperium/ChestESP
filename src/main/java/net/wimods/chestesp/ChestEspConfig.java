@@ -56,6 +56,12 @@ public final class ChestEspConfig implements ConfigData
 	@ConfigEntry.Gui.Tooltip
 	public int barrel_color = 0x00FF00;
 	
+	public boolean include_pots = false;
+	
+	@ConfigEntry.ColorPicker
+	@ConfigEntry.Gui.Tooltip
+	public int pot_color = 0x00FF00;
+	
 	public boolean include_shulker_boxes = true;
 	
 	@ConfigEntry.ColorPicker
@@ -85,6 +91,12 @@ public final class ChestEspConfig implements ConfigData
 	@ConfigEntry.ColorPicker
 	@ConfigEntry.Gui.Tooltip
 	public int dispenser_color = 0xFF8000;
+	
+	public boolean include_crafters = false;
+	
+	@ConfigEntry.ColorPicker
+	@ConfigEntry.Gui.Tooltip
+	public int crafter_color = 0xFFFFFF;
 	
 	public boolean include_furnaces = false;
 	
