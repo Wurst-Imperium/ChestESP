@@ -1,12 +1,4 @@
 buildscript {
-	configurations.all {
-		resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-			if (details.requested.group == "com.squareup.okio" && details.requested.name == "okio") {
-				details.useVersion "3.4.0"
-				details.because "Security vulnerability in versions prior to 3.4.0, pulled from okhttp 4.10.0, pulled from mod-publish-plugin"
-			}
-		}
-	}
 	dependencies {
 		classpath "org.kohsuke:github-api:1.322"
 	}
@@ -15,6 +7,7 @@ buildscript {
 plugins {
 	id "fabric-loom" version "1.7-SNAPSHOT"
 	id "me.modmuss50.mod-publish-plugin" version "0.5.1"
+	id "com.diffplug.spotless" version "6.25.0"
 }
 
 def ENV = System.getenv()
@@ -89,6 +82,20 @@ java {
 jar {
 	from("LICENSE") {
 		rename {"${it}_${base.archivesName.get()}"}
+	}
+}
+
+spotless {
+	lineEndings("WINDOWS")
+	java {
+		removeUnusedImports()
+		indentWithTabs()
+		trimTrailingWhitespace()
+		eclipse().configFile(file("codestyle/formatter.xml"))
+	}
+	json {
+		target "src/**/*.json"
+		gson().indentWithSpaces(2).version("2.10.1")
 	}
 }
 

@@ -4,11 +4,13 @@ on:
   push:
     paths:
       - '**.java'
+      - '**.json'
       - 'gradle**'
       - 'build.gradle'
   pull_request:
     paths:
       - '**.java'
+      - '**.json'
       - 'gradle**'
       - 'build.gradle'
   # Makes it possible to run this workflow manually from the Actions tab
@@ -46,6 +48,10 @@ jobs:
         build-scan-publish: true
         build-scan-terms-of-use-url: "https://gradle.com/help/legal-terms-of-use"
         build-scan-terms-of-use-agree: "yes"
+
+    - name: Check code style with Spotless
+      id: spotless_check
+      run: ./gradlew spotlessCheck
 
     - name: Execute Gradle build
       run: ./gradlew build --stacktrace --warning-mode=fail
