@@ -1,3 +1,8 @@
+**Minecraft 1.20.3/1.20.4/1.20.5/1.20.6-compatible builds of this mod are available to Early Access members.  
+Join now to download these versions!**
+
+[![Download via Ko-fi](https://github.com/Wurst-Imperium/ChestESP/assets/10100202/70d5fda1-46e7-465b-9424-cb9a32609ee5)](https://ko-fi.com/post/Early-Access-ChestESP-Mod-for-1-20-31-20-41-20-B0B7YLO90)
+
 # ChestESP
 
 This mod highlights nearby chests so you can see them through walls. It's based on a Wurst Client feature of the same name.
@@ -52,4 +57,12 @@ In the settings menu, you can:
 Additionally, there's a "Toggle ChestESP" entry in the Options > Controls > Key Binds menu that allows you to quickly enable/disable the mod at the press of a button. This feature is not bound to any key by default.
 
 ## Supported Versions
-At the moment, ChestESP only supports Fabric and is only available for Minecraft 1.20 - 1.19.4. Support for Forge and older Minecraft versions might be added in the future, depending on demand.
+
+- 1.20.6 Fabric ([early access](https://ko-fi.com/post/Early-Access-ChestESP-Mod-for-1-20-31-20-41-20-B0B7YLO90))
+- 1.20.5 Fabric ([early access](https://ko-fi.com/post/Early-Access-ChestESP-Mod-for-1-20-31-20-41-20-B0B7YLO90))
+- 1.20.4 Fabric ([early access](https://ko-fi.com/post/Early-Access-ChestESP-Mod-for-1-20-31-20-41-20-B0B7YLO90))
+- 1.20.3 Fabric ([early access](https://ko-fi.com/post/Early-Access-ChestESP-Mod-for-1-20-31-20-41-20-B0B7YLO90))
+- 1.20.2 Fabric
+- 1.20.1 Fabric
+- 1.20 Fabric
+- 1.19.4 Fabric
