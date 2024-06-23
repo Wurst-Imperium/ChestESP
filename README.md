@@ -54,7 +54,7 @@ In the settings menu, you can:
 Additionally, there's a "Toggle ChestESP" entry in the Options > Controls > Key Binds menu that allows you to quickly enable/disable the mod at the press of a button. This feature is not bound to any key by default.
 
 ## Supported Versions
-- 1.21 Fabric ([early access](https://ko-fi.com/post/Early-Access-ChestESP-Mod-for-1-20-31-20-41-20-B0B7YLO90))
+- 1.21 Fabric ([early access](https://ko-fi.com/Post/Early-Access-ChestESP-Mod-for-Minecraft-1-21-X8X1ZOM62))
 - 1.20.6 Fabric
 - 1.20.5 Fabric
 - 1.20.4 Fabric
