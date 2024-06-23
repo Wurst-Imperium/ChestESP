@@ -2,7 +2,6 @@
   "schemaVersion": 1,
   "id": "chestesp",
   "version": "${version}",
-
   "name": "ChestESP",
   "description": "This mod highlights nearby chests so you can see them through walls. It's based on a Wurst Client feature of the same name.",
   "authors": [
@@ -15,10 +14,8 @@
     "issues": "https://github.com/Wurst-Imperium/ChestESP/issues",
     "twitter": "https://twitter.com/Wurst_Imperium"
   },
-
   "license": "GPL-3.0-or-later",
   "icon": "assets/chestesp/icon.png",
-
   "environment": "client",
   "entrypoints": {
     "main": [
@@ -31,7 +28,6 @@
   "mixins": [
     "chestesp.mixins.json"
   ],
-
   "depends": {
     "fabricloader": ">=0.15.10",
     "fabric-api": "*",
