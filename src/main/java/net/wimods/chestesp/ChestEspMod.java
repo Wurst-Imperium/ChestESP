@@ -34,10 +34,6 @@ import net.wimods.chestesp.util.RenderUtils;
 public final class ChestEspMod
 {
 	private static final MinecraftClient MC = MinecraftClient.getInstance();
-	
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger("ChestESP");
 	
 	private final ConfigHolder<ChestEspConfig> configHolder;
@@ -152,7 +148,8 @@ public final class ChestEspMod
 		groups.entityGroups.stream().filter(ChestEspGroup::isEnabled)
 			.forEach(g -> g.updateBoxes(partialTicks));
 		
-		ChestEspRenderer espRenderer = new ChestEspRenderer(matrixStack);
+		ChestEspRenderer espRenderer =
+			new ChestEspRenderer(matrixStack, partialTicks);
 		ChestEspStyle style = configHolder.get().style;
 		
 		if(style.hasBoxes())

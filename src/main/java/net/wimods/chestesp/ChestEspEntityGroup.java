@@ -13,6 +13,7 @@ import java.util.function.ToIntFunction;
 
 import me.shedaniel.autoconfig.ConfigHolder;
 import net.minecraft.entity.Entity;
+import net.wimods.chestesp.util.EntityUtils;
 
 public final class ChestEspEntityGroup extends ChestEspGroup
 {
@@ -41,15 +42,6 @@ public final class ChestEspEntityGroup extends ChestEspGroup
 		boxes.clear();
 		
 		for(Entity e : entities)
-		{
-			double offsetX = -(e.getX() - e.lastRenderX)
-				+ (e.getX() - e.lastRenderX) * partialTicks;
-			double offsetY = -(e.getY() - e.lastRenderY)
-				+ (e.getY() - e.lastRenderY) * partialTicks;
-			double offsetZ = -(e.getZ() - e.lastRenderZ)
-				+ (e.getZ() - e.lastRenderZ) * partialTicks;
-			
-			boxes.add(e.getBoundingBox().offset(offsetX, offsetY, offsetZ));
-		}
+			boxes.add(EntityUtils.getLerpedBox(e, partialTicks));
 	}
 }

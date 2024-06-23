@@ -19,6 +19,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.math.MatrixStack;
 import net.wimods.chestesp.ChestEspMod;
 
@@ -34,8 +35,9 @@ public abstract class GameRendererMixin implements AutoCloseable
 	 */
 	@Inject(at = @At(value = "INVOKE",
 		target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V",
-		ordinal = 0), method = "renderWorld(FJ)V")
-	private void onRenderWorldViewBobbing(float tickDelta, long limitTime,
+		ordinal = 0),
+		method = "renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V")
+	private void onRenderWorldViewBobbing(RenderTickCounter tickCounter,
 		CallbackInfo ci)
 	{
 		ChestEspMod chestEsp = ChestEspMod.getInstance();
@@ -79,15 +81,16 @@ public abstract class GameRendererMixin implements AutoCloseable
 			target = "Lnet/minecraft/client/render/GameRenderer;renderHand:Z",
 			opcode = Opcodes.GETFIELD,
 			ordinal = 0),
-		method = "renderWorld(FJ)V")
-	private void onRenderWorld(float partialTicks, long finishTimeNano,
-		CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f2)
+		method = "renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V")
+	private void onRenderWorldHandRendering(RenderTickCounter tickCounter,
+		CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f2,
+		@Local(ordinal = 1) float tickDelta)
 	{
 		MatrixStack matrixStack = new MatrixStack();
 		matrixStack.multiplyPositionMatrix(matrix4f2);
 		ChestEspMod chestEsp = ChestEspMod.getInstance();
 		
 		if(chestEsp != null && chestEsp.isEnabled())
-			chestEsp.onRender(matrixStack, partialTicks);
+			chestEsp.onRender(matrixStack, tickDelta);
 	}
 }
