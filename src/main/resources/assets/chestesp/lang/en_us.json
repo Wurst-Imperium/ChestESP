@@ -8,6 +8,7 @@
   "text.autoconfig.chestesp.option.style.boxes": "Boxes only",
   "text.autoconfig.chestesp.option.style.lines": "Lines only",
   "text.autoconfig.chestesp.option.style.lines_and_boxes": "Lines and boxes",
+  "text.autoconfig.chestesp.option.include_basic_chests": "Include normal chests",
   "text.autoconfig.chestesp.option.chest_color": "Chest color",
   "text.autoconfig.chestesp.option.chest_color.@Tooltip": "Normal chests will be highlighted in this color.",
   "text.autoconfig.chestesp.option.include_trap_chests": "Include trap chests",

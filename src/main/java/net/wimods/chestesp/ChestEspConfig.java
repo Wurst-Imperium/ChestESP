@@ -22,6 +22,8 @@ public final class ChestEspConfig implements ConfigData
 	@ConfigEntry.Gui.Tooltip
 	public ChestEspStyle style = ChestEspStyle.BOXES;
 	
+	public boolean include_basic_chests = true;
+	
 	@ConfigEntry.ColorPicker
 	@ConfigEntry.Gui.Tooltip
 	public int chest_color = 0x00FF00;

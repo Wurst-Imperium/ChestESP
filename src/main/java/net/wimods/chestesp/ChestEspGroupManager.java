@@ -34,7 +34,8 @@ public final class ChestEspGroupManager
 	
 	public ChestEspGroupManager(ConfigHolder<ChestEspConfig> ch)
 	{
-		basicChests = new ChestEspBlockGroup(ch, c -> c.chest_color, null);
+		basicChests = new ChestEspBlockGroup(ch, c -> c.chest_color,
+			c -> c.include_basic_chests);
 		trapChests = new ChestEspBlockGroup(ch, c -> c.trap_chest_color,
 			c -> c.include_trap_chests);
 		enderChests = new ChestEspBlockGroup(ch, c -> c.ender_chest_color,
