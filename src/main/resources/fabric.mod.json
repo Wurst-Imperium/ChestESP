@@ -3,15 +3,15 @@
   "id": "chestesp",
   "version": "${version}",
   "name": "ChestESP",
-  "description": "This mod highlights nearby chests so you can see them through walls. It's based on a Wurst Client feature of the same name.",
+  "description": "Highlights nearby chests so you can see them through walls. Based on a Wurst Client feature of the same name.",
   "authors": [
     "Alexander01998"
   ],
   "contact": {
-    "homepage": "https://www.wimods.net/chestesp/?utm_source=ChestESP&utm_medium=ModMenu&utm_content=Website",
+    "homepage": "https://www.wimods.net/chestesp/?utm_source=ChestESP&utm_medium=ModMenu&utm_content=ChestESP+ModMenu+website+link",
     "sources": "https://github.com/Wurst-Imperium/ChestESP",
-    "email": "contact.wurstimperium@gmail.com",
     "issues": "https://github.com/Wurst-Imperium/ChestESP/issues",
+    "email": "contact.wurstimperium@gmail.com",
     "twitter": "https://twitter.com/Wurst_Imperium"
   },
   "license": "GPL-3.0-or-later",
@@ -47,7 +47,7 @@
   "custom": {
     "modmenu": {
       "links": {
-        "Donate": "https://www.wurstclient.net/donate/?utm_source=ChestESP&utm_medium=ModMenu&utm_content=Donate"
+        "Donate": "https://www.wurstclient.net/donate/?utm_source=ChestESP&utm_medium=ModMenu&utm_content=ChestESP+ModMenu+donate+link"
       }
     }
   }
