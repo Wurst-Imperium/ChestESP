@@ -1,8 +1,3 @@
-**A Minecraft 1.21-compatible build of this mod is available to Early Access members.  
-Join now to download this version!**
-
-[![Download via Ko-fi](https://github.com/Wurst-Imperium/ChestESP/assets/10100202/70d5fda1-46e7-465b-9424-cb9a32609ee5)](https://ko-fi.com/Post/Early-Access-ChestESP-Mod-for-Minecraft-1-21-X8X1ZOM62)
-
 # ChestESP
 
 This mod highlights nearby chests so you can see them through walls. It's based on a Wurst Client feature of the same name.
