@@ -11,7 +11,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 
-public record RegionPos(int x, int z) {
+public record RegionPos(int x, int z)
+{
 	public static RegionPos of(BlockPos pos)
 	{
 		return new RegionPos(pos.getX() >> 9 << 9, pos.getZ() >> 9 << 9);

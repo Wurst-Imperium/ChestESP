@@ -10,7 +10,8 @@ package net.wimods.chestesp.util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-public record Rotation(float yaw, float pitch) {
+public record Rotation(float yaw, float pitch)
+{
 	public Vec3d toLookVec()
 	{
 		float radPerDeg = MathHelper.RADIANS_PER_DEGREE;
