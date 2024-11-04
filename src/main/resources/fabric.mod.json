@@ -19,7 +19,8 @@
   "environment": "client",
   "entrypoints": {
     "main": [
-      "net.wimods.chestesp.ChestEspModInitializer"
+      "net.wimods.chestesp.ChestEspModInitializer",
+      "net.wimods.chestesp.test.ChestESPTestClient"
     ],
     "modmenu": [
       "net.wimods.chestesp.ChestEspModMenuApi"
@@ -28,6 +29,7 @@
   "mixins": [
     "chestesp.mixins.json"
   ],
+  "accessWidener": "chestesp.accesswidener",
   "depends": {
     "fabricloader": ">=0.15.10",
     "fabric-api": ">=0.100.1",
