@@ -156,7 +156,7 @@ publishMods {
 	file = remapJar.archiveFile
 	def versionString = project.version as String
 	def ghVersion = "v" + versionString.substring(0, versionString.indexOf("-"))
-	def changelogUrl = "https://www.wimods.net/chestesp/chestesp-1-1/"
+	def changelogUrl = "https://www.wimods.net/chestesp/chestesp-1-2/"
 	def archivesName = project.base.archivesName.get() as String
 	additionalFiles.from(
 		file("${project.buildDir}/libs/${archivesName}-${versionString}-sources.jar"),
@@ -170,7 +170,7 @@ publishMods {
 		projectId = "870203"
 		accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
 		minecraftVersions.add("${project.cf_game_version}")
-		requires("fabric-api", "modmenu", "cloth-config")
+		requires("fabric-api")
 		changelog = "A changelog can be found at: [${changelogUrl}](${changelogUrl}?mc=${project.minecraft_version}&utm_source=CurseForge&utm_medium=ChestESP&utm_campaign=Changelog&utm_content=CurseForge+ChestESP+MC${project.minecraft_version})"
 	}
 }
