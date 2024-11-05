@@ -31,7 +31,7 @@
   ],
   "accessWidener": "chestesp.accesswidener",
   "depends": {
-    "fabricloader": ">=0.15.10",
+    "fabricloader": ">=0.16.2",
     "fabric-api": ">=0.100.1",
     "modmenu": "^11.0.0-beta.1",
     "cloth-config": "^15.0.0",
