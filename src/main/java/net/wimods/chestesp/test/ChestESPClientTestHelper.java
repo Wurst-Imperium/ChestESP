@@ -21,6 +21,7 @@ import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.tutorial.TutorialStep;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
 
@@ -134,6 +135,14 @@ public enum ChestESPClientTestHelper
 		submitAndWait(mc -> {
 			configUpdater.accept(
 				ChestEspMod.getInstance().getConfigHolder().getConfig());
+			return null;
+		});
+	}
+	
+	public static void dismissTutorialToasts()
+	{
+		submitAndWait(mc -> {
+			mc.getTutorialManager().setStep(TutorialStep.NONE);
 			return null;
 		});
 	}
