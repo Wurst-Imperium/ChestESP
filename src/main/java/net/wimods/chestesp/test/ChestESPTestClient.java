@@ -96,8 +96,9 @@ public final class ChestESPTestClient implements ModInitializer
 		System.out.println("Creating test world");
 		clickScreenButton("selectWorld.create");
 		
-		waitForWorldTicks(200);
+		waitForWorldTicks(180);
 		runChatCommand("seed");
+		waitForWorldTicks(20);
 		System.out.println("Reached singleplayer world");
 		takeScreenshot("in_game", Duration.ZERO);
 		
