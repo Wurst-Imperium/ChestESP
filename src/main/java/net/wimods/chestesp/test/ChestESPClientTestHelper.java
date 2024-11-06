@@ -11,12 +11,17 @@ import static net.wimods.chestesp.test.fabric.FabricClientTestHelper.*;
 
 import java.util.function.Consumer;
 
+import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.tutorial.TutorialStep;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
 
@@ -94,7 +99,25 @@ public enum ChestESPClientTestHelper
 	public static void runChatCommand(String command)
 	{
 		submitAndWait(mc -> {
-			mc.getNetworkHandler().sendChatCommand(command);
+			ClientPlayNetworkHandler netHandler = mc.getNetworkHandler();
+			
+			// Validate command using client-side command dispatcher
+			ParseResults<?> results = netHandler.getCommandDispatcher()
+				.parse(command, netHandler.getCommandSource());
+			
+			// Command is invalid, fail the test
+			if(!results.getExceptions().isEmpty())
+			{
+				StringBuilder errors =
+					new StringBuilder("Invalid command: " + command);
+				for(CommandSyntaxException e : results.getExceptions().values())
+					errors.append("\n").append(e.getMessage());
+				
+				throw new RuntimeException(errors.toString());
+			}
+			
+			// Command is valid, send it
+			netHandler.sendChatCommand(command);
 			return null;
 		});
 	}
@@ -112,6 +135,14 @@ public enum ChestESPClientTestHelper
 		submitAndWait(mc -> {
 			configUpdater.accept(
 				ChestEspMod.getInstance().getConfigHolder().getConfig());
+			return null;
+		});
+	}
+	
+	public static void dismissTutorialToasts()
+	{
+		submitAndWait(mc -> {
+			mc.getTutorialManager().setStep(TutorialStep.NONE);
 			return null;
 		});
 	}
