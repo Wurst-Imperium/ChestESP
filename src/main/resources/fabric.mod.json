@@ -31,11 +31,11 @@
   ],
   "accessWidener": "chestesp.accesswidener",
   "depends": {
-    "fabricloader": ">=0.16.2",
-    "fabric-api": ">=0.100.1",
-    "modmenu": "^11.0.0-beta.1",
-    "cloth-config": "^15.0.0",
-    "minecraft": "~1.21-beta.1 <1.21.2-",
+    "fabricloader": ">=0.16.7",
+    "fabric-api": ">=0.106.1",
+    "modmenu": "^12.0.0-beta.1",
+    "cloth-config": "^16.0.0",
+    "minecraft": "~1.21.2",
     "java": ">=21"
   },
   "suggests": {

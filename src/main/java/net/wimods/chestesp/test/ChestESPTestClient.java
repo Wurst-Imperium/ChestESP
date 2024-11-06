@@ -199,7 +199,7 @@ public final class ChestESPTestClient implements ModInitializer
 		// vehicles
 		runChatCommand("setblock ^3 ^ ^7 rail");
 		runChatCommand("summon chest_minecart ^3 ^ ^7");
-		runChatCommand("summon chest_boat ^ ^ ^7");
+		runChatCommand("summon oak_chest_boat ^ ^ ^7");
 		runChatCommand("setblock ^-3 ^ ^7 rail");
 		runChatCommand("summon hopper_minecart ^-3 ^ ^7");
 		
