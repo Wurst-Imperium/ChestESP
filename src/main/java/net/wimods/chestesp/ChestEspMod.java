@@ -11,55 +11,92 @@ import org.lwjgl.opengl.GL11;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.block.entity.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.vehicle.ChestBoatEntity;
-import net.minecraft.entity.vehicle.ChestMinecartEntity;
-import net.minecraft.entity.vehicle.HopperMinecartEntity;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.vehicle.ChestBoat;
+import net.minecraft.world.entity.vehicle.MinecartChest;
+import net.minecraft.world.entity.vehicle.MinecartHopper;
+import net.minecraft.world.level.block.entity.*;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.common.NeoForge;
+import net.wimods.chestesp.test.ChestESPTestClient;
 import net.wimods.chestesp.util.ChunkUtils;
 import net.wimods.chestesp.util.RenderUtils;
 
+@Mod(ChestEspMod.MODID)
 public final class ChestEspMod
 {
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	public static final String MODID = "chestesp";
+	private static ChestEspMod instance;
+	
+	private static final Minecraft MC = Minecraft.getInstance();
 	public static final Logger LOGGER = LoggerFactory.getLogger("ChestESP");
 	
 	private final ConfigHolder<ChestEspConfig> configHolder;
 	private final ChestEspGroupManager groups;
-	private final KeyBinding toggleKey;
+	private final KeyMapping toggleKey;
 	
 	private boolean enabled;
 	
-	public ChestEspMod()
+	public ChestEspMod(IEventBus modBus, ModContainer container)
 	{
 		LOGGER.info("Starting ChestESP...");
+		if(instance != null)
+			throw new RuntimeException("ChestESP constructor ran twice!");
+		
+		instance = this;
 		
 		configHolder = AutoConfig.register(ChestEspConfig.class,
 			GsonConfigSerializer::new);
 		
+		// Register the config screen
+		container.registerExtensionPoint(IConfigScreenFactory.class,
+			(mc, screen) -> AutoConfig
+				.getConfigScreen(ChestEspConfig.class, screen).get());
+		
 		groups = new ChestEspGroupManager(configHolder);
 		
-		toggleKey = KeyBindingHelper
-			.registerKeyBinding(new KeyBinding("key.chestesp.toggle",
-				InputUtil.UNKNOWN_KEY.getCode(), "ChestESP"));
+		toggleKey = new KeyMapping("key.chestesp.toggle",
+			InputConstants.UNKNOWN.getValue(), "ChestESP");
 		
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			boolean enabled = configHolder.get().enable;
-			while(toggleKey.wasPressed())
-				setEnabled(!enabled);
-		});
+		// Register keybinding on mod bus
+		modBus.addListener(this::onRegisterKeyMappings);
+		
+		// Register tick handler on NeoForge bus
+		NeoForge.EVENT_BUS.addListener(this::onClientTick);
+		
+		// Run end-to-end test, if enabled
+		if(System.getProperty("chestesp.e2eTest") != null)
+			ChestESPTestClient.start();
+	}
+	
+	@SubscribeEvent
+	private void onRegisterKeyMappings(RegisterKeyMappingsEvent event)
+	{
+		event.register(toggleKey);
+	}
+	
+	@SubscribeEvent
+	private void onClientTick(ClientTickEvent.Post event)
+	{
+		boolean enabled = configHolder.get().enable;
+		while(toggleKey.consumeClick())
+			setEnabled(!enabled);
 	}
 	
 	public void setEnabled(boolean enabled)
@@ -119,12 +156,12 @@ public final class ChestEspMod
 				groups.furnaces.add(blockEntity);
 		});
 		
-		for(Entity entity : MC.world.getEntities())
-			if(entity instanceof ChestMinecartEntity)
+		for(Entity entity : MC.level.entitiesForRendering())
+			if(entity instanceof MinecartChest)
 				groups.chestCarts.add(entity);
-			else if(entity instanceof HopperMinecartEntity)
+			else if(entity instanceof MinecartHopper)
 				groups.hopperCarts.add(entity);
-			else if(entity instanceof ChestBoatEntity)
+			else if(entity instanceof ChestBoat)
 				groups.chestBoats.add(entity);
 	}
 	
@@ -133,7 +170,7 @@ public final class ChestEspMod
 		return configHolder.get().style.hasLines();
 	}
 	
-	public void onRender(MatrixStack matrixStack, float partialTicks)
+	public void onRender(PoseStack matrixStack, float partialTicks)
 	{
 		// GL settings
 		GL11.glEnable(GL11.GL_BLEND);
@@ -142,7 +179,7 @@ public final class ChestEspMod
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		
-		matrixStack.push();
+		matrixStack.pushPose();
 		RenderUtils.applyRegionalRenderOffset(matrixStack);
 		
 		groups.entityGroups.stream().filter(ChestEspGroup::isEnabled)
@@ -154,19 +191,19 @@ public final class ChestEspMod
 		
 		if(style.hasBoxes())
 		{
-			RenderSystem.setShader(GameRenderer::getPositionProgram);
+			RenderSystem.setShader(GameRenderer::getPositionShader);
 			groups.allGroups.stream().filter(ChestEspGroup::isEnabled)
 				.forEach(espRenderer::renderBoxes);
 		}
 		
 		if(style.hasLines())
 		{
-			RenderSystem.setShader(GameRenderer::getPositionProgram);
+			RenderSystem.setShader(GameRenderer::getPositionShader);
 			groups.allGroups.stream().filter(ChestEspGroup::isEnabled)
 				.forEach(espRenderer::renderLines);
 		}
 		
-		matrixStack.pop();
+		matrixStack.popPose();
 		
 		// GL resets
 		RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -177,7 +214,7 @@ public final class ChestEspMod
 	
 	public static ChestEspMod getInstance()
 	{
-		return ChestEspModInitializer.getInstance();
+		return instance;
 	}
 	
 	public boolean isEnabled()

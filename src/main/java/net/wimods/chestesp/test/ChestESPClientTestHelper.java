@@ -14,14 +14,14 @@ import java.util.function.Consumer;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.tutorial.TutorialStep;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.tutorial.TutorialSteps;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
 
@@ -29,27 +29,36 @@ public enum ChestESPClientTestHelper
 {
 	;
 	
+	public static void clickPosition(int x, int y)
+	{
+		waitFor("Click position " + x + ", " + y, mc -> {
+			mc.screen.mouseClicked(x, y, 0);
+			mc.screen.mouseReleased(x, y, 0);
+			return true;
+		});
+	}
+	
 	public static void clickScreenButton(int x, int y)
 	{
 		waitFor("Click button at " + x + ", " + y, mc -> {
-			Screen screen = mc.currentScreen;
+			Screen screen = mc.screen;
 			if(screen == null)
 				return false;
 			
-			for(Drawable drawable : screen.drawables)
+			for(Renderable drawable : screen.renderables)
 			{
-				if(!(drawable instanceof Widget widget))
+				if(!(drawable instanceof LayoutElement widget))
 					continue;
 				
 				System.out.println(
 					"Found widget at " + widget.getX() + ", " + widget.getY()
 						+ " of type " + widget.getClass().getName());
 				
-				if(widget instanceof PressableWidget pressable
+				if(widget instanceof AbstractButton pressable
 					&& pressMatchingButton(pressable, x, y))
 					return true;
 				
-				widget.forEachChild(clickableWidget -> pressMatchingButton(
+				widget.visitWidgets(clickableWidget -> pressMatchingButton(
 					clickableWidget, x, y));
 			}
 			
@@ -57,10 +66,10 @@ public enum ChestESPClientTestHelper
 		});
 	}
 	
-	private static boolean pressMatchingButton(ClickableWidget widget, int x,
+	private static boolean pressMatchingButton(AbstractWidget widget, int x,
 		int y)
 	{
-		if(widget instanceof PressableWidget button && button.getX() == x
+		if(widget instanceof AbstractButton button && button.getX() == x
 			&& button.getY() == y)
 		{
 			button.onPress();
@@ -73,19 +82,19 @@ public enum ChestESPClientTestHelper
 	public static void setTextfieldText(int index, String text)
 	{
 		waitFor("Set textfield " + index + " to " + text, mc -> {
-			Screen screen = mc.currentScreen;
+			Screen screen = mc.screen;
 			if(screen == null)
 				return false;
 			
 			int currentIndex = 0;
-			for(Drawable drawable : screen.drawables)
+			for(Renderable drawable : screen.renderables)
 			{
-				if(!(drawable instanceof TextFieldWidget textField))
+				if(!(drawable instanceof EditBox textField))
 					continue;
 				
 				if(currentIndex == index)
 				{
-					textField.setText(text);
+					textField.setValue(text);
 					return true;
 				}
 				
@@ -99,11 +108,11 @@ public enum ChestESPClientTestHelper
 	public static void runChatCommand(String command)
 	{
 		submitAndWait(mc -> {
-			ClientPlayNetworkHandler netHandler = mc.getNetworkHandler();
+			ClientPacketListener netHandler = mc.getConnection();
 			
 			// Validate command using client-side command dispatcher
-			ParseResults<?> results = netHandler.getCommandDispatcher()
-				.parse(command, netHandler.getCommandSource());
+			ParseResults<?> results = netHandler.getCommands().parse(command,
+				netHandler.getSuggestionsProvider());
 			
 			// Command is invalid, fail the test
 			if(!results.getExceptions().isEmpty())
@@ -117,7 +126,7 @@ public enum ChestESPClientTestHelper
 			}
 			
 			// Command is valid, send it
-			netHandler.sendChatCommand(command);
+			netHandler.sendCommand(command);
 			return null;
 		});
 	}
@@ -125,7 +134,7 @@ public enum ChestESPClientTestHelper
 	public static void clearChat()
 	{
 		submitAndWait(mc -> {
-			mc.inGameHud.getChatHud().clear(true);
+			mc.gui.getChat().clearMessages(true);
 			return null;
 		});
 	}
@@ -142,7 +151,7 @@ public enum ChestESPClientTestHelper
 	public static void dismissTutorialToasts()
 	{
 		submitAndWait(mc -> {
-			mc.getTutorialManager().setStep(TutorialStep.NONE);
+			mc.getTutorial().setStep(TutorialSteps.NONE);
 			return null;
 		});
 	}

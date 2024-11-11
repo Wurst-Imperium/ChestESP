@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 import me.shedaniel.autoconfig.ConfigHolder;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.wimods.chestesp.util.EntityUtils;
 
 public final class ChestEspEntityGroup extends ChestEspGroup

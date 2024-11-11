@@ -1,11 +1,11 @@
 /*
  * Copied from https://github.com/FabricMC/fabric/blob/
  * f17fc976e9d0d6fe6fc7303fb25ca7b24d122c98/fabric-api-base/src/testmodClient/
- * java/net/fabricmc/fabric/test/base/client/FabricClientTestHelper.java
- * and formatted to match our code style.
+ * java/net/fabricmc/fabric/test/base/client/FabricClientTestHelper.java,
+ * formatted to match our code style, and then ported to NeoForge.
  *
- * This isn't a part of Fabric's public API (yet), so for now the only way to
- * use it is to make a copy.
+ * TODO: Replace this with a purpose-built WI Mods test helper, since porting a
+ * Fabric utility to NeoForge is kind of cursed...
  */
 /*
  * Copyright (c) 2016, 2017, 2018, 2019 FabricMC
@@ -33,23 +33,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.screen.GameMenuScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.option.Perspective;
-import net.minecraft.client.util.ScreenshotRecorder;
-import net.minecraft.text.Text;
+import net.minecraft.client.CameraType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Screenshot;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.screens.LevelLoadingScreen;
+import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.network.chat.Component;
 
 // Provides thread safe utils for interacting with a running game.
 public final class FabricClientTestHelper
@@ -66,14 +65,14 @@ public final class FabricClientTestHelper
 	public static void waitForScreen(Class<? extends Screen> screenClass)
 	{
 		waitFor("Screen %s".formatted(screenClass.getName()),
-			client -> client.currentScreen != null
-				&& client.currentScreen.getClass() == screenClass);
+			client -> client.screen != null
+				&& client.screen.getClass() == screenClass);
 	}
 	
 	public static void openGameMenu()
 	{
-		setScreen(client -> new GameMenuScreen(true));
-		waitForScreen(GameMenuScreen.class);
+		setScreen(client -> new PauseScreen(true));
+		waitForScreen(PauseScreen.class);
 	}
 	
 	public static void openInventory()
@@ -83,8 +82,8 @@ public final class FabricClientTestHelper
 		
 		boolean creative = submitAndWait(
 			client -> Objects.requireNonNull(client.player).isCreative());
-		waitForScreen(
-			creative ? CreativeInventoryScreen.class : InventoryScreen.class);
+		waitForScreen(creative ? CreativeModeInventoryScreen.class
+			: InventoryScreen.class);
 	}
 	
 	public static void closeScreen()
@@ -92,8 +91,7 @@ public final class FabricClientTestHelper
 		setScreen(client -> null);
 	}
 	
-	private static void setScreen(
-		Function<MinecraftClient, Screen> screenSupplier)
+	private static void setScreen(Function<Minecraft, Screen> screenSupplier)
 	{
 		submit(client -> {
 			client.setScreen(screenSupplier.apply(client));
@@ -116,32 +114,32 @@ public final class FabricClientTestHelper
 			String count =
 				String.format("%02d", screenshotCount.incrementAndGet());
 			String filename = count + "_" + name + ".png";
-			ScreenshotRecorder.saveScreenshot(
-				FabricLoader.getInstance().getGameDir().toFile(), filename,
-				client.getFramebuffer(), message -> {});
+			Screenshot.grab(client.gameDirectory, filename,
+				client.getMainRenderTarget(), message -> {});
 			return null;
 		});
 	}
 	
 	public static void clickScreenButton(String translationKey)
 	{
-		final String buttonText = Text.translatable(translationKey).getString();
+		final String buttonText =
+			Component.translatable(translationKey).getString();
 		
 		waitFor("Click button" + buttonText, client -> {
-			final Screen screen = client.currentScreen;
+			final Screen screen = client.screen;
 			
 			if(screen == null)
 				return false;
 			
 			// Replaced the accessor with an access widener
-			for(Drawable drawable : screen.drawables)
+			for(Renderable drawable : screen.renderables)
 			{
-				if(drawable instanceof PressableWidget pressableWidget
+				if(drawable instanceof AbstractButton pressableWidget
 					&& pressMatchingButton(pressableWidget, buttonText))
 					return true;
 				
-				if(drawable instanceof Widget widget)
-					widget.forEachChild(clickableWidget -> pressMatchingButton(
+				if(drawable instanceof LayoutElement widget)
+					widget.visitWidgets(clickableWidget -> pressMatchingButton(
 						clickableWidget, buttonText));
 			}
 			
@@ -150,10 +148,10 @@ public final class FabricClientTestHelper
 		});
 	}
 	
-	private static boolean pressMatchingButton(ClickableWidget widget,
+	private static boolean pressMatchingButton(AbstractWidget widget,
 		String text)
 	{
-		if(widget instanceof ButtonWidget buttonWidget
+		if(widget instanceof Button buttonWidget
 			&& text.equals(buttonWidget.getMessage().getString()))
 		{
 			buttonWidget.onPress();
@@ -161,8 +159,8 @@ public final class FabricClientTestHelper
 		}
 		
 		// Replaced the accessor with an access widener
-		if(widget instanceof CyclingButtonWidget<?> buttonWidget
-			&& text.equals(buttonWidget.optionText.getString()))
+		if(widget instanceof CycleButton<?> buttonWidget
+			&& text.equals(buttonWidget.name.getString()))
 		{
 			buttonWidget.onPress();
 			return true;
@@ -175,26 +173,27 @@ public final class FabricClientTestHelper
 	{
 		// Wait for the world to be loaded and get the start ticks
 		waitFor("World load",
-			client -> client.world != null
-				&& !(client.currentScreen instanceof LevelLoadingScreen),
+			client -> client.level != null
+				&& !(client.screen instanceof LevelLoadingScreen),
 			Duration.ofMinutes(30));
-		final long startTicks = submitAndWait(client -> client.world.getTime());
-		waitFor("World load", client -> Objects.requireNonNull(client.world)
-			.getTime() > startTicks + ticks, Duration.ofMinutes(10));
+		final long startTicks =
+			submitAndWait(client -> client.level.getGameTime());
+		waitFor("World load", client -> Objects.requireNonNull(client.level)
+			.getGameTime() > startTicks + ticks, Duration.ofMinutes(10));
 	}
 	
 	public static void enableDebugHud()
 	{
 		submitAndWait(client -> {
-			client.inGameHud.getDebugHud().toggleDebugHud();
+			client.gui.getDebugOverlay().toggleOverlay();
 			return null;
 		});
 	}
 	
-	public static void setPerspective(Perspective perspective)
+	public static void setPerspective(CameraType perspective)
 	{
 		submitAndWait(client -> {
-			client.options.setPerspective(perspective);
+			client.options.setCameraType(perspective);
 			return null;
 		});
 	}
@@ -204,22 +203,21 @@ public final class FabricClientTestHelper
 	public static void waitForTitleScreenFade()
 	{
 		waitFor("Title screen fade", client -> {
-			if(!(client.currentScreen instanceof TitleScreen titleScreen))
+			if(!(client.screen instanceof TitleScreen titleScreen))
 				return false;
 			
 			// Replaced the accessor with an access widener
-			return !titleScreen.doBackgroundFade;
+			return !titleScreen.fading;
 		});
 	}
 	
-	public static void waitFor(String what,
-		Predicate<MinecraftClient> predicate)
+	public static void waitFor(String what, Predicate<Minecraft> predicate)
 	{
 		waitFor(what, predicate, Duration.ofSeconds(10));
 	}
 	
-	public static void waitFor(String what,
-		Predicate<MinecraftClient> predicate, Duration timeout)
+	public static void waitFor(String what, Predicate<Minecraft> predicate,
+		Duration timeout)
 	{
 		final LocalDateTime end = LocalDateTime.now().plus(timeout);
 		
@@ -251,13 +249,13 @@ public final class FabricClientTestHelper
 	
 	@SuppressWarnings("resource")
 	private static <T> CompletableFuture<T> submit(
-		Function<MinecraftClient, T> function)
+		Function<Minecraft, T> function)
 	{
-		return MinecraftClient.getInstance()
-			.submit(() -> function.apply(MinecraftClient.getInstance()));
+		return Minecraft.getInstance()
+			.submit(() -> function.apply(Minecraft.getInstance()));
 	}
 	
-	public static <T> T submitAndWait(Function<MinecraftClient, T> function)
+	public static <T> T submitAndWait(Function<Minecraft, T> function)
 	{
 		return submit(function).join();
 	}

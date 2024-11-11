@@ -13,7 +13,7 @@ This mod highlights nearby chests so you can see them through walls. It's based 
 1. Run this command in PowerShell:
 
    ```pwsh
-   ./gradlew.bat genSources eclipse --no-daemon
+   ./gradlew.bat eclipse --no-daemon
    ```
 
 2. In Eclipse, go to `Import...` > `Existing Projects into Workspace` and select this project.

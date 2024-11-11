@@ -16,29 +16,24 @@ import java.time.Duration;
 
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.gui.screen.AccessibilityOnboardingScreen;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.screen.world.CreateWorldScreen;
-import net.minecraft.client.gui.screen.world.SelectWorldScreen;
+import net.minecraft.client.gui.screens.AccessibilityOnboardingScreen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
+import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.wimods.chestesp.ChestEspStyle;
 
 // It would be cleaner to have this test in src/test/java, but remapping that
 // into a separate testmod is a whole can of worms.
-public final class ChestESPTestClient implements ModInitializer
+public final class ChestESPTestClient
 {
-	@Override
-	public void onInitialize()
+	public static void start()
 	{
-		if(System.getProperty("chestesp.e2eTest") == null)
-			return;
-		
 		Thread.ofVirtual().name("ChestESP End-to-End Test")
 			.uncaughtExceptionHandler((t, e) -> {
 				e.printStackTrace();
 				System.exit(1);
-			}).start(this::runTest);
+			}).start(new ChestESPTestClient()::runTest);
 	}
 	
 	private void runTest()
@@ -60,11 +55,14 @@ public final class ChestESPTestClient implements ModInitializer
 		takeScreenshot("title_screen", Duration.ZERO);
 		
 		System.out.println("Clicking mods button");
-		clickScreenButton("modmenu.title");
-		takeScreenshot("mod_menu");
+		clickScreenButton("fml.menu.mods");
 		
-		System.out.println("Clicking configure button");
-		clickScreenButton(403, 48);
+		System.out.println("Selecting ChestESP entry");
+		clickPosition(42, 74);
+		takeScreenshot("mod_list");
+		
+		System.out.println("Clicking config button");
+		clickScreenButton("fml.menu.mods.config");
 		takeScreenshot("cloth_config");
 		
 		System.out.println("Returning to title screen");
@@ -74,7 +72,8 @@ public final class ChestESPTestClient implements ModInitializer
 		System.out.println("Clicking singleplayer button");
 		clickScreenButton("menu.singleplayer");
 		
-		if(submitAndWait(mc -> !mc.getLevelStorage().getLevelList().isEmpty()))
+		if(submitAndWait(
+			mc -> !mc.getLevelSource().findLevelCandidates().isEmpty()))
 		{
 			System.out.println("World list is not empty. Waiting for it");
 			waitForScreen(SelectWorldScreen.class);
@@ -87,7 +86,8 @@ public final class ChestESPTestClient implements ModInitializer
 		System.out.println("Reached create world screen");
 		
 		// Set MC version as world name
-		setTextfieldText(0, SharedConstants.getGameVersion().getName());
+		setTextfieldText(0,
+			SharedConstants.getCurrentVersion().getName() + " NeoForge");
 		// Select creative mode
 		clickScreenButton("selectWorld.gameMode");
 		clickScreenButton("selectWorld.gameMode");

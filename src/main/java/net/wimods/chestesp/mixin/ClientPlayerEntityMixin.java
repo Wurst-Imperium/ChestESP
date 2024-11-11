@@ -13,23 +13,22 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.authlib.GameProfile;
-
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.wimods.chestesp.ChestEspMod;
 
-@Mixin(ClientPlayerEntity.class)
-public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
+@Mixin(LocalPlayer.class)
+public class ClientPlayerEntityMixin extends AbstractClientPlayer
 {
-	public ClientPlayerEntityMixin(ChestEspMod chestEspMod, ClientWorld world,
+	public ClientPlayerEntityMixin(ChestEspMod chestEspMod, ClientLevel world,
 		GameProfile profile)
 	{
 		super(world, profile);
 	}
 	
 	@Inject(at = @At(value = "INVOKE",
-		target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tick()V",
+		target = "Lnet/minecraft/client/player/AbstractClientPlayer;tick()V",
 		ordinal = 0), method = "tick()V")
 	private void onTick(CallbackInfo ci)
 	{

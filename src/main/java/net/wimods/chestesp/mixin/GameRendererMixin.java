@@ -16,11 +16,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.sugar.Local;
-
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.renderer.GameRenderer;
 import net.wimods.chestesp.ChestEspMod;
 
 @Mixin(GameRenderer.class)
@@ -34,10 +33,10 @@ public abstract class GameRendererMixin implements AutoCloseable
 	 * next view-bobbing call should be cancelled.
 	 */
 	@Inject(at = @At(value = "INVOKE",
-		target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V",
+		target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V",
 		ordinal = 0),
-		method = "renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V")
-	private void onRenderWorldViewBobbing(RenderTickCounter tickCounter,
+		method = "renderLevel(Lnet/minecraft/client/DeltaTracker;)V")
+	private void onRenderWorldViewBobbing(DeltaTracker tickCounter,
 		CallbackInfo ci)
 	{
 		ChestEspMod chestEsp = ChestEspMod.getInstance();
@@ -51,10 +50,9 @@ public abstract class GameRendererMixin implements AutoCloseable
 	 * CameraTransformViewBobbingEvent.
 	 */
 	@Inject(at = @At("HEAD"),
-		method = "bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V",
+		method = "bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V",
 		cancellable = true)
-	private void onBobView(MatrixStack matrices, float tickDelta,
-		CallbackInfo ci)
+	private void onBobView(PoseStack matrices, float tickDelta, CallbackInfo ci)
 	{
 		if(!cancelNextBobView)
 			return;
@@ -69,7 +67,7 @@ public abstract class GameRendererMixin implements AutoCloseable
 	 * after the view-bobbing call.
 	 */
 	@Inject(at = @At("HEAD"),
-		method = "renderHand(Lnet/minecraft/client/render/Camera;FLorg/joml/Matrix4f;)V")
+		method = "renderItemInHand(Lnet/minecraft/client/Camera;FLorg/joml/Matrix4f;)V")
 	private void onRenderHand(Camera camera, float tickDelta, Matrix4f matrix4f,
 		CallbackInfo ci)
 	{
@@ -78,16 +76,16 @@ public abstract class GameRendererMixin implements AutoCloseable
 	
 	@Inject(
 		at = @At(value = "FIELD",
-			target = "Lnet/minecraft/client/render/GameRenderer;renderHand:Z",
+			target = "Lnet/minecraft/client/renderer/GameRenderer;renderHand:Z",
 			opcode = Opcodes.GETFIELD,
 			ordinal = 0),
-		method = "renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V")
-	private void onRenderWorldHandRendering(RenderTickCounter tickCounter,
+		method = "renderLevel(Lnet/minecraft/client/DeltaTracker;)V")
+	private void onRenderWorldHandRendering(DeltaTracker tickCounter,
 		CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f2,
 		@Local(ordinal = 1) float tickDelta)
 	{
-		MatrixStack matrixStack = new MatrixStack();
-		matrixStack.multiplyPositionMatrix(matrix4f2);
+		PoseStack matrixStack = new PoseStack();
+		matrixStack.mulPose(matrix4f2);
 		ChestEspMod chestEsp = ChestEspMod.getInstance();
 		
 		if(chestEsp != null && chestEsp.isEnabled())

@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 import me.shedaniel.autoconfig.ConfigHolder;
-import net.minecraft.util.math.Box;
+import net.minecraft.world.phys.AABB;
 
 public abstract class ChestEspGroup
 {
@@ -23,7 +23,7 @@ public abstract class ChestEspGroup
 	private final ToIntFunction<ChestEspConfig> color;
 	private final Predicate<ChestEspConfig> enabled;
 	
-	protected final ArrayList<Box> boxes = new ArrayList<>();
+	protected final ArrayList<AABB> boxes = new ArrayList<>();
 	
 	/**
 	 * Creates a new ChestEspGroup controlled by the given settings. If
@@ -57,7 +57,7 @@ public abstract class ChestEspGroup
 		return new float[]{red, green, blue};
 	}
 	
-	public List<Box> getBoxes()
+	public List<AABB> getBoxes()
 	{
 		return Collections.unmodifiableList(boxes);
 	}
