@@ -99,7 +99,7 @@ jobs:
       if: always()
       with:
         name: Test Screenshots
-        path: run/screenshots
+        path: runs/client/screenshots
 
     - name: Create test screenshot gallery
       if: ${{ env.IMGUR_CLIENT_ID && (success() || failure()) }}
@@ -109,7 +109,7 @@ jobs:
         echo "<summary>📸 Test Screenshots</summary>" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 
-        for img in run/screenshots/*.png; do
+        for img in runs/client/screenshots/*.png; do
           if [ -f "$img" ]; then
             filename=$(basename "$img")
             name_without_ext="${filename%.*}"
