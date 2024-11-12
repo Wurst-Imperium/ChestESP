@@ -2,6 +2,10 @@ name: Update Gradle Dependency Graph
 
 on:
   push:
+    branches:
+      - "**"
+    tags-ignore:
+      - "**"
     paths:
       - "gradle**"
       - "*.gradle"
