@@ -16,6 +16,7 @@ on:
     paths:
       - "**.java"
       - "**.json"
+      - "**.yml"
       - "gradle**"
       - "*.gradle"
   workflow_dispatch:
