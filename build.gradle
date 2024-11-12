@@ -118,6 +118,23 @@ configurations {
 	runtimeClasspath.extendsFrom localRuntime
 }
 
+configurations.all {
+	resolutionStrategy {
+		// Override vulnerable msal4j dependency until Minecraft updates to a
+		// newer version. v1.15.0, used by Minecraft 1.21.3, is vulnerable to
+		// CVE-2024-35255.
+		force "com.microsoft.azure:msal4j:1.17.2"
+		
+		// Fixes a weird issue in NeoForge 21.3 where it tries to load both
+		// ASM 9.7 and ASM 9.5 at the same time.
+		force "org.ow2.asm:asm-analysis:9.7"
+		force "org.ow2.asm:asm:9.7"
+		force "org.ow2.asm:asm-tree:9.7"
+		force "org.ow2.asm:asm-commons:9.7"
+		force "org.ow2.asm:asm-util:9.7"
+	}
+}
+
 dependencies {
 	// Specify the version of Minecraft to use.
 	// Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.

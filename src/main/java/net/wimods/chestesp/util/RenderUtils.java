@@ -18,7 +18,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -119,7 +119,7 @@ public enum RenderUtils
 		float maxZ = (float)bb.maxZ;
 		
 		Matrix4f matrix = matrixStack.last().pose();
-		RenderSystem.setShader(GameRenderer::getPositionShader);
+		RenderSystem.setShader(CoreShaders.POSITION);
 		Tesselator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.Mode.QUADS,
 			DefaultVertexFormat.POSITION);
@@ -219,7 +219,7 @@ public enum RenderUtils
 	{
 		Matrix4f matrix = matrixStack.last().pose();
 		Tesselator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionShader);
+		RenderSystem.setShader(CoreShaders.POSITION);
 		BufferBuilder bufferBuilder = tessellator
 			.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION);
 		
@@ -444,7 +444,7 @@ public enum RenderUtils
 	{
 		Matrix4f matrix = matrixStack.last().pose();
 		Tesselator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionShader);
+		RenderSystem.setShader(CoreShaders.POSITION);
 		
 		double midX = (bb.minX + bb.maxX) / 2;
 		double midY = (bb.minY + bb.maxY) / 2;
@@ -580,7 +580,7 @@ public enum RenderUtils
 	
 	public static void drawArrow(Vec3 from, Vec3 to, PoseStack matrixStack)
 	{
-		RenderSystem.setShader(GameRenderer::getPositionShader);
+		RenderSystem.setShader(CoreShaders.POSITION);
 		
 		Tesselator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator

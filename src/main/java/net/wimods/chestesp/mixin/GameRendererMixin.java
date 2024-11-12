@@ -81,11 +81,11 @@ public abstract class GameRendererMixin implements AutoCloseable
 			ordinal = 0),
 		method = "renderLevel(Lnet/minecraft/client/DeltaTracker;)V")
 	private void onRenderWorldHandRendering(DeltaTracker tickCounter,
-		CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f2,
+		CallbackInfo ci, @Local(ordinal = 2) Matrix4f matrix4f3,
 		@Local(ordinal = 1) float tickDelta)
 	{
 		PoseStack matrixStack = new PoseStack();
-		matrixStack.mulPose(matrix4f2);
+		matrixStack.mulPose(matrix4f3);
 		ChestEspMod chestEsp = ChestEspMod.getInstance();
 		
 		if(chestEsp != null && chestEsp.isEnabled())

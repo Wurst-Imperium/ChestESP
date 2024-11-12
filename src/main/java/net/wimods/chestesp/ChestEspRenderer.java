@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import org.joml.Matrix4f;
 
+import com.mojang.blaze3d.buffers.BufferUsage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -20,7 +21,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.ShaderInstance;
+
+import net.minecraft.client.renderer.CompiledShaderProgram;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -61,7 +63,7 @@ public final class ChestEspRenderer
 			
 			Matrix4f viewMatrix = matrixStack.last().pose();
 			Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
-			ShaderInstance shader = RenderSystem.getShader();
+			CompiledShaderProgram shader = RenderSystem.getShader();
 			
 			RenderSystem.setShaderColor(colorF[0], colorF[1], colorF[2], 0.25F);
 			solidBox.bind();
@@ -108,8 +110,8 @@ public final class ChestEspRenderer
 	public static void prepareBuffers()
 	{
 		closeBuffers();
-		solidBox = new VertexBuffer(VertexBuffer.Usage.STATIC);
-		outlinedBox = new VertexBuffer(VertexBuffer.Usage.STATIC);
+		solidBox = new VertexBuffer(BufferUsage.STATIC_WRITE);
+		outlinedBox = new VertexBuffer(BufferUsage.STATIC_WRITE);
 		
 		AABB box = new AABB(BlockPos.ZERO);
 		RenderUtils.drawSolidBox(box, solidBox);
