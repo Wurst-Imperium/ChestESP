@@ -47,19 +47,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Extract version
-        id: version
-        run: |
-          MOD_VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d ' ')
-          TAG_VERSION="v${MOD_VERSION%%-*}"
-          echo "tag_version=$TAG_VERSION" >> $GITHUB_OUTPUT
-
       - name: Create and push tag
         run: |
+          MOD_VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d ' ')
           git config --global user.name "Wurst-Bot"
           git config --global user.email "contact.wurstimperium@gmail.com"
-          git tag ${{ steps.version.outputs.tag_version }}
-          git push origin ${{ steps.version.outputs.tag_version }}
+          git tag $MOD_VERSION
+          git push origin $MOD_VERSION
 
       - name: Close milestone
         if: ${{ inputs.close_milestone }}
