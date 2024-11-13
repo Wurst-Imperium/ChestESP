@@ -30,13 +30,11 @@ repositories {
 	maven {url "https://maven.terraformersmc.com/releases/"}
 }
 
-// Override vulnerable dependencies until Minecraft updates to newer versions
+// Override vulnerable msal4j dependency until Minecraft updates to a newer version
 configurations.all {
 	resolutionStrategy {
 		// v1.15.0, used by Minecraft 1.21.2 and 1.21.3, is vulnerable to CVE-2024-35255
 		force 'com.microsoft.azure:msal4j:1.17.2'
-		// v4.1.97, used by Minecraft 1.21.2 and 1.21.3, is vulnerable to CVE-2024-47535
-		force 'io.netty:netty-common:4.1.115'
 	}
 }
 
