@@ -47,6 +47,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Build
+        run: ./gradlew build --stacktrace --warning-mode=fail
+
       - name: Create and push tag
         run: |
           MOD_VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d ' ')
@@ -58,9 +61,6 @@ jobs:
       - name: Close milestone
         if: ${{ inputs.close_milestone }}
         run: ./gradlew closeMilestone --stacktrace
-
-      - name: Build
-        run: ./gradlew build --stacktrace
 
       - name: Upload backups
         if: ${{ inputs.upload_backups }}
