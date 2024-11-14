@@ -68,6 +68,8 @@ jobs:
 
       - name: Publish to GitHub
         if: ${{ inputs.publish_github }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.MCX_PUBLISH_TOKEN }}
         run: ./gradlew github --stacktrace
 
       - name: Publish to CurseForge  
