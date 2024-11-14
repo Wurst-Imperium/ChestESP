@@ -166,7 +166,7 @@ spotless {
 publishMods {
 	file = remapJar.archiveFile
 	def versionString = project.version as String
-	def ghVersion = "v" + versionString.substring(0, versionString.indexOf("-"))
+	def ghVersion = "v" + versionString.substring(0, versionString.indexOf("-MC"))
 	def changelogUrl = "https://www.wimods.net/chestesp/chestesp-1-2/"
 	def archivesName = project.base.archivesName.get() as String
 	additionalFiles.from(
@@ -201,7 +201,7 @@ task github(dependsOn: build) {
 	doLast {
 		def github = GitHub.connectUsingOAuth(ENV.GITHUB_TOKEN as String)
 		def repository = github.getRepository("Wurst-Imperium-MCX/ChestESP")
-		def ghVersion = "v" + version.substring(0, version.indexOf("-"))
+		def ghVersion = "v" + version.substring(0, version.indexOf("-MC"))
 		
 		def ghRelease = repository.getReleaseByTagName(ghVersion as String);
 		if(ghRelease == null) {
@@ -255,7 +255,7 @@ task uploadBackups {
 	}
 	
 	doLast {
-		def shortVersion = version.substring(0, version.indexOf("-"))
+		def shortVersion = version.substring(0, version.indexOf("-MC"))
 		def backupUrl = "https://api.wurstclient.net/artifact-backups/ChestESP/${shortVersion}"
 		
 		def client = new OkHttpClient()
