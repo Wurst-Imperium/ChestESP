@@ -8,7 +8,6 @@
 package net.wimods.chestesp.test;
 
 import static net.wimods.chestesp.test.ChestESPClientTestHelper.*;
-import static net.wimods.chestesp.test.ChestESPClientTestHelper.clickScreenButton;
 import static net.wimods.chestesp.test.fabric.FabricClientTestHelper.*;
 import static net.wimods.chestesp.test.fabric.FabricClientTestHelper.clickScreenButton;
 
