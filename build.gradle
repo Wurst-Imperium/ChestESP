@@ -1,7 +1,6 @@
 buildscript {
 	dependencies {
 		classpath "org.kohsuke:github-api:1.326"
-		classpath "com.squareup.okhttp3:okhttp:4.12.0"
 	}
 }
 
@@ -264,7 +263,7 @@ publishMods {
 		jarFiles[0]
 	}
 	def versionString = project.version as String
-	def ghVersion = "v" + versionString.substring(0, versionString.indexOf("-"))
+	def ghVersion = "v" + versionString.substring(0, versionString.indexOf("-MC"))
 	def changelogUrl = "https://www.wimods.net/chestesp/chestesp-1-2/"
 	def archivesName = project.base.archivesName.get() as String
 	additionalFiles.from(
@@ -303,7 +302,7 @@ task github {
 	doLast {
 		def github = GitHub.connectUsingOAuth(ENV.GITHUB_TOKEN as String)
 		def repository = github.getRepository("Wurst-Imperium-MCX/ChestESP")
-		def ghVersion = "v" + version.substring(0, version.indexOf("-"))
+		def ghVersion = "v" + version.substring(0, version.indexOf("-MC"))
 		
 		def ghRelease = repository.getReleaseByTagName(ghVersion as String);
 		if(ghRelease == null) {
@@ -347,12 +346,6 @@ task closeMilestone {
 	}
 }
 
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-
 task uploadBackups {
 	dependsOn build
 	
@@ -361,38 +354,32 @@ task uploadBackups {
 	}
 	
 	doLast {
-		def shortVersion = version.substring(0, version.indexOf("-"))
+		def shortVersion = version.substring(0, version.indexOf("-MC"))
 		def backupUrl = "https://api.wurstclient.net/artifact-backups/ChestESP/${shortVersion}"
 		
-		def client = new OkHttpClient()
-		def multipartBuilder = new MultipartBody.Builder()
-			.setType(MultipartBody.FORM)
+		def connection = new URL(backupUrl).openConnection() as HttpURLConnection
+		def boundary = UUID.randomUUID().toString()
+		connection.setRequestMethod("POST")
+		connection.setRequestProperty("X-API-Key", ENV.WI_BACKUPS_API_KEY)
+		connection.setRequestProperty("Accept", "application/json")
+		connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
+		connection.doOutput = true
 		
-		// Add main JAR
-		def mainJar = remapJar.archiveFile.get().asFile
-		multipartBuilder.addFormDataPart(
-			"files",
-			mainJar.name,
-			RequestBody.create(MediaType.parse("application/java-archive"), mainJar)
-		)
-		
-		// Add sources JAR
-		def sourcesJar = remapSourcesJar.archiveFile.get().asFile
-		multipartBuilder.addFormDataPart(
-			"files",
-			sourcesJar.name,
-			RequestBody.create(MediaType.parse("application/java-archive"), sourcesJar)
-		)
-		
-		def request = new Request.Builder()
-			.url(backupUrl)
-			.header("X-API-Key", ENV.WI_BACKUPS_API_KEY)
-			.post(multipartBuilder.build())
-			.build()
-			
-		def response = client.newCall(request).execute()
-		if (!response.successful) {
-			throw new GradleException("Failed to upload backups: ${response.code} ${response.body?.string()}")
+		def output = connection.outputStream
+		[remapJar, remapSourcesJar].each { jarTask ->
+			def file = jarTask.archiveFile.get().asFile
+			output << "--${boundary}\r\n"
+			output << "Content-Disposition: form-data; name=\"files\"; filename=\"${file.name}\"\r\n"
+			output << "Content-Type: application/java-archive\r\n\r\n"
+			file.withInputStream { input -> 
+				output << input
+			}
+			output << "\r\n"
 		}
+		output << "--${boundary}--\r\n"
+		output.flush()
+		
+		if(connection.responseCode != 200)
+			throw new GradleException("Failed to upload backups: ${connection.responseCode} ${connection.responseMessage}")
 	}
 }
