@@ -359,7 +359,7 @@ task closeMilestone {
 }
 
 task uploadBackups {
-	dependsOn build
+	dependsOn tasks.named("renameJarJar")
 	
 	onlyIf {
 		ENV.WI_BACKUPS_API_KEY
@@ -378,8 +378,10 @@ task uploadBackups {
 		connection.doOutput = true
 		
 		def output = connection.outputStream
-		[remapJar, remapSourcesJar].each { jarTask ->
-			def file = jarTask.archiveFile.get().asFile
+		def libsDir = layout.buildDirectory.dir("libs").get().asFile
+		def jarFiles = libsDir.listFiles().findAll { it.name.endsWith(".jar") }
+		
+		jarFiles.each { file ->
 			output << "--${boundary}\r\n"
 			output << "Content-Disposition: form-data; name=\"files\"; filename=\"${file.name}\"\r\n"
 			output << "Content-Type: application/java-archive\r\n\r\n"
