@@ -253,9 +253,8 @@ task uploadBackups {
 	}
 	
 	doLast {
-		def versionString = project.version as String
-		def ghVersion = "v" + versionString.substring(0, versionString.indexOf("-"))
-		def backupUrl = "https://api.wurstclient.net/artifact-backups/ChestESP/${ghVersion}"
+		def shortVersion = version.substring(0, version.indexOf("-"))
+		def backupUrl = "https://api.wurstclient.net/artifact-backups/ChestESP/${shortVersion}"
 		
 		def client = new OkHttpClient()
 		def multipartBuilder = new MultipartBody.Builder()
@@ -264,7 +263,7 @@ task uploadBackups {
 		// Add main JAR
 		def mainJar = remapJar.archiveFile.get().asFile
 		multipartBuilder.addFormDataPart(
-			"file",
+			"files",
 			mainJar.name,
 			RequestBody.create(MediaType.parse("application/java-archive"), mainJar)
 		)
@@ -272,7 +271,7 @@ task uploadBackups {
 		// Add sources JAR
 		def sourcesJar = remapSourcesJar.archiveFile.get().asFile
 		multipartBuilder.addFormDataPart(
-			"file",
+			"files",
 			sourcesJar.name,
 			RequestBody.create(MediaType.parse("application/java-archive"), sourcesJar)
 		)
