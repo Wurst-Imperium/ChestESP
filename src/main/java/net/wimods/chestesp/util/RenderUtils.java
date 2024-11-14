@@ -58,17 +58,6 @@ public enum RenderUtils
 		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
 	}
 	
-	public static void applyCameraRotationOnly()
-	{
-		// no longer necessary for some reason
-		
-		// Camera camera =
-		// WurstClient.MC.getBlockEntityRenderDispatcher().camera;
-		// GL11.glRotated(MathHelper.wrapDegrees(camera.getPitch()), 1, 0, 0);
-		// GL11.glRotated(MathHelper.wrapDegrees(camera.getYaw() + 180.0), 0, 1,
-		// 0);
-	}
-	
 	public static Vec3 getCameraPos()
 	{
 		Camera camera = MC.getBlockEntityRenderDispatcher().camera;
