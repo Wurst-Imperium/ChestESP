@@ -332,7 +332,9 @@ task github {
 }
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import org.kohsuke.github.GHIssueState
+import org.kohsuke.github.GHMilestoneState
+import java.time.ZoneId
 
 task closeMilestone {
 	onlyIf {
@@ -345,12 +347,13 @@ task closeMilestone {
 		def ghVersion = "v" + version.substring(0, version.indexOf("-MC"))
 		def versionSlug = ghVersion.substring(1).replace('.', '-')
 		
+		// Weird API design: listMilestones() requires GHIssueState while everything else uses GHMilestoneState.
 		def milestone = repository.listMilestones(GHIssueState.ALL).find { it.title == ghVersion }
 		if (milestone == null) {
-			milestone = repository.createMilestone(ghVersion, null)
+			milestone = repository.createMilestone(ghVersion, "")
 		}
 		
-		if (!milestone.isClosed()) {
+		if (milestone.getState() != GHMilestoneState.CLOSED) {
 			milestone.setDueOn(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()))
 			milestone.setDescription("https://wimods.net/chestesp/chestesp-${versionSlug}/")
 			milestone.close()
