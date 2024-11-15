@@ -214,6 +214,7 @@ task github(dependsOn: build) {
 }
 
 import java.time.LocalDate
+import org.kohsuke.github.GHIssueState
 import org.kohsuke.github.GHMilestoneState
 import java.time.ZoneId
 
@@ -228,9 +229,10 @@ task closeMilestone {
 		def ghVersion = "v" + version.substring(0, version.indexOf("-MC"))
 		def versionSlug = ghVersion.substring(1).replace('.', '-')
 		
-		def milestone = repository.listMilestones(GHMilestoneState.ALL).find { it.title == ghVersion }
+		// Weird API design: listMilestones() requires GHIssueState while everything else uses GHMilestoneState.
+		def milestone = repository.listMilestones(GHIssueState.ALL).find { it.title == ghVersion }
 		if (milestone == null) {
-			milestone = repository.createMilestone(ghVersion, null)
+			milestone = repository.createMilestone(ghVersion, "")
 		}
 		
 		if (milestone.getState() != GHMilestoneState.CLOSED) {
