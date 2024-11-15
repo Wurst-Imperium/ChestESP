@@ -269,10 +269,10 @@ spotless {
 }
 
 publishMods {
-	file = tasks.named("renameJarJar").map { task ->
+	file = tasks.named("renameJarJar").flatMap { task ->
 		def libsDir = layout.buildDirectory.dir("libs").get().asFile
 		def jarFiles = libsDir.listFiles().findAll { it.name.endsWith(".jar") }
-		jarFiles[0]
+		layout.file(providers.provider { jarFiles[0] })
 	}
 	def versionString = project.version as String
 	def ghVersion = "v" + versionString.substring(0, versionString.indexOf("-MC"))
