@@ -320,7 +320,7 @@ task github {
 }
 
 import java.time.LocalDate
-import org.kohsuke.github.GHIssueState
+import org.kohsuke.github.GHMilestoneState
 import java.time.ZoneId
 
 task closeMilestone {
@@ -334,12 +334,12 @@ task closeMilestone {
 		def ghVersion = "v" + version.substring(0, version.indexOf("-MC"))
 		def versionSlug = ghVersion.substring(1).replace('.', '-')
 		
-		def milestone = repository.listMilestones(GHIssueState.ALL).find { it.title == ghVersion }
+		def milestone = repository.listMilestones(GHMilestoneState.ALL).find { it.title == ghVersion }
 		if (milestone == null) {
 			milestone = repository.createMilestone(ghVersion, null)
 		}
 		
-		if (!milestone.isClosed()) {
+		if (milestone.getState() != GHMilestoneState.CLOSED) {
 			milestone.setDueOn(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()))
 			milestone.setDescription("https://wimods.net/chestesp/chestesp-${versionSlug}/")
 			milestone.close()
