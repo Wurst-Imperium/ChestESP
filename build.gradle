@@ -265,10 +265,6 @@ publishMods {
 	def versionString = project.version as String
 	def ghVersion = "v" + versionString.substring(0, versionString.indexOf("-MC"))
 	def changelogUrl = "https://www.wimods.net/chestesp/chestesp-1-2/"
-	def archivesName = project.base.archivesName.get() as String
-	additionalFiles.from(
-		file("${project.buildDir}/libs/${archivesName}-${versionString}-sources.jar"),
-	)
 	type = ghVersion.contains("pre") ? BETA : STABLE
 	modLoaders.add("neoforge")
 	
