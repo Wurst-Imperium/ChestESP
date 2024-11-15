@@ -214,7 +214,8 @@ task github(dependsOn: build) {
 }
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import org.kohsuke.github.GHIssueState
+import java.time.ZoneId
 
 task closeMilestone {
 	onlyIf {
