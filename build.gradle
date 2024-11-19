@@ -256,17 +256,25 @@ spotless {
 	}
 }
 
+def getGhVersion() {
+	return "v" + version.substring(0, version.indexOf("-MC"))
+}
+
+def getChangelogUrl() {
+	def modSlug = mod_name.toLowerCase().replace(" ", "-")
+	def versionSlug = version.substring(0, version.indexOf("-MC")).replace(".", "-")
+	return "https://www.wimods.net/${modSlug}/${modSlug}-${versionSlug}/"
+}
+
 publishMods {
 	file = tasks.named("renameJarJar").flatMap { task ->
 		def libsDir = layout.buildDirectory.dir("libs").get().asFile
 		def jarFiles = libsDir.listFiles().findAll { it.name.endsWith(".jar") }
 		layout.file(providers.provider { jarFiles[0] })
 	}
-	def versionString = project.version as String
-	def ghVersion = "v" + versionString.substring(0, versionString.indexOf("-MC"))
-	def changelogUrl = "https://www.wimods.net/chestesp/chestesp-1-2/"
-	type = ghVersion.contains("pre") ? BETA : STABLE
+	type = getGhVersion().contains("pre") ? BETA : STABLE
 	modLoaders.add("neoforge")
+	def changelogUrl = getChangelogUrl()
 	
 	curseforge {
 		projectId = "870203"
@@ -298,9 +306,9 @@ task github {
 	doLast {
 		def github = GitHub.connectUsingOAuth(ENV.GITHUB_TOKEN as String)
 		def repository = github.getRepository("Wurst-Imperium-MCX/ChestESP")
-		def ghVersion = "v" + version.substring(0, version.indexOf("-MC"))
+		def ghVersion = getGhVersion()
 		
-		def ghRelease = repository.getReleaseByTagName(ghVersion as String);
+		def ghRelease = repository.getReleaseByTagName(ghVersion as String)
 		if(ghRelease == null) {
 			def releaseBuilder = new GHReleaseBuilder(repository, ghVersion as String)
 			releaseBuilder.prerelease(ghVersion.contains("pre"))
@@ -328,8 +336,7 @@ task closeMilestone {
 	doLast {
 		def github = GitHub.connectUsingOAuth(ENV.GITHUB_TOKEN as String)
 		def repository = github.getRepository("Wurst-Imperium/ChestESP")
-		def ghVersion = "v" + version.substring(0, version.indexOf("-MC"))
-		def versionSlug = ghVersion.substring(1).replace('.', '-')
+		def ghVersion = getGhVersion()
 		
 		// Weird API design: listMilestones() requires GHIssueState while everything else uses GHMilestoneState.
 		def milestone = repository.listMilestones(GHIssueState.ALL).find { it.title == ghVersion }
@@ -339,7 +346,7 @@ task closeMilestone {
 		
 		if (milestone.getState() != GHMilestoneState.CLOSED) {
 			milestone.setDueOn(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()))
-			milestone.setDescription("https://wimods.net/chestesp/chestesp-${versionSlug}/")
+			milestone.setDescription(getChangelogUrl())
 			milestone.close()
 		}
 	}
@@ -353,7 +360,7 @@ task uploadBackups {
 	}
 	
 	doLast {
-		def shortVersion = version.substring(0, version.indexOf("-MC"))
+		def shortVersion = getGhVersion().substring(1)
 		def backupUrl = "https://api.wurstclient.net/artifact-backups/ChestESP/${shortVersion}"
 		
 		def connection = new URL(backupUrl).openConnection() as HttpURLConnection
