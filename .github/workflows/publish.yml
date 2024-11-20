@@ -55,8 +55,8 @@ jobs:
           MOD_VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d ' ')
           git config --global user.name "Wurst-Bot"
           git config --global user.email "contact.wurstimperium@gmail.com"
-          git tag $MOD_VERSION
-          git push origin $MOD_VERSION
+          git tag v$MOD_VERSION
+          git push origin v$MOD_VERSION
 
       - name: Close milestone
         if: ${{ inputs.close_milestone }}
@@ -68,6 +68,8 @@ jobs:
 
       - name: Publish to GitHub
         if: ${{ inputs.publish_github }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.MCX_PUBLISH_TOKEN }}
         run: ./gradlew github --stacktrace
 
       - name: Publish to CurseForge  
