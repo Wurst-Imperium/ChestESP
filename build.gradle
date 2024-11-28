@@ -61,7 +61,7 @@ dependencies {
 	}
 	
 	constraints {
-		modApi("org.yaml:snakeyaml:2.2") {
+		modApi("org.yaml:snakeyaml:2.3") {
 			because "version 1.27 pulled from cloth-config has security vulnerabilities"
 		}
 		modApi("com.google.code.gson:gson:2.10.1") {
