@@ -54,7 +54,7 @@ dependencies {
 		modApi("org.yaml:snakeyaml:2.2") {
 			because "version 1.27 pulled from cloth-config has security vulnerabilities"
 		}
-		modApi("com.google.code.gson:gson:2.10.1") {
+		modApi("com.google.code.gson:gson:2.11.0") {
 			because "version 2.8.1 pulled from cloth-config has security vulnerabilities"
 		}
 	}
@@ -148,7 +148,7 @@ spotless {
 	}
 	json {
 		target "src/**/*.json"
-		gson().indentWithSpaces(2).version("2.10.1")
+		gson().indentWithSpaces(2).version("2.11.0")
 	}
 }
 
