@@ -86,7 +86,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MCX_PUBLISH_TOKEN }}
         run: ./gradlew github --stacktrace
 
-      - name: Publish to CurseForge  
+      - name: Publish to CurseForge
         if: ${{ inputs.publish_curseforge }}
         run: ./gradlew publishCurseforge --stacktrace
 
@@ -94,18 +94,17 @@ jobs:
         id: cf_file_id
         if: ${{ inputs.publish_curseforge }}
         run: |
-          file_id=$(./gradlew getCurseforgeId | grep -o 'CURSEFORGE_FILE_ID=[0-9]*' | grep -o '[0-9]*')
+          file_id=$(./gradlew getCurseforgeId -x publishCurseforge | grep -o 'CURSEFORGE_FILE_ID=[0-9]*' | grep -o '[0-9]*')
           echo "file_id=$file_id" >> "$GITHUB_OUTPUT"
-          echo "CurseForge file ID: `$file_id`" >> $GITHUB_STEP_SUMMARY
+          echo "CurseForge file ID: \`$file_id\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Trigger website update
         if: ${{ inputs.update_website && inputs.publish_curseforge }}
         env:
           GH_TOKEN: ${{ secrets.WIMODS_NET_PUBLISH_TOKEN }}
         run: |
-          MOD_VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d ' \r' | sed 's/-MC.*$//')
-          MC_VERSION=$(grep "minecraft_version" gradle.properties | cut -d'=' -f2 | tr -d ' \r')
-          FAPI_VERSION=$(grep "fabric_version" gradle.properties | cut -d'=' -f2 | tr -d ' \r')
+          MOD_VERSION=$(grep "^mod_version" gradle.properties | cut -d'=' -f2 | tr -d ' \r' | sed 's/-MC.*$//')
+          MC_VERSION=$(grep "^minecraft_version=" gradle.properties | cut -d'=' -f2 | tr -d ' \r')
           gh workflow run add_mod_port.yml \
             -R Wurst-Imperium/wimods.net \
             -f mod="chestesp" \
