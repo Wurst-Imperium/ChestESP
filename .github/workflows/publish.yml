@@ -103,8 +103,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.WIMODS_NET_PUBLISH_TOKEN }}
         run: |
-          MOD_VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d ' \r' | sed 's/-MC.*$//')
-          MC_VERSION=$(grep "minecraft_version" gradle.properties | cut -d'=' -f2 | tr -d ' \r')
+          MOD_VERSION=$(grep "^mod_version=" gradle.properties | cut -d'=' -f2 | tr -d ' \r' | sed 's/-MC.*$//')
+          MC_VERSION=$(grep "^minecraft_version=" gradle.properties | cut -d'=' -f2 | tr -d ' \r')
           gh workflow run add_mod_port.yml \
             -R Wurst-Imperium/wimods.net \
             -f mod="chestesp" \
