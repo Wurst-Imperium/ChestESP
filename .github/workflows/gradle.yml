@@ -6,8 +6,8 @@ run-name: |
 
 on:
   push:
-    branches:
-      - "**"
+    branches-ignore:
+      - "dependabot/**"
     tags-ignore:
       - "**"
     paths:
