@@ -249,6 +249,8 @@ import com.diffplug.spotless.generic.LicenseHeaderStep
 spotless {
 	lineEndings("WINDOWS")
 	java {
+		removeUnusedImports()
+		indentWithTabs()
 		trimTrailingWhitespace()
 		eclipse().configFile(file("codestyle/formatter.xml"))
 	}
