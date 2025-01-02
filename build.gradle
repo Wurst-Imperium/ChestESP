@@ -138,13 +138,19 @@ jar {
 	}
 }
 
+import com.diffplug.spotless.generic.LicenseHeaderStep
 spotless {
 	lineEndings("WINDOWS")
 	java {
-		removeUnusedImports()
-		indentWithTabs()
 		trimTrailingWhitespace()
 		eclipse().configFile(file("codestyle/formatter.xml"))
+	}
+	format("license_header") {
+		target("src/*/java/**/*.java", "src/test/java/**/*.java")
+		targetExclude("src/main/java/net/wimods/chestesp/test/fabric/**/*.java")
+		def header_file = file("codestyle/license_header.txt")
+		def delimiter = LicenseHeaderStep.DEFAULT_JAVA_HEADER_DELIMITER
+		licenseHeaderFile(header_file, delimiter).updateYearWithLatest(true)
 	}
 	json {
 		target "src/**/*.json"
