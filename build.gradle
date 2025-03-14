@@ -1,6 +1,6 @@
 buildscript {
 	dependencies {
-		classpath "org.kohsuke:github-api:1.326"
+		classpath "org.kohsuke:github-api:1.327"
 	}
 }
 
@@ -8,10 +8,12 @@ plugins {
 	id "java-library"
 	id "eclipse"
 	id "idea"
-	id "net.neoforged.gradle.userdev" version "7.0.146"
-	id "net.neoforged.gradle.mixin" version "7.0.146"
-	id "me.modmuss50.mod-publish-plugin" version "0.8.1"
-	id "com.diffplug.spotless" version "6.25.0"
+	// NeoGradle. Check the latest version at:
+	// https://projects.neoforged.net/neoforged/neogradle
+	id "net.neoforged.gradle.userdev" version "7.0.183"
+	id "net.neoforged.gradle.mixin" version "7.0.183"
+	id "me.modmuss50.mod-publish-plugin" version "0.8.4"
+	id "com.diffplug.spotless" version "7.0.2"
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -25,7 +27,7 @@ group = project.mod_group_id
 
 repositories {
 	mavenLocal()
-	maven {url "https://maven.shedaniel.me/"}
+	maven {url = "https://maven.shedaniel.me/"}
 }
 
 base {
@@ -36,6 +38,8 @@ base {
 jar {
 	archiveClassifier = "slim"
 	destinationDirectory = layout.buildDirectory.dir("devlibs")
+	
+	exclude("intentionally_untranslated.json")
 }
 
 // Create a task to remove the hardcoded "-all" suffix from the jarJar output
@@ -88,7 +92,7 @@ runs {
 	
 	server {
 		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-		programArgument '--nogui'
+		argument '--nogui'
 	}
 	
 	// This run config launches GameTestServer and runs all registered gametests, then exits.
@@ -103,7 +107,7 @@ runs {
 		// workingDirectory project.file('run-data')
 		
 		// Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-		programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+		arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
 	}
 }
 
@@ -116,15 +120,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // "optional", meaning it will not be pulled by dependents of this mod.
 configurations {
 	runtimeClasspath.extendsFrom localRuntime
-}
-
-configurations.all {
-	resolutionStrategy {
-		// Override vulnerable netty-common dependency until Minecraft updates
-		// to a newer version. v4.1.97.Final, used by Minecraft 1.21 - 1.21.3,
-		// is vulnerable to CVE-2024-47535.
-		force "io.netty:netty-common:4.1.115.Final"
-	}
 }
 
 dependencies {
@@ -210,14 +205,14 @@ tasks.register('runEndToEndTest') {
 // Modify runClient if it's running as a dependency of runEndToEndTest.
 // Since NeoGradle doesn't allow custom run types yet, this is the only way to
 // make runEndToEndTest work for now.
-tasks.withType(net.neoforged.gradle.common.runs.tasks.RunExec).configureEach {
+tasks.withType(JavaExec).configureEach {
 	doFirst {
 		if (gradle.startParameter.taskNames.contains('runEndToEndTest')) {
-			jvmArguments.addAll(
+			jvmArgs += [
 				'-Dchestesp.e2eTest',
 				'-Dmixin.debug.verify=true',
 				'-Dmixin.debug.countInjections=true'
-			)
+			]
 		}
 	}
 }
@@ -226,7 +221,7 @@ processResources {
 	inputs.property "version", project.version
 	
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": inputs.properties.version
 	}
 }
 
@@ -242,13 +237,21 @@ idea {
 	}
 }
 
+import com.diffplug.spotless.generic.LicenseHeaderStep
 spotless {
-	lineEndings("WINDOWS")
+	lineEndings = "WINDOWS"
 	java {
 		removeUnusedImports()
-		indentWithTabs()
+		leadingSpacesToTabs()
 		trimTrailingWhitespace()
 		eclipse().configFile(file("codestyle/formatter.xml"))
+	}
+	format("licenseHeader") {
+		target("src/*/java/**/*.java", "src/test/java/**/*.java")
+		targetExclude("src/main/java/net/wimods/chestesp/test/fabric/**/*.java")
+		def header_file = file("codestyle/license_header.txt")
+		def delimiter = LicenseHeaderStep.DEFAULT_JAVA_HEADER_DELIMITER
+		licenseHeaderFile(header_file, delimiter).updateYearWithLatest(true)
 	}
 	json {
 		target "src/**/*.json"
@@ -280,8 +283,18 @@ publishMods {
 		projectId = "870203"
 		accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
 		minecraftVersions.add("${project.cf_game_version}")
-		embeds("modmenu", "cloth-config")
+		embeds("cloth-config")
 		changelog = "A changelog can be found at: [${changelogUrl}](${changelogUrl}?mc=${project.minecraft_version}&utm_source=CurseForge&utm_medium=ChestESP&utm_campaign=Changelog&utm_content=CurseForge+ChestESP+MC${project.minecraft_version}-NeoForge)"
+	}
+}
+
+import groovy.json.JsonSlurper
+
+tasks.register("getCurseforgeId") {
+	inputs.file publishCurseforge.result
+	doLast {
+		def result = new JsonSlurper().parseText(publishCurseforge.result.get().asFile.text)
+		println "CURSEFORGE_FILE_ID=${result.fileId}"
 	}
 }
 
@@ -291,6 +304,10 @@ tasks.named("publishMods").configure {
 
 tasks.named("publishCurseforge").configure {
 	dependsOn(tasks.named("build"))
+}
+
+tasks.named("getCurseforgeId").configure {
+	dependsOn(tasks.named("publishCurseforge"))
 }
 
 import org.kohsuke.github.GHReleaseBuilder
@@ -363,31 +380,47 @@ task uploadBackups {
 		def shortVersion = getGhVersion().substring(1)
 		def backupUrl = "https://api.wurstclient.net/artifact-backups/ChestESP/${shortVersion}"
 		
-		def connection = new URL(backupUrl).openConnection() as HttpURLConnection
-		def boundary = UUID.randomUUID().toString()
-		connection.setRequestMethod("POST")
-		connection.setRequestProperty("X-API-Key", ENV.WI_BACKUPS_API_KEY)
-		connection.setRequestProperty("Accept", "application/json")
-		connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
-		connection.doOutput = true
+		def maxRetries = 3
+		def retryCount = 0
+		def success = false
 		
-		def output = connection.outputStream
-		def libsDir = layout.buildDirectory.dir("libs").get().asFile
-		def jarFiles = libsDir.listFiles().findAll { it.name.endsWith(".jar") }
-		
-		jarFiles.each { file ->
-			output << "--${boundary}\r\n"
-			output << "Content-Disposition: form-data; name=\"files\"; filename=\"${file.name}\"\r\n"
-			output << "Content-Type: application/java-archive\r\n\r\n"
-			file.withInputStream { input -> 
-				output << input
+		while (!success && retryCount < maxRetries) {
+			try {
+				def connection = new URL(backupUrl).openConnection() as HttpURLConnection
+				def boundary = UUID.randomUUID().toString()
+				connection.setRequestMethod("POST")
+				connection.setRequestProperty("X-API-Key", ENV.WI_BACKUPS_API_KEY)
+				connection.setRequestProperty("Accept", "application/json")
+				connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
+				connection.doOutput = true
+				
+				def output = connection.outputStream
+				jarFiles.each { file ->
+					output << "--${boundary}\r\n"
+					output << "Content-Disposition: form-data; name=\"files\"; filename=\"${file.name}\"\r\n"
+					output << "Content-Type: application/java-archive\r\n\r\n"
+					file.withInputStream { input -> 
+						output << input
+					}
+					output << "\r\n"
+				}
+				output << "--${boundary}--\r\n"
+				output.flush()
+				
+				if(connection.responseCode != 200) {
+					throw new IOException("HTTP ${connection.responseCode}: ${connection.responseMessage}")
+				}
+				
+				success = true
+				
+			} catch (Exception e) {
+				retryCount++
+				if (retryCount >= maxRetries) {
+					throw new GradleException("Failed to upload backups after ${maxRetries} attempts: ${e.message}")
+				}
+				println "Upload attempt ${retryCount} failed: ${e.message}. Retrying in 5 seconds..."
+				Thread.sleep(5000)
 			}
-			output << "\r\n"
 		}
-		output << "--${boundary}--\r\n"
-		output.flush()
-		
-		if(connection.responseCode != 200)
-			throw new GradleException("Failed to upload backups: ${connection.responseCode} ${connection.responseMessage}")
 	}
 }
