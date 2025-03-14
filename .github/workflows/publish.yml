@@ -112,7 +112,6 @@ jobs:
       run: |
         MOD_VERSION=$(grep "^mod_version=" gradle.properties | cut -d'=' -f2 | tr -d ' \r' | sed 's/-MC.*$//')
         MC_VERSION=$(grep "^minecraft_version=" gradle.properties | cut -d'=' -f2 | tr -d ' \r')
-        FAPI_VERSION=$(grep "^fabric_version=" gradle.properties | cut -d'=' -f2 | tr -d ' \r')
         JSON_STRING=$(cat << EOF
         {
           "mod": "chestesp",
