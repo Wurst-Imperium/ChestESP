@@ -48,13 +48,10 @@ public abstract class ChestEspGroup
 		return enabled == null || enabled.test(configHolder.get());
 	}
 	
-	public float[] getColorF()
+	public int getColorI(int alpha)
 	{
-		int colorI = color.applyAsInt(configHolder.get());
-		float red = (colorI >> 16 & 0xFF) / 255F;
-		float green = (colorI >> 8 & 0xFF) / 255F;
-		float blue = (colorI & 0xFF) / 255F;
-		return new float[]{red, green, blue};
+		int rgb = color.applyAsInt(configHolder.get());
+		return (alpha << 24) | rgb;
 	}
 	
 	public List<Box> getBoxes()
