@@ -7,12 +7,12 @@
  */
 package net.wimods.chestesp;
 
-import org.lwjgl.opengl.GL11;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.autoconfig.AutoConfig;
@@ -20,12 +20,13 @@ import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.ChestBoat;
 import net.minecraft.world.entity.vehicle.MinecartChest;
 import net.minecraft.world.entity.vehicle.MinecartHopper;
 import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -108,13 +109,8 @@ public final class ChestEspMod
 		
 		this.enabled = enabled;
 		
-		if(enabled)
-			ChestEspRenderer.prepareBuffers();
-		else
-		{
+		if(!enabled)
 			groups.allGroups.forEach(ChestEspGroup::clear);
-			ChestEspRenderer.closeBuffers();
-		}
 		
 		if(configHolder.get().enable != enabled)
 		{
@@ -172,44 +168,48 @@ public final class ChestEspMod
 	
 	public void onRender(PoseStack matrixStack, float partialTicks)
 	{
-		// GL settings
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
-		
-		matrixStack.pushPose();
-		RenderUtils.applyRegionalRenderOffset(matrixStack);
-		
 		groups.entityGroups.stream().filter(ChestEspGroup::isEnabled)
 			.forEach(g -> g.updateBoxes(partialTicks));
 		
-		ChestEspRenderer espRenderer =
-			new ChestEspRenderer(matrixStack, partialTicks);
 		ChestEspStyle style = configHolder.get().style;
-		
 		if(style.hasBoxes())
-		{
-			RenderSystem.setShader(CoreShaders.POSITION);
-			groups.allGroups.stream().filter(ChestEspGroup::isEnabled)
-				.forEach(espRenderer::renderBoxes);
-		}
+			renderBoxes(matrixStack);
 		
 		if(style.hasLines())
+			renderTracers(matrixStack, partialTicks);
+	}
+	
+	private void renderBoxes(PoseStack matrixStack)
+	{
+		for(ChestEspGroup group : groups.allGroups)
 		{
-			RenderSystem.setShader(CoreShaders.POSITION);
-			groups.allGroups.stream().filter(ChestEspGroup::isEnabled)
-				.forEach(espRenderer::renderLines);
+			if(!group.isEnabled())
+				continue;
+			
+			List<AABB> boxes = group.getBoxes();
+			int quadsColor = group.getColorI(0x40);
+			int linesColor = group.getColorI(0x80);
+			
+			RenderUtils.drawSolidBoxes(matrixStack, boxes, quadsColor, false);
+			RenderUtils.drawOutlinedBoxes(matrixStack, boxes, linesColor,
+				false);
 		}
-		
-		matrixStack.popPose();
-		
-		// GL resets
-		RenderSystem.setShaderColor(1, 1, 1, 1);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+	}
+	
+	private void renderTracers(PoseStack matrixStack, float partialTicks)
+	{
+		for(ChestEspGroup group : groups.allGroups)
+		{
+			if(!group.isEnabled())
+				continue;
+			
+			List<AABB> boxes = group.getBoxes();
+			List<Vec3> ends = boxes.stream().map(AABB::getCenter).toList();
+			int color = group.getColorI(0x80);
+			
+			RenderUtils.drawTracers(matrixStack, partialTicks, ends, color,
+				false);
+		}
 	}
 	
 	public static ChestEspMod getInstance()
