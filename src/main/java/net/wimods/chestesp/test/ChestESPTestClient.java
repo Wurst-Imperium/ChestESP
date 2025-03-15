@@ -7,11 +7,10 @@
  */
 package net.wimods.chestesp.test;
 
-import static net.wimods.chestesp.test.ChestESPClientTestHelper.*;
-import static net.wimods.chestesp.test.fabric.FabricClientTestHelper.*;
-import static net.wimods.chestesp.test.fabric.FabricClientTestHelper.clickScreenButton;
+import static net.wimods.chestesp.test.WiModsTestHelper.*;
 
 import java.time.Duration;
+import java.util.function.Consumer;
 
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
@@ -20,10 +19,10 @@ import net.minecraft.client.gui.screens.AccessibilityOnboardingScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
+import net.wimods.chestesp.ChestEspConfig;
+import net.wimods.chestesp.ChestEspMod;
 import net.wimods.chestesp.ChestEspStyle;
 
-// It would be cleaner to have this test in src/test/java, but remapping that
-// into a separate testmod is a whole can of worms.
 public final class ChestESPTestClient
 {
 	public static void start()
@@ -38,14 +37,14 @@ public final class ChestESPTestClient
 	private void runTest()
 	{
 		System.out.println("Starting ChestESP End-to-End Test");
-		waitForLoadingComplete();
+		waitForResourceLoading();
 		
-		if(submitAndWait(mc -> mc.options.onboardAccessibility))
+		if(submitAndGet(mc -> mc.options.onboardAccessibility))
 		{
 			System.out.println("Onboarding is enabled. Waiting for it");
 			waitForScreen(AccessibilityOnboardingScreen.class);
 			System.out.println("Reached onboarding screen");
-			clickScreenButton("gui.continue");
+			clickButton("gui.continue");
 		}
 		
 		waitForScreen(TitleScreen.class);
@@ -54,51 +53,51 @@ public final class ChestESPTestClient
 		takeScreenshot("title_screen", Duration.ZERO);
 		
 		System.out.println("Clicking mods button");
-		clickScreenButton("fml.menu.mods");
+		clickButton("fml.menu.mods");
 		
 		System.out.println("Selecting ChestESP entry");
 		clickPosition(42, 74);
 		takeScreenshot("mod_list");
 		
 		System.out.println("Clicking config button");
-		clickScreenButton("fml.menu.mods.config");
+		clickButton("fml.menu.mods.config");
 		takeScreenshot("cloth_config");
 		
 		System.out.println("Returning to title screen");
-		clickScreenButton("gui.cancel");
-		clickScreenButton("gui.done");
+		clickButton("gui.cancel");
+		clickButton("gui.done");
 		
 		System.out.println("Clicking singleplayer button");
-		clickScreenButton("menu.singleplayer");
+		clickButton("menu.singleplayer");
 		
-		if(submitAndWait(
+		if(submitAndGet(
 			mc -> !mc.getLevelSource().findLevelCandidates().isEmpty()))
 		{
 			System.out.println("World list is not empty. Waiting for it");
 			waitForScreen(SelectWorldScreen.class);
 			System.out.println("Reached select world screen");
 			takeScreenshot("select_world_screen");
-			clickScreenButton("selectWorld.create");
+			clickButton("selectWorld.create");
 		}
 		
 		waitForScreen(CreateWorldScreen.class);
 		System.out.println("Reached create world screen");
 		
 		// Set MC version as world name
-		setTextfieldText(0,
-			SharedConstants.getCurrentVersion().getName() + " NeoForge");
+		setTextFieldText(0, "E2E Test "
+			+ SharedConstants.getCurrentVersion().getName() + " NeoForge");
 		// Select creative mode
-		clickScreenButton("selectWorld.gameMode");
-		clickScreenButton("selectWorld.gameMode");
+		clickButton("selectWorld.gameMode");
+		clickButton("selectWorld.gameMode");
 		takeScreenshot("create_world_screen");
 		
 		System.out.println("Creating test world");
-		clickScreenButton("selectWorld.create");
+		clickButton("selectWorld.create");
 		
-		waitForWorldTicks(180);
+		waitForWorldLoad();
 		dismissTutorialToasts();
+		waitForWorldTicks(200);
 		runChatCommand("seed");
-		waitForWorldTicks(20);
 		System.out.println("Reached singleplayer world");
 		takeScreenshot("in_game", Duration.ZERO);
 		
@@ -152,11 +151,11 @@ public final class ChestESPTestClient
 		takeScreenshot("ChestESP_all_purple");
 		
 		System.out.println("Opening debug menu");
-		enableDebugHud();
+		toggleDebugHud();
 		takeScreenshot("debug_menu");
 		
 		System.out.println("Closing debug menu");
-		enableDebugHud();// bad name, it actually toggles
+		toggleDebugHud();
 		
 		System.out.println("Checking for broken mixins");
 		MixinEnvironment.getCurrentEnvironment().audit();
@@ -173,11 +172,11 @@ public final class ChestESPTestClient
 		takeScreenshot("game_menu");
 		
 		System.out.println("Returning to title screen");
-		clickScreenButton("menu.returnToMenu");
+		clickButton("menu.returnToMenu");
 		waitForScreen(TitleScreen.class);
 		
 		System.out.println("Stopping the game");
-		clickScreenButton("menu.quit");
+		clickButton("menu.quit");
 	}
 	
 	private void buildTestRig()
@@ -215,5 +214,13 @@ public final class ChestESPTestClient
 		runChatCommand("setblock ^-1 ^4 ^7 chest[type=right]");
 		runChatCommand("setblock ^1 ^4 ^7 trapped_chest[type=left]");
 		runChatCommand("setblock ^2 ^4 ^7 trapped_chest[type=right]");
+	}
+	
+	public static void updateConfig(Consumer<ChestEspConfig> configUpdater)
+	{
+		submitAndWait(mc -> {
+			configUpdater.accept(
+				ChestEspMod.getInstance().getConfigHolder().getConfig());
+		});
 	}
 }
