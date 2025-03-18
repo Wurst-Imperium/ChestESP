@@ -34,33 +34,33 @@ public final class ChestEspGroupManager
 	
 	public ChestEspGroupManager(ConfigHolder<ChestEspConfig> ch)
 	{
-		basicChests = new ChestEspBlockGroup(ch, c -> c.chest_color,
+		basicChests = new ChestEspBlockGroup(ch, "chest", c -> c.chest_color,
 			c -> c.include_basic_chests);
-		trapChests = new ChestEspBlockGroup(ch, c -> c.trap_chest_color,
-			c -> c.include_trap_chests);
-		enderChests = new ChestEspBlockGroup(ch, c -> c.ender_chest_color,
-			c -> c.include_ender_chests);
-		chestCarts = new ChestEspEntityGroup(ch, c -> c.chest_cart_color,
-			c -> c.include_chest_carts);
-		chestBoats = new ChestEspEntityGroup(ch, c -> c.chest_boat_color,
-			c -> c.include_chest_boats);
-		barrels = new ChestEspBlockGroup(ch, c -> c.barrel_color,
+		trapChests = new ChestEspBlockGroup(ch, "trap_chest",
+			c -> c.trap_chest_color, c -> c.include_trap_chests);
+		enderChests = new ChestEspBlockGroup(ch, "ender_chest",
+			c -> c.ender_chest_color, c -> c.include_ender_chests);
+		chestCarts = new ChestEspEntityGroup(ch, "chest_cart",
+			c -> c.chest_cart_color, c -> c.include_chest_carts);
+		chestBoats = new ChestEspEntityGroup(ch, "chest_boat",
+			c -> c.chest_boat_color, c -> c.include_chest_boats);
+		barrels = new ChestEspBlockGroup(ch, "barrel", c -> c.barrel_color,
 			c -> c.include_barrels);
-		pots =
-			new ChestEspBlockGroup(ch, c -> c.pot_color, c -> c.include_pots);
-		shulkerBoxes = new ChestEspBlockGroup(ch, c -> c.shulker_box_color,
-			c -> c.include_shulker_boxes);
-		hoppers = new ChestEspBlockGroup(ch, c -> c.hopper_color,
+		pots = new ChestEspBlockGroup(ch, "pot", c -> c.pot_color,
+			c -> c.include_pots);
+		shulkerBoxes = new ChestEspBlockGroup(ch, "shulker_box",
+			c -> c.shulker_box_color, c -> c.include_shulker_boxes);
+		hoppers = new ChestEspBlockGroup(ch, "hopper", c -> c.hopper_color,
 			c -> c.include_hoppers);
-		hopperCarts = new ChestEspEntityGroup(ch, c -> c.hopper_cart_color,
-			c -> c.include_hopper_carts);
-		droppers = new ChestEspBlockGroup(ch, c -> c.dropper_color,
+		hopperCarts = new ChestEspEntityGroup(ch, "hopper_cart",
+			c -> c.hopper_cart_color, c -> c.include_hopper_carts);
+		droppers = new ChestEspBlockGroup(ch, "dropper", c -> c.dropper_color,
 			c -> c.include_droppers);
-		dispensers = new ChestEspBlockGroup(ch, c -> c.dispenser_color,
-			c -> c.include_dispensers);
-		crafters = new ChestEspBlockGroup(ch, c -> c.crafter_color,
+		dispensers = new ChestEspBlockGroup(ch, "dispenser",
+			c -> c.dispenser_color, c -> c.include_dispensers);
+		crafters = new ChestEspBlockGroup(ch, "crafter", c -> c.crafter_color,
 			c -> c.include_crafters);
-		furnaces = new ChestEspBlockGroup(ch, c -> c.furnace_color,
+		furnaces = new ChestEspBlockGroup(ch, "furnace", c -> c.furnace_color,
 			c -> c.include_furnaces);
 		
 		allGroups = Arrays.asList(basicChests, trapChests, enderChests,

@@ -37,6 +37,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.wimods.chestesp.test.ChestESPTestClient;
 import net.wimods.chestesp.util.ChunkUtils;
+import net.wimods.chestesp.util.PlausibleAnalytics;
 import net.wimods.chestesp.util.RenderUtils;
 
 @Mod(ChestEspMod.MODID)
@@ -49,6 +50,7 @@ public final class ChestEspMod
 	public static final Logger LOGGER = LoggerFactory.getLogger("ChestESP");
 	
 	private final ConfigHolder<ChestEspConfig> configHolder;
+	private final PlausibleAnalytics plausible;
 	private final ChestEspGroupManager groups;
 	private final KeyMapping toggleKey;
 	
@@ -67,13 +69,19 @@ public final class ChestEspMod
 		
 		// Register the config screen
 		container.registerExtensionPoint(IConfigScreenFactory.class,
-			(mc, screen) -> AutoConfig
-				.getConfigScreen(ChestEspConfig.class, screen).get());
+			(mc, screen) -> {
+				ChestEspMod.getInstance().getPlausible().pageview("/config");
+				return AutoConfig.getConfigScreen(ChestEspConfig.class, screen)
+					.get();
+			});
 		
 		groups = new ChestEspGroupManager(configHolder);
 		
 		toggleKey = new KeyMapping("key.chestesp.toggle",
 			InputConstants.UNKNOWN.getValue(), "ChestESP");
+		
+		plausible = new PlausibleAnalytics(configHolder, groups, toggleKey);
+		plausible.pageview("/");
 		
 		// Register keybinding on mod bus
 		modBus.addListener(this::onRegisterKeyMappings);
@@ -225,5 +233,10 @@ public final class ChestEspMod
 	public ConfigHolder<ChestEspConfig> getConfigHolder()
 	{
 		return configHolder;
+	}
+	
+	public PlausibleAnalytics getPlausible()
+	{
+		return plausible;
 	}
 }
