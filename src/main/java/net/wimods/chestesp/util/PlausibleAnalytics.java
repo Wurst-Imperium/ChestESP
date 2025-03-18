@@ -82,7 +82,7 @@ public final class PlausibleAnalytics
 		sessionProp("mc_version", getVersion("minecraft"));
 		sessionProp("mod_loader", "neoforge");
 		sessionProp("neoforge_version", getVersion("neoforge"));
-		sessionProp("cloth_config_version", getVersion("cloth-config"));
+		sessionProp("cloth_config_version", getVersion("cloth_config"));
 		sessionProp("sodium_version", getVersion("sodium"));
 		sessionProp("sinytra_connector_version", getVersion("connector"));
 		
