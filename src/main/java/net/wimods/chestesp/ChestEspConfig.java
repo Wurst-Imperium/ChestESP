@@ -105,4 +105,7 @@ public final class ChestEspConfig implements ConfigData
 	@ConfigEntry.ColorPicker
 	@ConfigEntry.Gui.Tooltip
 	public int furnace_color = 0xFF0000;
+	
+	@ConfigEntry.Gui.Tooltip
+	public boolean plausible = true;
 }

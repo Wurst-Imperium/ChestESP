@@ -29,6 +29,7 @@ import net.minecraft.entity.vehicle.HopperMinecartEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.wimods.chestesp.util.ChunkUtils;
+import net.wimods.chestesp.util.PlausibleAnalytics;
 import net.wimods.chestesp.util.RenderUtils;
 
 public final class ChestEspMod
@@ -37,6 +38,7 @@ public final class ChestEspMod
 	public static final Logger LOGGER = LoggerFactory.getLogger("ChestESP");
 	
 	private final ConfigHolder<ChestEspConfig> configHolder;
+	private final PlausibleAnalytics plausible;
 	private final ChestEspGroupManager groups;
 	private final KeyBinding toggleKey;
 	
@@ -60,6 +62,9 @@ public final class ChestEspMod
 			while(toggleKey.wasPressed())
 				setEnabled(!enabled);
 		});
+		
+		plausible = new PlausibleAnalytics(configHolder, groups, toggleKey);
+		plausible.pageview("/");
 	}
 	
 	public void setEnabled(boolean enabled)
@@ -187,5 +192,10 @@ public final class ChestEspMod
 	public ConfigHolder<ChestEspConfig> getConfigHolder()
 	{
 		return configHolder;
+	}
+	
+	public PlausibleAnalytics getPlausible()
+	{
+		return plausible;
 	}
 }
