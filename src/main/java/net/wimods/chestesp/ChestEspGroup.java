@@ -20,6 +20,7 @@ import net.minecraft.world.phys.AABB;
 public abstract class ChestEspGroup
 {
 	private final ConfigHolder<ChestEspConfig> configHolder;
+	private final String name;
 	private final ToIntFunction<ChestEspConfig> color;
 	private final Predicate<ChestEspConfig> enabled;
 	
@@ -30,12 +31,18 @@ public abstract class ChestEspGroup
 	 * <code>enabled</code> is <code>null</code>, the group will always be
 	 * enabled.
 	 */
-	public ChestEspGroup(ConfigHolder<ChestEspConfig> configHolder,
+	public ChestEspGroup(ConfigHolder<ChestEspConfig> configHolder, String name,
 		ToIntFunction<ChestEspConfig> color, Predicate<ChestEspConfig> enabled)
 	{
 		this.configHolder = Objects.requireNonNull(configHolder);
+		this.name = Objects.requireNonNull(name);
 		this.color = Objects.requireNonNull(color);
 		this.enabled = enabled;
+	}
+	
+	public String getName()
+	{
+		return name;
 	}
 	
 	public void clear()
@@ -52,6 +59,12 @@ public abstract class ChestEspGroup
 	{
 		int rgb = color.applyAsInt(configHolder.get());
 		return (alpha << 24) | rgb;
+	}
+	
+	public String getColorHex()
+	{
+		int rgb = color.applyAsInt(configHolder.get());
+		return String.format("#%06X", rgb);
 	}
 	
 	public List<AABB> getBoxes()
