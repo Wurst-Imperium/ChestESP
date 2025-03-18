@@ -20,9 +20,10 @@ public final class ChestEspEntityGroup extends ChestEspGroup
 	private final ArrayList<Entity> entities = new ArrayList<>();
 	
 	public ChestEspEntityGroup(ConfigHolder<ChestEspConfig> configHolder,
-		ToIntFunction<ChestEspConfig> color, Predicate<ChestEspConfig> enabled)
+		String name, ToIntFunction<ChestEspConfig> color,
+		Predicate<ChestEspConfig> enabled)
 	{
-		super(configHolder, color, enabled);
+		super(configHolder, name, color, enabled);
 	}
 	
 	public void add(Entity e)

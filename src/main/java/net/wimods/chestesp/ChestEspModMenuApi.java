@@ -17,7 +17,10 @@ public final class ChestEspModMenuApi implements ModMenuApi
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory()
 	{
-		return parent -> AutoConfig
-			.getConfigScreen(ChestEspConfig.class, parent).get();
+		return parent -> {
+			ChestEspMod.getInstance().getPlausible().pageview("/config");
+			return AutoConfig.getConfigScreen(ChestEspConfig.class, parent)
+				.get();
+		};
 	}
 }
