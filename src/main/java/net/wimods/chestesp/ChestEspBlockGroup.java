@@ -23,9 +23,10 @@ import net.wimods.chestesp.util.BlockUtils;
 public final class ChestEspBlockGroup extends ChestEspGroup
 {
 	public ChestEspBlockGroup(ConfigHolder<ChestEspConfig> configHolder,
-		ToIntFunction<ChestEspConfig> color, Predicate<ChestEspConfig> enabled)
+		String name, ToIntFunction<ChestEspConfig> color,
+		Predicate<ChestEspConfig> enabled)
 	{
-		super(configHolder, color, enabled);
+		super(configHolder, name, color, enabled);
 	}
 	
 	public void add(BlockEntity be)
