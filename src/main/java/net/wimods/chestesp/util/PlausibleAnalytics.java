@@ -145,7 +145,8 @@ public final class PlausibleAnalytics
 	
 	private boolean isDebugMode()
 	{
-		return !FMLLoader.isProduction();
+		return !FMLLoader.isProduction()
+			|| System.getProperty("chestesp.e2eTest") != null;
 	}
 	
 	private void runBackgroundLoop()
