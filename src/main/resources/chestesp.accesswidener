@@ -1,5 +1,12 @@
 accessWidener	v1	named
 accessible	class	net/minecraft/client/gui/widget/OptionListWidget$WidgetEntry
+accessible	method	net/minecraft/client/gl/RenderPipelines	register	(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
+accessible	method	net/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder	build	(Z)Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters;
+accessible	method	net/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder	layering	(Lnet/minecraft/client/render/RenderPhase$Layering;)Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder;
+accessible	method	net/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder	lineWidth	(Lnet/minecraft/client/render/RenderPhase$LineWidth;)Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder;
+accessible	method	net/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder	target	(Lnet/minecraft/client/render/RenderPhase$Target;)Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder;
+accessible	field	net/minecraft/client/gl/RenderPipelines	POSITION_COLOR_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible	field	net/minecraft/client/gl/RenderPipelines	RENDERTYPE_LINES_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
 accessible	field	net/minecraft/client/gui/screen/Screen	drawables	Ljava/util/List;
 accessible	field	net/minecraft/client/gui/screen/TitleScreen	doBackgroundFade	Z
 accessible	field	net/minecraft/client/gui/widget/CyclingButtonWidget	optionText	Lnet/minecraft/text/Text;

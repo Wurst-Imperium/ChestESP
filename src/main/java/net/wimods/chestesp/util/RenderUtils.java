@@ -11,9 +11,6 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
-import com.mojang.blaze3d.platform.GlConst;
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.client.render.Camera;
@@ -58,10 +55,6 @@ public enum RenderUtils
 	public static void drawTracers(MatrixStack matrices, float partialTicks,
 		List<Vec3d> ends, int color, boolean depthTest)
 	{
-		int depthFunc = depthTest ? GlConst.GL_LEQUAL : GlConst.GL_ALWAYS;
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(depthFunc);
-		
 		VertexConsumerProvider.Immediate vcp = getVCP();
 		RenderLayer layer = ChestEspRenderLayers.getLines(depthTest);
 		VertexConsumer buffer = vcp.getBuffer(layer);
@@ -110,10 +103,6 @@ public enum RenderUtils
 	public static void drawSolidBoxes(MatrixStack matrices, List<Box> boxes,
 		int color, boolean depthTest)
 	{
-		int depthFunc = depthTest ? GlConst.GL_LEQUAL : GlConst.GL_ALWAYS;
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(depthFunc);
-		
 		VertexConsumerProvider.Immediate vcp = getVCP();
 		RenderLayer layer = ChestEspRenderLayers.getQuads(depthTest);
 		VertexConsumer buffer = vcp.getBuffer(layer);
@@ -170,10 +159,6 @@ public enum RenderUtils
 	public static void drawOutlinedBoxes(MatrixStack matrices, List<Box> boxes,
 		int color, boolean depthTest)
 	{
-		int depthFunc = depthTest ? GlConst.GL_LEQUAL : GlConst.GL_ALWAYS;
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(depthFunc);
-		
 		VertexConsumerProvider.Immediate vcp = getVCP();
 		RenderLayer layer = ChestEspRenderLayers.getLines(depthTest);
 		VertexConsumer buffer = vcp.getBuffer(layer);
