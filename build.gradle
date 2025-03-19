@@ -395,6 +395,9 @@ task uploadBackups {
 				connection.doOutput = true
 				
 				def output = connection.outputStream
+				def libsDir = layout.buildDirectory.dir("libs").get().asFile
+				def jarFiles = libsDir.listFiles().findAll { it.name.endsWith(".jar") }
+				
 				jarFiles.each { file ->
 					output << "--${boundary}\r\n"
 					output << "Content-Disposition: form-data; name=\"files\"; filename=\"${file.name}\"\r\n"
