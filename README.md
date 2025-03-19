@@ -2,7 +2,7 @@
 
 This mod highlights nearby chests so you can see them through walls. It's based on a Wurst Client feature of the same name.
 
-![A screenshot showing all of the different containers that ChestESP supports](https://github.com/user-attachments/assets/70fcc9df-0693-4fc3-933d-121fe853dc00)
+![A screenshot showing all of the different containers that ChestESP supports](https://github.com/user-attachments/assets/32a39288-56b3-4017-adfa-4e7349b46f64)
 
 ## Downloads
 
@@ -58,6 +58,7 @@ ChestESP supports the following container types:
 - Hoppers
 - Droppers
 - Dispensers
+- Crafters
 - Furnaces
 - Blast furnaces
 - Smokers
