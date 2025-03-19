@@ -144,7 +144,8 @@ public final class PlausibleAnalytics
 	
 	private boolean isDebugMode()
 	{
-		return FabricLoader.getInstance().isDevelopmentEnvironment();
+		return FabricLoader.getInstance().isDevelopmentEnvironment()
+			|| System.getProperty("chestesp.e2eTest") != null;
 	}
 	
 	private void runBackgroundLoop()
