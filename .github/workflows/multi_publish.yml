@@ -91,7 +91,7 @@ jobs:
         owner: Wurst-Imperium
         repo: ChestESP
         run_id: ${{ steps.publish_dispatch.outputs.run_id }}
-        run_timeout_seconds: 600  # 10 minutes
+        run_timeout_seconds: 1800  # 30 minutes
 
   announce:
     runs-on: ubuntu-latest
