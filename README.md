@@ -2,11 +2,11 @@
 
 This mod highlights nearby chests so you can see them through walls. It's based on a Wurst Client feature of the same name.
 
-![A screenshot showing all of the different containers that ChestESP supports](https://github.com/user-attachments/assets/70fcc9df-0693-4fc3-933d-121fe853dc00)
+![A screenshot showing all of the different containers that ChestESP supports](https://img.wimods.net/github.com/Wurst-Imperium/ChestESP?to=https://github.com/user-attachments/assets/32a39288-56b3-4017-adfa-4e7349b46f64)
 
 ## Downloads
 
-[![Download ChestESP](https://wurst.wiki/_media/icon/chestesp/download_chestesp_326x80.png)](https://www.wimods.net/chestesp/download/?utm_source=GitHub&utm_medium=ChestESP&utm_campaign=README.md&utm_content=Download+ChestESP)
+[![Download ChestESP](https://wurst.wiki/_media/icon/chestesp/download_chestesp_326x80.png)](https://go.wimods.net/from/github.com/Wurst-Imperium/ChestESP?to=https://www.wimods.net/chestesp/download/?utm_source=GitHub&utm_medium=ChestESP&utm_campaign=README.md&utm_content=Download+ChestESP)
 
 ## Installation
 
@@ -15,16 +15,16 @@ This mod highlights nearby chests so you can see them through walls. It's based 
 
 ### Installation using Fabric
 
-1. Install [Fabric Loader](https://fabricmc.net/use/installer/).
-2. Add [Fabric API](https://modrinth.com/mod/fabric-api) to your mods folder.
+1. Install [Fabric Loader](https://go.wimods.net/from/github.com/Wurst-Imperium/ChestESP?to=https://fabricmc.net/use/installer/).
+2. Add [Fabric API](https://go.wimods.net/from/github.com/Wurst-Imperium/ChestESP?to=https://modrinth.com/mod/fabric-api) to your mods folder.
 3. Add ChestESP to your mods folder.
 
 > [!NOTE]
-> Older ChestESP versions also required that you add [Cloth Config](https://modrinth.com/mod/cloth-config) and [ModMenu](https://modrinth.com/mod/modmenu) to your mods folder. As of ChestESP 1.2, you no longer need to do this.
+> Older ChestESP versions also required that you add [Cloth Config](https://go.wimods.net/from/github.com/Wurst-Imperium/ChestESP?to=https://modrinth.com/mod/cloth-config) and [ModMenu](https://go.wimods.net/from/github.com/Wurst-Imperium/ChestESP?to=https://modrinth.com/mod/modmenu) to your mods folder. As of ChestESP 1.2, you no longer need to do this.
 
 ### Installation using NeoForge
 
-1. Install [NeoForge](https://neoforged.net/).
+1. Install [NeoForge](https://go.wimods.net/from/github.com/Wurst-Imperium/ChestESP?to=https://neoforged.net/).
 2. Add ChestESP to your mods folder.
 
 ## Usage
@@ -58,6 +58,7 @@ ChestESP supports the following container types:
 - Hoppers
 - Droppers
 - Dispensers
+- Crafters
 - Furnaces
 - Blast furnaces
 - Smokers
@@ -71,7 +72,7 @@ Only English for now.
 ## Development Setup
 
 > [!IMPORTANT]
-> Make sure you have [Java Development Kit 21](https://adoptium.net/?variant=openjdk21&jvmVariant=hotspot) installed. It won't work with other versions.
+> Make sure you have [Java Development Kit 21](https://go.wimods.net/from/github.com/Wurst-Imperium/ChestESP?to=https://adoptium.net/?variant=openjdk21&jvmVariant=hotspot) installed. It won't work with other versions.
 
 ### Development using Eclipse
 
@@ -101,7 +102,7 @@ Only English for now.
 ### Development using VSCode / Cursor
 
 > [!TIP]
-> You'll probably want to install the [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) to make development easier.
+> You'll probably want to install the [Extension Pack for Java](https://go.wimods.net/from/github.com/Wurst-Imperium/ChestESP?to=https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) to make development easier.
 
 1. Clone the repository:
 
