@@ -22,6 +22,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.ChestBoat;
+import net.minecraft.world.entity.vehicle.ChestRaft;
 import net.minecraft.world.entity.vehicle.MinecartChest;
 import net.minecraft.world.entity.vehicle.MinecartHopper;
 import net.minecraft.world.level.block.entity.*;
@@ -171,7 +172,7 @@ public final class ChestEspMod
 				groups.chestCarts.add(entity);
 			else if(entity instanceof MinecartHopper)
 				groups.hopperCarts.add(entity);
-			else if(entity instanceof ChestBoat)
+			else if(entity instanceof ChestBoat || entity instanceof ChestRaft)
 				groups.chestBoats.add(entity);
 	}
 	
