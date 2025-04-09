@@ -10,10 +10,10 @@ plugins {
 	id "idea"
 	// NeoGradle. Check the latest version at:
 	// https://projects.neoforged.net/neoforged/neogradle
-	id "net.neoforged.gradle.userdev" version "7.0.183"
-	id "net.neoforged.gradle.mixin" version "7.0.183"
+	id "net.neoforged.gradle.userdev" version "7.0.184"
+	id "net.neoforged.gradle.mixin" version "7.0.184"
 	id "me.modmuss50.mod-publish-plugin" version "0.8.4"
-	id "com.diffplug.spotless" version "7.0.2"
+	id "com.diffplug.spotless" version "7.0.3"
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -124,13 +124,8 @@ configurations {
 
 configurations.all {
 	resolutionStrategy {
-		// Fixes a weird issue in NeoForge 21.3-21.4 where it tries to load
-		// both ASM 9.7 and ASM 9.5 at the same time.
-		force "org.ow2.asm:asm-analysis:9.7"
-		force "org.ow2.asm:asm:9.7"
-		force "org.ow2.asm:asm-tree:9.7"
-		force "org.ow2.asm:asm-commons:9.7"
-		force "org.ow2.asm:asm-util:9.7"
+		// v2.5.1, used by Minecraft 1.21.4 - 1.21.5, is vulnerable to CVE-2024-57699
+		force "net.minidev:json-smart:2.5.2"
 	}
 }
 
@@ -357,7 +352,7 @@ task github {
 		def ghRelease = repository.getReleaseByTagName(ghVersion as String)
 		if(ghRelease == null) {
 			def releaseBuilder = new GHReleaseBuilder(repository, ghVersion as String)
-			releaseBuilder.setBody(getChangelogImage("github.com/${repoId}/releases/tag/${ghVersion}"))
+			releaseBuilder.body(getChangelogImage("github.com/${repoId}/releases/tag/${ghVersion}"))
 			releaseBuilder.prerelease(ghVersion.contains("pre"))
 			ghRelease = releaseBuilder.create()
 		}
@@ -370,10 +365,9 @@ task github {
 	}
 }
 
-import java.time.LocalDate
 import org.kohsuke.github.GHIssueState
 import org.kohsuke.github.GHMilestoneState
-import java.time.ZoneId
+import java.time.Instant
 
 task closeMilestone {
 	onlyIf {
@@ -393,7 +387,7 @@ task closeMilestone {
 		}
 		
 		if (milestone.getState() != GHMilestoneState.CLOSED) {
-			milestone.setDueOn(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()))
+			milestone.setDueOn(Date.from(Instant.now()))
 			milestone.setDescription(getChangelog("GitHub", "github.com/${repoId}/milestone/${ghVersion}"))
 			milestone.close()
 		}

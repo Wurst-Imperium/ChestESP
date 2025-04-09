@@ -9,9 +9,7 @@ package net.wimods.chestesp;
 
 import java.util.OptionalDouble;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 
@@ -22,87 +20,47 @@ public enum ChestEspRenderLayers
 	/**
 	 * Similar to {@link RenderType#lines()}, but with line width 2.
 	 */
-	public static final RenderType.CompositeRenderType LINES = RenderType
-		.create("chestesp:lines", DefaultVertexFormat.POSITION_COLOR_NORMAL,
-			VertexFormat.Mode.LINES, 1536, false, true,
+	public static final RenderType.CompositeRenderType LINES =
+		RenderType.create("chestesp:lines", 1536, RenderPipelines.LINES,
 			RenderType.CompositeState.builder()
-				.setShaderState(RenderType.RENDERTYPE_LINES_SHADER)
 				.setLineState(
 					new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
 				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
-				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 				.setOutputState(RenderType.ITEM_ENTITY_TARGET)
-				.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
-				.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
-				.setCullState(RenderType.NO_CULL).createCompositeState(false));
+				.createCompositeState(false));
 	
 	/**
 	 * Similar to {@link RenderType#lines()}, but with line width 2 and no
 	 * depth test.
-	 *
-	 * @apiNote Until 25w08a (1.21.5), turning off depth test has to be done
-	 *          manually, by calling
-	 *          {@code RenderSystem.depthFunc(GlConst.GL_ALWAYS);} before
-	 *          drawing the ESP lines. Without this code, ESP lines will be
-	 *          drawn with depth test set to LEQUAL (only visible if not
-	 *          obstructed).
 	 */
 	public static final RenderType.CompositeRenderType ESP_LINES = RenderType
-		.create("chestesp:esp_lines", DefaultVertexFormat.POSITION_COLOR_NORMAL,
-			VertexFormat.Mode.LINES, 1536, false, true,
+		.create("chestesp:esp_lines", 1536, ChestEspPipelines.ESP_LINES,
 			RenderType.CompositeState.builder()
-				.setShaderState(RenderType.RENDERTYPE_LINES_SHADER)
 				.setLineState(
 					new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
 				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
-				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 				.setOutputState(RenderType.ITEM_ENTITY_TARGET)
-				.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
-				.setDepthTestState(RenderType.NO_DEPTH_TEST)
-				.setCullState(RenderType.NO_CULL).createCompositeState(false));
+				.createCompositeState(false));
 	
 	/**
 	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled.
 	 */
-	public static final RenderType.CompositeRenderType QUADS =
-		RenderType.create("chestesp:quads", DefaultVertexFormat.POSITION_COLOR,
-			VertexFormat.Mode.QUADS, 1536, false, true,
-			RenderType.CompositeState.builder()
-				.setShaderState(RenderType.POSITION_COLOR_SHADER)
-				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
-				.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
-				.createCompositeState(false));
+	public static final RenderType.CompositeRenderType QUADS = RenderType
+		.create("chestesp:quads", 1536, false, true, ChestEspPipelines.QUADS,
+			RenderType.CompositeState.builder().createCompositeState(false));
 	
 	/**
 	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled
 	 * and no depth test.
-	 *
-	 * @apiNote Until 25w08a (1.21.5), turning off depth test has to be done
-	 *          manually, by calling
-	 *          {@code RenderSystem.depthFunc(GlConst.GL_ALWAYS);} before
-	 *          drawing the ESP lines. Without this code, ESP lines will be
-	 *          drawn with depth test set to LEQUAL (only visible if not
-	 *          obstructed).
 	 */
-	public static final RenderType.CompositeRenderType ESP_QUADS = RenderType
-		.create("chestesp:esp_quads", DefaultVertexFormat.POSITION_COLOR,
-			VertexFormat.Mode.QUADS, 1536, false, true,
-			RenderType.CompositeState.builder()
-				.setShaderState(RenderType.POSITION_COLOR_SHADER)
-				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
-				.setDepthTestState(RenderType.NO_DEPTH_TEST)
-				.createCompositeState(false));
+	public static final RenderType.CompositeRenderType ESP_QUADS =
+		RenderType.create("chestesp:esp_quads", 1536, false, true,
+			ChestEspPipelines.ESP_QUADS,
+			RenderType.CompositeState.builder().createCompositeState(false));
 	
 	/**
 	 * Returns either {@link #QUADS} or {@link #ESP_QUADS} depending on the
 	 * value of {@code depthTest}.
-	 *
-	 * @apiNote Until 25w08a (1.21.5), turning off depth test has to be done
-	 *          manually, by calling
-	 *          {@code RenderSystem.depthFunc(GlConst.GL_ALWAYS);} before
-	 *          drawing the ESP lines. Without this code, ESP lines will be
-	 *          drawn with depth test set to LEQUAL (only visible if not
-	 *          obstructed).
 	 */
 	public static RenderType getQuads(boolean depthTest)
 	{
@@ -112,13 +70,6 @@ public enum ChestEspRenderLayers
 	/**
 	 * Returns either {@link #LINES} or {@link #ESP_LINES} depending on the
 	 * value of {@code depthTest}.
-	 *
-	 * @apiNote Until 25w08a (1.21.5), turning off depth test has to be done
-	 *          manually, by calling
-	 *          {@code RenderSystem.depthFunc(GlConst.GL_ALWAYS);} before
-	 *          drawing the ESP lines. Without this code, ESP lines will be
-	 *          drawn with depth test set to LEQUAL (only visible if not
-	 *          obstructed).
 	 */
 	public static RenderType getLines(boolean depthTest)
 	{

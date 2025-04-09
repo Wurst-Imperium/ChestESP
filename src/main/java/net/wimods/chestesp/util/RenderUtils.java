@@ -10,9 +10,6 @@ package net.wimods.chestesp.util;
 import java.util.List;
 
 import org.joml.Vector3f;
-
-import com.mojang.blaze3d.platform.GlConst;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -57,10 +54,6 @@ public enum RenderUtils
 	public static void drawTracers(PoseStack matrices, float partialTicks,
 		List<Vec3> ends, int color, boolean depthTest)
 	{
-		int depthFunc = depthTest ? GlConst.GL_LEQUAL : GlConst.GL_ALWAYS;
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(depthFunc);
-		
 		MultiBufferSource.BufferSource vcp = getVCP();
 		RenderType layer = ChestEspRenderLayers.getLines(depthTest);
 		VertexConsumer buffer = vcp.getBuffer(layer);
@@ -113,10 +106,6 @@ public enum RenderUtils
 	public static void drawSolidBoxes(PoseStack matrices, List<AABB> boxes,
 		int color, boolean depthTest)
 	{
-		int depthFunc = depthTest ? GlConst.GL_LEQUAL : GlConst.GL_ALWAYS;
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(depthFunc);
-		
 		MultiBufferSource.BufferSource vcp = getVCP();
 		RenderType layer = ChestEspRenderLayers.getQuads(depthTest);
 		VertexConsumer buffer = vcp.getBuffer(layer);
@@ -173,10 +162,6 @@ public enum RenderUtils
 	public static void drawOutlinedBoxes(PoseStack matrices, List<AABB> boxes,
 		int color, boolean depthTest)
 	{
-		int depthFunc = depthTest ? GlConst.GL_LEQUAL : GlConst.GL_ALWAYS;
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(depthFunc);
-		
 		MultiBufferSource.BufferSource vcp = getVCP();
 		RenderType layer = ChestEspRenderLayers.getLines(depthTest);
 		VertexConsumer buffer = vcp.getBuffer(layer);

@@ -31,6 +31,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -46,7 +47,6 @@ public final class ChestEspMod
 	public static final String MODID = "chestesp";
 	private static ChestEspMod instance;
 	
-	private static final Minecraft MC = Minecraft.getInstance();
 	public static final Logger LOGGER = LoggerFactory.getLogger("ChestESP");
 	
 	private final ConfigHolder<ChestEspConfig> configHolder;
@@ -83,12 +83,17 @@ public final class ChestEspMod
 		plausible = new PlausibleAnalytics(configHolder, groups, toggleKey);
 		plausible.pageview("/");
 		
-		// Register keybinding on mod bus
+		// Register mod bus events
+		modBus.addListener(this::onClientSetup);
 		modBus.addListener(this::onRegisterKeyMappings);
 		
-		// Register tick handler on NeoForge bus
+		// Register NeoForge bus events
 		NeoForge.EVENT_BUS.addListener(this::onClientTick);
-		
+	}
+	
+	@SubscribeEvent
+	private void onClientSetup(FMLClientSetupEvent event)
+	{
 		// Run end-to-end test, if enabled
 		if(System.getProperty("chestesp.e2eTest") != null)
 			ChestESPTestClient.start();
@@ -160,7 +165,8 @@ public final class ChestEspMod
 				groups.furnaces.add(blockEntity);
 		});
 		
-		for(Entity entity : MC.level.entitiesForRendering())
+		for(Entity entity : Minecraft.getInstance().level
+			.entitiesForRendering())
 			if(entity instanceof MinecartChest)
 				groups.chestCarts.add(entity);
 			else if(entity instanceof MinecartHopper)
