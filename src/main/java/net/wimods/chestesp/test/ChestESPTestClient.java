@@ -86,7 +86,7 @@ public final class ChestESPTestClient implements ModInitializer
 		
 		// Set MC version as world name
 		setTextFieldText(0,
-			"E2E Test " + SharedConstants.getGameVersion().getName());
+			"E2E Test " + SharedConstants.getGameVersion().name());
 		// Select creative mode
 		clickButton("selectWorld.gameMode");
 		clickButton("selectWorld.gameMode");
