@@ -201,7 +201,7 @@ public enum WiModsTestHelper
 		File gameDir = Minecraft.getInstance().gameDirectory;
 		
 		submitAndWait(mc -> Screenshot.grab(gameDir, filename,
-			mc.getMainRenderTarget(), message -> {}));
+			mc.getMainRenderTarget(), 1, message -> {}));
 	}
 	
 	/**

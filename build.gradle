@@ -13,7 +13,7 @@ plugins {
 	id "net.neoforged.gradle.userdev" version "7.0.184"
 	id "net.neoforged.gradle.mixin" version "7.0.184"
 	id "me.modmuss50.mod-publish-plugin" version "0.8.4"
-	id "com.diffplug.spotless" version "7.0.3"
+	id "com.diffplug.spotless" version "7.0.4"
 }
 
 tasks.named('wrapper', Wrapper).configure {

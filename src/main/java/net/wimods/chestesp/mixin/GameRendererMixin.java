@@ -8,16 +8,14 @@
 package net.wimods.chestesp.mixin;
 
 import org.joml.Matrix4f;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Camera;
+
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import net.wimods.chestesp.ChestEspMod;
@@ -67,28 +65,10 @@ public abstract class GameRendererMixin implements AutoCloseable
 	 * after the view-bobbing call.
 	 */
 	@Inject(at = @At("HEAD"),
-		method = "renderItemInHand(Lnet/minecraft/client/Camera;FLorg/joml/Matrix4f;)V")
-	private void onRenderHand(Camera camera, float tickDelta, Matrix4f matrix4f,
+		method = "renderItemInHand(FZLorg/joml/Matrix4f;)V")
+	private void onRenderHand(float tickDelta, boolean bl, Matrix4f matrix4f,
 		CallbackInfo ci)
 	{
 		cancelNextBobView = false;
-	}
-	
-	@Inject(
-		at = @At(value = "FIELD",
-			target = "Lnet/minecraft/client/renderer/GameRenderer;renderHand:Z",
-			opcode = Opcodes.GETFIELD,
-			ordinal = 0),
-		method = "renderLevel(Lnet/minecraft/client/DeltaTracker;)V")
-	private void onRenderWorldHandRendering(DeltaTracker tickCounter,
-		CallbackInfo ci, @Local(ordinal = 2) Matrix4f matrix4f3,
-		@Local(ordinal = 1) float tickDelta)
-	{
-		PoseStack matrixStack = new PoseStack();
-		matrixStack.mulPose(matrix4f3);
-		ChestEspMod chestEsp = ChestEspMod.getInstance();
-		
-		if(chestEsp != null && chestEsp.isEnabled())
-			chestEsp.onRender(matrixStack, tickDelta);
 	}
 }

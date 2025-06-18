@@ -9,7 +9,6 @@ package net.wimods.chestesp;
 
 import java.util.OptionalDouble;
 
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 
@@ -20,8 +19,8 @@ public enum ChestEspRenderLayers
 	/**
 	 * Similar to {@link RenderType#lines()}, but with line width 2.
 	 */
-	public static final RenderType.CompositeRenderType LINES =
-		RenderType.create("chestesp:lines", 1536, RenderPipelines.LINES,
+	public static final RenderType.CompositeRenderType LINES = RenderType
+		.create("chestesp:lines", 1536, ChestEspPipelines.DEPTH_TEST_LINES,
 			RenderType.CompositeState.builder()
 				.setLineState(
 					new RenderStateShard.LineStateShard(OptionalDouble.of(2)))

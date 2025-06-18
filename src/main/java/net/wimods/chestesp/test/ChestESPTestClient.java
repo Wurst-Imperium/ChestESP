@@ -85,7 +85,7 @@ public final class ChestESPTestClient
 		
 		// Set MC version as world name
 		setTextFieldText(0, "E2E Test "
-			+ SharedConstants.getCurrentVersion().getName() + " NeoForge");
+			+ SharedConstants.getCurrentVersion().name() + " NeoForge");
 		// Select creative mode
 		clickButton("selectWorld.gameMode");
 		clickButton("selectWorld.gameMode");
