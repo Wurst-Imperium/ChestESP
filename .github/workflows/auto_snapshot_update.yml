@@ -38,7 +38,7 @@ jobs:
       run: echo ${{ github.event.inputs.distinct_id }}
 
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         # Include all branches in case the new snapshot branch already exists.
         fetch-depth: 0
