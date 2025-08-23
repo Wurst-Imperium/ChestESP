@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.resource.language.LanguageManager;
 import net.minecraft.client.world.ClientWorld;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspGroup;
@@ -111,6 +113,8 @@ public final class PlausibleAnalytics
 	
 	private void onWorldChange(MinecraftClient client, ClientWorld world)
 	{
+		sessionProp("language", getLanguage(client));
+		
 		String path = getPathForServer(client.getCurrentServerEntry());
 		LinkedHashMap<String, String> props = new LinkedHashMap<>();
 		props.put("enabled", "" + configHolder.get().enable);
@@ -124,6 +128,13 @@ public final class PlausibleAnalytics
 			props.put(key, value);
 		}
 		pageview(path, props);
+	}
+	
+	private String getLanguage(MinecraftClient client)
+	{
+		return Optional.ofNullable(client.getLanguageManager())
+			.map(LanguageManager::getLanguage).map(String::toLowerCase)
+			.orElse(null);
 	}
 	
 	private String getPathForServer(ServerInfo server)
