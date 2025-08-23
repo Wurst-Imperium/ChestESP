@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2023-2025 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -21,6 +21,8 @@ public final class ChestEspConfig implements ConfigData
 	@ConfigEntry.Gui.EnumHandler(option = EnumDisplayOption.BUTTON)
 	@ConfigEntry.Gui.Tooltip
 	public ChestEspStyle style = ChestEspStyle.BOXES;
+	
+	public boolean include_basic_chests = true;
 	
 	@ConfigEntry.ColorPicker
 	@ConfigEntry.Gui.Tooltip
@@ -56,6 +58,12 @@ public final class ChestEspConfig implements ConfigData
 	@ConfigEntry.Gui.Tooltip
 	public int barrel_color = 0x00FF00;
 	
+	public boolean include_pots = false;
+	
+	@ConfigEntry.ColorPicker
+	@ConfigEntry.Gui.Tooltip
+	public int pot_color = 0x00FF00;
+	
 	public boolean include_shulker_boxes = true;
 	
 	@ConfigEntry.ColorPicker
@@ -86,9 +94,18 @@ public final class ChestEspConfig implements ConfigData
 	@ConfigEntry.Gui.Tooltip
 	public int dispenser_color = 0xFF8000;
 	
+	public boolean include_crafters = false;
+	
+	@ConfigEntry.ColorPicker
+	@ConfigEntry.Gui.Tooltip
+	public int crafter_color = 0xFFFFFF;
+	
 	public boolean include_furnaces = false;
 	
 	@ConfigEntry.ColorPicker
 	@ConfigEntry.Gui.Tooltip
 	public int furnace_color = 0xFF0000;
+	
+	@ConfigEntry.Gui.Tooltip
+	public boolean plausible = true;
 }

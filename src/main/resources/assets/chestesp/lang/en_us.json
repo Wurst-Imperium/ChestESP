@@ -8,6 +8,7 @@
   "text.autoconfig.chestesp.option.style.boxes": "Boxes only",
   "text.autoconfig.chestesp.option.style.lines": "Lines only",
   "text.autoconfig.chestesp.option.style.lines_and_boxes": "Lines and boxes",
+  "text.autoconfig.chestesp.option.include_basic_chests": "Include normal chests",
   "text.autoconfig.chestesp.option.chest_color": "Chest color",
   "text.autoconfig.chestesp.option.chest_color.@Tooltip": "Normal chests will be highlighted in this color.",
   "text.autoconfig.chestesp.option.include_trap_chests": "Include trap chests",
@@ -25,6 +26,9 @@
   "text.autoconfig.chestesp.option.include_barrels": "Include barrels",
   "text.autoconfig.chestesp.option.barrel_color": "Barrel color",
   "text.autoconfig.chestesp.option.barrel_color.@Tooltip": "Barrels will be highlighted in this color.",
+  "text.autoconfig.chestesp.option.include_pots": "Include pots",
+  "text.autoconfig.chestesp.option.pot_color": "Pots color",
+  "text.autoconfig.chestesp.option.pot_color.@Tooltip": "Decorated pots will be highlighted in this color.",
   "text.autoconfig.chestesp.option.include_shulker_boxes": "Include shulkers",
   "text.autoconfig.chestesp.option.shulker_box_color": "Shulker color",
   "text.autoconfig.chestesp.option.shulker_box_color.@Tooltip": "Shulker boxes will be highlighted in this color.",
@@ -40,7 +44,12 @@
   "text.autoconfig.chestesp.option.include_dispensers": "Include dispensers",
   "text.autoconfig.chestesp.option.dispenser_color": "Dispenser color",
   "text.autoconfig.chestesp.option.dispenser_color.@Tooltip": "Dispensers will be highlighted in this color.",
+  "text.autoconfig.chestesp.option.include_crafters": "Include crafters",
+  "text.autoconfig.chestesp.option.crafter_color": "Crafter color",
+  "text.autoconfig.chestesp.option.crafter_color.@Tooltip": "Crafters will be highlighted in this color.",
   "text.autoconfig.chestesp.option.include_furnaces": "Include furnaces",
   "text.autoconfig.chestesp.option.furnace_color": "Furnace color",
-  "text.autoconfig.chestesp.option.furnace_color.@Tooltip": "Furnaces, smokers, and blast furnaces will be highlighted in this color."
+  "text.autoconfig.chestesp.option.furnace_color.@Tooltip": "Furnaces, smokers, and blast furnaces will be highlighted in this color.",
+  "text.autoconfig.chestesp.option.plausible": "Help improve ChestESP",
+  "text.autoconfig.chestesp.option.plausible.@Tooltip": "Help me improve ChestESP by contributing to its anonymous usage statistics.\nThese statistics help to answer questions like:\n- \"how many people are still on [old Minecraft version], do I need to backport this?\"\n- \"what percentage of installations support [shiny new feature], is it too early to use that?\"\n- \"is there a setting that most players change? that should probably be the new default.\"\nNone of the data is personal or identifiable. None of it is sold.\nAll of it stays in the EU (I'm self-hosting Plausible in Germany).\nThere are no cookies or persistent identifiers (see plausible.io for how that works).\nHere is the full list of what's collected:\n- ChestESP version\n- Minecraft version\n- Fabric/NeoForge version\n- OS version\n- Cloth Config version\n- Mod Menu version (if installed)\n- Sodium version (if installed)\n- Sinytra Connector version (if installed)\n- ChestESP settings\n- Game type: singleplayer/multiplayer/Realms/LAN\n (without revealing the world name or server address)\n- Language\nOf course you can verify all of this in the source code.\nLook for this file: net.wimods.chestesp.util.PlausibleAnalytics.java"
 }

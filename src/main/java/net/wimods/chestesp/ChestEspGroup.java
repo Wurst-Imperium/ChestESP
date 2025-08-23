@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2023-2025 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -20,6 +20,7 @@ import net.minecraft.util.math.Box;
 public abstract class ChestEspGroup
 {
 	private final ConfigHolder<ChestEspConfig> configHolder;
+	private final String name;
 	private final ToIntFunction<ChestEspConfig> color;
 	private final Predicate<ChestEspConfig> enabled;
 	
@@ -30,12 +31,18 @@ public abstract class ChestEspGroup
 	 * <code>enabled</code> is <code>null</code>, the group will always be
 	 * enabled.
 	 */
-	public ChestEspGroup(ConfigHolder<ChestEspConfig> configHolder,
+	public ChestEspGroup(ConfigHolder<ChestEspConfig> configHolder, String name,
 		ToIntFunction<ChestEspConfig> color, Predicate<ChestEspConfig> enabled)
 	{
 		this.configHolder = Objects.requireNonNull(configHolder);
+		this.name = Objects.requireNonNull(name);
 		this.color = Objects.requireNonNull(color);
 		this.enabled = enabled;
+	}
+	
+	public String getName()
+	{
+		return name;
 	}
 	
 	public void clear()
@@ -48,13 +55,16 @@ public abstract class ChestEspGroup
 		return enabled == null || enabled.test(configHolder.get());
 	}
 	
-	public float[] getColorF()
+	public int getColorI(int alpha)
 	{
-		int colorI = color.applyAsInt(configHolder.get());
-		float red = (colorI >> 16 & 0xFF) / 255F;
-		float green = (colorI >> 8 & 0xFF) / 255F;
-		float blue = (colorI & 0xFF) / 255F;
-		return new float[]{red, green, blue};
+		int rgb = color.applyAsInt(configHolder.get());
+		return (alpha << 24) | rgb;
+	}
+	
+	public String getColorHex()
+	{
+		int rgb = color.applyAsInt(configHolder.get());
+		return String.format("#%06X", rgb);
 	}
 	
 	public List<Box> getBoxes()

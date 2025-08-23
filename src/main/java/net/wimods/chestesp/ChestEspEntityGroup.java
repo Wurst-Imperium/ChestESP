@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2023-2025 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -13,15 +13,17 @@ import java.util.function.ToIntFunction;
 
 import me.shedaniel.autoconfig.ConfigHolder;
 import net.minecraft.entity.Entity;
+import net.wimods.chestesp.util.EntityUtils;
 
 public final class ChestEspEntityGroup extends ChestEspGroup
 {
 	private final ArrayList<Entity> entities = new ArrayList<>();
 	
 	public ChestEspEntityGroup(ConfigHolder<ChestEspConfig> configHolder,
-		ToIntFunction<ChestEspConfig> color, Predicate<ChestEspConfig> enabled)
+		String name, ToIntFunction<ChestEspConfig> color,
+		Predicate<ChestEspConfig> enabled)
 	{
-		super(configHolder, color, enabled);
+		super(configHolder, name, color, enabled);
 	}
 	
 	public void add(Entity e)
@@ -41,15 +43,6 @@ public final class ChestEspEntityGroup extends ChestEspGroup
 		boxes.clear();
 		
 		for(Entity e : entities)
-		{
-			double offsetX = -(e.getX() - e.lastRenderX)
-				+ (e.getX() - e.lastRenderX) * partialTicks;
-			double offsetY = -(e.getY() - e.lastRenderY)
-				+ (e.getY() - e.lastRenderY) * partialTicks;
-			double offsetZ = -(e.getZ() - e.lastRenderZ)
-				+ (e.getZ() - e.lastRenderZ) * partialTicks;
-			
-			boxes.add(e.getBoundingBox().offset(offsetX, offsetY, offsetZ));
-		}
+			boxes.add(EntityUtils.getLerpedBox(e, partialTicks));
 	}
 }

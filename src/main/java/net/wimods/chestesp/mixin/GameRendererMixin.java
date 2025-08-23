@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2023-2025 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -9,6 +9,7 @@ package net.wimods.chestesp.mixin;
 
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -23,8 +24,13 @@ import net.wimods.chestesp.ChestEspMod;
 public abstract class GameRendererMixin
 	implements AutoCloseable, SynchronousResourceReloader
 {
+	@Unique
 	private boolean cancelNextBobView;
 	
+	/**
+	 * Fires the CameraTransformViewBobbingEvent event and records whether the
+	 * next view-bobbing call should be cancelled.
+	 */
 	@Inject(at = @At(value = "INVOKE",
 		target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V",
 		ordinal = 0),
@@ -38,6 +44,10 @@ public abstract class GameRendererMixin
 			cancelNextBobView = chestEsp.shouldCancelViewBobbing();
 	}
 	
+	/**
+	 * Cancels the view-bobbing call if requested by the last
+	 * CameraTransformViewBobbingEvent.
+	 */
 	@Inject(at = @At("HEAD"),
 		method = "bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V",
 		cancellable = true)
@@ -51,6 +61,11 @@ public abstract class GameRendererMixin
 		cancelNextBobView = false;
 	}
 	
+	/**
+	 * This mixin is injected into a random method call later in the
+	 * renderWorld() method to ensure that cancelNextBobView is always reset
+	 * after the view-bobbing call.
+	 */
 	@Inject(at = @At("HEAD"),
 		method = "renderHand(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/Camera;F)V")
 	private void renderHand(MatrixStack matrices, Camera camera,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2023-2025 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -17,7 +17,10 @@ public final class ChestEspModMenuApi implements ModMenuApi
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory()
 	{
-		return parent -> AutoConfig
-			.getConfigScreen(ChestEspConfig.class, parent).get();
+		return parent -> {
+			ChestEspMod.getInstance().getPlausible().pageview("/config");
+			return AutoConfig.getConfigScreen(ChestEspConfig.class, parent)
+				.get();
+		};
 	}
 }
