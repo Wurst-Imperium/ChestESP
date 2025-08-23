@@ -25,6 +25,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.vehicle.ChestBoatEntity;
 import net.minecraft.entity.vehicle.ChestMinecartEntity;
+import net.minecraft.entity.vehicle.ChestRaftEntity;
 import net.minecraft.entity.vehicle.HopperMinecartEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -124,7 +125,8 @@ public final class ChestEspMod
 				groups.chestCarts.add(entity);
 			else if(entity instanceof HopperMinecartEntity)
 				groups.hopperCarts.add(entity);
-			else if(entity instanceof ChestBoatEntity)
+			else if(entity instanceof ChestBoatEntity
+				|| entity instanceof ChestRaftEntity)
 				groups.chestBoats.add(entity);
 	}
 	

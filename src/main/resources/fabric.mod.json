@@ -8,11 +8,9 @@
     "Alexander01998"
   ],
   "contact": {
-    "homepage": "https://www.wimods.net/chestesp/?utm_source=ChestESP&utm_medium=ModMenu&utm_content=ChestESP+ModMenu+website+link",
-    "sources": "https://github.com/Wurst-Imperium/ChestESP",
-    "issues": "https://github.com/Wurst-Imperium/ChestESP/issues",
-    "email": "contact.wurstimperium@gmail.com",
-    "twitter": "https://twitter.com/Wurst_Imperium"
+    "homepage": "https://www.wimods.net/chestesp/modmenu-homepage/",
+    "sources": "https://www.wimods.net/chestesp/modmenu-sources/",
+    "issues": "https://www.wimods.net/chestesp/modmenu-issues/"
   },
   "license": "GPL-3.0-or-later",
   "icon": "assets/chestesp/icon.png",
@@ -49,7 +47,9 @@
   "custom": {
     "modmenu": {
       "links": {
-        "Donate": "https://www.wurstclient.net/donate/?utm_source=ChestESP&utm_medium=ModMenu&utm_content=ChestESP+ModMenu+donate+link"
+        "modmenu.donate": "https://www.wimods.net/chestesp/modmenu-donate/",
+        "modmenu.twitter": "https://www.wimods.net/chestesp/modmenu-twitter/",
+        "Forum": "https://www.wimods.net/chestesp/modmenu-forum/"
       }
     }
   }
