@@ -5,9 +5,12 @@
  * License, version 3. If a copy of the GPL was not distributed with this
  * file, You can obtain one at: https://www.gnu.org/licenses/gpl-3.0.txt
  */
-package net.wimods.chestesp.test;
+package net.wimods.chestesp.gametest;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,6 +21,8 @@ import java.util.function.Predicate;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
+import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotComparisonOptions;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
@@ -36,6 +41,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.tutorial.TutorialStep;
 import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.item.Item;
@@ -45,6 +51,42 @@ import net.minecraft.util.math.BlockPos;
 public enum WiModsTestHelper
 {
 	;
+	
+	public static void assertScreenshotEqualsUrl(ClientGameTestContext context,
+		String fileName, String url)
+	{
+		try
+		{
+			context.assertScreenshotEquals(TestScreenshotComparisonOptions
+				.of(downloadImage(url)).saveWithFileName(fileName));
+			
+		}catch(RuntimeException e)
+		{
+			if(e.getMessage().contains("Screenshot does not contain template"))
+				throw new AssertionError("Screenshot '" + fileName
+					+ "' does not match template '" + url + "'");
+			
+			throw e;
+		}
+	}
+	
+	public static TestScreenshotComparisonOptions templateImageFromUrl(
+		String url)
+	{
+		return TestScreenshotComparisonOptions.of(downloadImage(url));
+	}
+	
+	public static NativeImage downloadImage(String url)
+	{
+		try(InputStream inputStream = URI.create(url).toURL().openStream())
+		{
+			return NativeImage.read(inputStream);
+			
+		}catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 	
 	private static final AtomicInteger screenshotCounter = new AtomicInteger(0);
 	
@@ -136,9 +178,9 @@ public enum WiModsTestHelper
 	 * Waits for the fading animation of the title screen to finish, or fails
 	 * after 10 seconds.
 	 */
-	public static void waitForTitleScreenFade()
+	public static void waitForTitleScreenFade(ClientGameTestContext context)
 	{
-		waitUntil("title screen fade is complete", mc -> {
+		context.waitFor(mc -> {
 			if(!(mc.currentScreen instanceof TitleScreen titleScreen))
 				return false;
 			
@@ -302,9 +344,10 @@ public enum WiModsTestHelper
 		return false;
 	}
 	
-	public static void clickButtonAt(int x, int y)
+	public static void clickButtonAt(ClientGameTestContext context, int x,
+		int y)
 	{
-		waitUntil("button at " + x + ", " + y + " is visible", mc -> {
+		context.waitFor(mc -> {
 			Screen screen = mc.currentScreen;
 			if(screen == null)
 				return false;
@@ -318,25 +361,16 @@ public enum WiModsTestHelper
 					"Found widget at " + widget.getX() + ", " + widget.getY()
 						+ " of type " + widget.getClass().getName());
 				
-				if(clickButtonInWidget(widget, x, y))
+				if(widget instanceof PressableWidget button
+					&& button.getX() == x && button.getY() == y)
+				{
+					button.onPress();
 					return true;
+				}
 			}
 			
 			return false;
 		});
-	}
-	
-	private static boolean clickButtonInWidget(ClickableWidget widget, int x,
-		int y)
-	{
-		if(widget instanceof PressableWidget button && button.getX() == x
-			&& button.getY() == y)
-		{
-			button.onPress();
-			return true;
-		}
-		
-		return false;
 	}
 	
 	/**

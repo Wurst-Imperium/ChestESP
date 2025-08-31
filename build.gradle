@@ -78,6 +78,14 @@ loom {
 	accessWidenerPath = file("src/main/resources/chestesp.accesswidener")
 }
 
+fabricApi.configureTests {
+	createSourceSet = true
+	enableGameTests = false
+	enableClientGameTests = true
+	modId = "chestesp_testmod"
+	username = "Wurst-Bot"
+}
+
 configurations {
 	productionRuntime {
 		extendsFrom configurations.minecraftLibraries

@@ -17,8 +17,7 @@
   "environment": "client",
   "entrypoints": {
     "main": [
-      "net.wimods.chestesp.ChestEspModInitializer",
-      "net.wimods.chestesp.test.ChestESPTestClient"
+      "net.wimods.chestesp.ChestEspModInitializer"
     ],
     "modmenu": [
       "net.wimods.chestesp.ChestEspModMenuApi"
