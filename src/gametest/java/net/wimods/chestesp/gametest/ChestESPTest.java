@@ -37,14 +37,13 @@ public final class ChestESPTest implements FabricClientGameTest
 		waitForTitleScreenFade(context);
 		
 		System.out.println("Reached title screen");
-		context.takeScreenshot(
-			TestScreenshotOptions.of("title_screen").withTickDelta(0));
+		assertScreenshotEquals(context, "title_screen",
+			"https://i.imgur.com/egw0IEv.png");
 		
 		System.out.println("Clicking mods button");
 		context.clickScreenButton("modmenu.title");
-		context.takeScreenshot("mod_menu");
-		assertScreenshotEqualsUrl(context, "mod_menu",
-			"https://i.imgur.com/M9il0SH.png");
+		assertScreenshotEquals(context, "mod_menu",
+			"https://i.imgur.com/PU7EsPS.png");
 		
 		System.out.println("Clicking configure button");
 		TestInput input = context.getInput();
@@ -52,7 +51,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		input.pressKey(GLFW.GLFW_KEY_TAB);
 		input.pressKey(GLFW.GLFW_KEY_TAB);
 		input.pressKey(GLFW.GLFW_KEY_ENTER);
-		assertScreenshotEqualsUrl(context, "cloth_config",
+		assertScreenshotEquals(context, "cloth_config",
 			"https://i.imgur.com/MXdxdap.png");
 		
 		System.out.println("Returning to title screen");

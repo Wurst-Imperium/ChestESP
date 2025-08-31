@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,11 +20,17 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.joml.Vector2i;
+import org.lwjgl.system.MemoryUtil;
+
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotComparisonOptions;
+import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotComparisonAlgorithm;
+import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotComparisonAlgorithm.RawImage;
+import net.fabricmc.fabric.impl.client.gametest.screenshot.TestScreenshotComparisonAlgorithms.RawImageImpl;
+import net.fabricmc.fabric.impl.client.gametest.threading.ThreadingImpl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
@@ -52,28 +60,100 @@ public enum WiModsTestHelper
 {
 	;
 	
-	public static void assertScreenshotEqualsUrl(ClientGameTestContext context,
-		String fileName, String url)
+	/**
+	 * Takes a screenshot, matches it against the template image, and throws if
+	 * it doesn't match. This method allows the template image to have
+	 * an alpha channel and ignores any pixels that are >50% transparent. This
+	 * way, you can precisely control which parts of the screenshot to assert
+	 * against the template and which parts to ignore.
+	 */
+	public static void assertScreenshotEquals(ClientGameTestContext context,
+		String fileName, String templateUrl)
 	{
-		try
-		{
-			context.assertScreenshotEquals(TestScreenshotComparisonOptions
-				.of(downloadImage(url)).saveWithFileName(fileName));
-			
-		}catch(RuntimeException e)
-		{
-			if(e.getMessage().contains("Screenshot does not contain template"))
-				throw new AssertionError("Screenshot '" + fileName
-					+ "' does not match template '" + url + "'");
-			
-			throw e;
-		}
+		ThreadingImpl.checkOnGametestThread("assertScreenshotEquals");
+		
+		NativeImage nativeTemplateImage = downloadImage(templateUrl);
+		boolean[][] mask = alphaChannelToMask(nativeTemplateImage);
+		RawImage<int[]> rawTemplateImage =
+			RawImageImpl.fromColorNativeImage(nativeTemplateImage);
+		RawImage<int[]> maskedTemplateImage = applyMask(rawTemplateImage, mask);
+		
+		Path screenshotPath = context.takeScreenshot(fileName);
+		RawImage<int[]> rawScreenshotImage =
+			RawImageImpl.fromColorNativeImage(loadImageFile(screenshotPath));
+		RawImage<int[]> maskedScreenshotImage =
+			applyMask(rawScreenshotImage, mask);
+		
+		if(maskedScreenshotImage.width() != maskedTemplateImage.width()
+			|| maskedScreenshotImage.height() != maskedTemplateImage.height())
+			throw new AssertionError(
+				"Screenshot and template dimensions do not match");
+		
+		Vector2i result = TestScreenshotComparisonAlgorithm.defaultAlgorithm()
+			.findColor(maskedScreenshotImage, maskedTemplateImage);
+		if(result == null)
+			throw new AssertionError("Screenshot '" + fileName
+				+ "' does not match template '" + templateUrl + "'");
 	}
 	
-	public static TestScreenshotComparisonOptions templateImageFromUrl(
-		String url)
+	private static boolean[][] alphaChannelToMask(NativeImage template)
 	{
-		return TestScreenshotComparisonOptions.of(downloadImage(url));
+		if(!template.getFormat().hasAlpha())
+		{
+			int width = template.getWidth();
+			int height = template.getHeight();
+			boolean[][] mask = new boolean[width][height];
+			for(int y = 0; y < height; y++)
+				for(int x = 0; x < width; x++)
+					mask[x][y] = false;
+			return mask;
+		}
+		
+		int width = template.getWidth();
+		int height = template.getHeight();
+		boolean[][] mask = new boolean[width][height];
+		
+		int size = width * height;
+		int alphaOffset = template.getFormat().getAlphaOffset() / 8;
+		int channelCount = template.getFormat().getChannelCount();
+		
+		for(int i = 0; i < size; i++)
+		{
+			int x = i % width;
+			int y = i / width;
+			int alpha = MemoryUtil.memGetByte(
+				template.imageId() + i * channelCount + alphaOffset) & 0xff;
+			mask[x][y] = alpha > 127;
+		}
+		
+		return mask;
+	}
+	
+	private static RawImage<int[]> applyMask(RawImage<int[]> image,
+		boolean[][] mask)
+	{
+		int width = image.width();
+		int height = image.height();
+		int[] inData = image.data();
+		int[] outData = new int[width * height];
+		
+		for(int y = 0; y < height; y++)
+			for(int x = 0; x < width; x++)
+				outData[y * width + x] = mask[x][y] ? inData[y * width + x] : 0;
+			
+		return new RawImageImpl<>(width, height, outData);
+	}
+	
+	public static NativeImage loadImageFile(Path path)
+	{
+		try(InputStream inputStream = Files.newInputStream(path))
+		{
+			return NativeImage.read(inputStream);
+			
+		}catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public static NativeImage downloadImage(String url)
