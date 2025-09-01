@@ -5,9 +5,12 @@
  * License, version 3. If a copy of the GPL was not distributed with this
  * file, You can obtain one at: https://www.gnu.org/licenses/gpl-3.0.txt
  */
-package net.wimods.chestesp.test;
+package net.wimods.chestesp.gametest;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,9 +18,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
+import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotComparisonOptions;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
@@ -43,6 +49,42 @@ import net.minecraft.world.level.block.Block;
 public enum WiModsTestHelper
 {
 	;
+	
+	public static void assertScreenshotEqualsUrl(ClientGameTestContext context,
+		String fileName, String url)
+	{
+		try
+		{
+			context.assertScreenshotEquals(TestScreenshotComparisonOptions
+				.of(downloadImage(url)).saveWithFileName(fileName));
+			
+		}catch(RuntimeException e)
+		{
+			if(e.getMessage().contains("Screenshot does not contain template"))
+				throw new AssertionError("Screenshot '" + fileName
+					+ "' does not match template '" + url + "'");
+			
+			throw e;
+		}
+	}
+	
+	public static TestScreenshotComparisonOptions templateImageFromUrl(
+		String url)
+	{
+		return TestScreenshotComparisonOptions.of(downloadImage(url));
+	}
+	
+	public static NativeImage downloadImage(String url)
+	{
+		try(InputStream inputStream = URI.create(url).toURL().openStream())
+		{
+			return NativeImage.read(inputStream);
+			
+		}catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 	
 	private static final AtomicInteger screenshotCounter = new AtomicInteger(0);
 	
@@ -133,9 +175,9 @@ public enum WiModsTestHelper
 	 * Waits for the fading animation of the title screen to finish, or fails
 	 * after 10 seconds.
 	 */
-	public static void waitForTitleScreenFade()
+	public static void waitForTitleScreenFade(ClientGameTestContext context)
 	{
-		waitUntil("title screen fade is complete", mc -> {
+		context.waitFor(mc -> {
 			if(!(mc.screen instanceof TitleScreen titleScreen))
 				return false;
 			

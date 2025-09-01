@@ -59,11 +59,17 @@ tasks.named("build").configure {
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 mixin {
-	config 'chestesp.mixins.json'
+	config "chestesp.mixins.json"
 }
 
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 //minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
+
+sourceSets {
+    gametest {
+        depends.on sourceSets.main
+    }
+}
 
 // Default run configurations.
 // These can be tweaked, removed, or duplicated as needed.
@@ -108,6 +114,17 @@ runs {
 		
 		// Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
 		arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+	}
+
+	clientGameTest {
+		runType("client")
+		jvmArguments("-Dchestesp.e2eTest", "-Dmixin.debug.verify=true", "-Dmixin.debug.countInjections=true")
+		workingDirectory(file("build/run/clientGameTest"))
+		modSource project.sourceSets.gametest
+		mixin {
+			config "fabric_api.mixins.json"
+			config "client_gametest.mixins.json"
+		}
 	}
 }
 
@@ -256,7 +273,7 @@ spotless {
 		eclipse().configFile(file("codestyle/formatter.xml"))
 	}
 	format("licenseHeader") {
-		target("src/*/java/**/*.java", "src/test/java/**/*.java")
+		target("src/main/java/**/*.java", "src/test/java/**/*.java", "src/gametest/java/net/wimods/**/*.java")
 		def header_file = file("codestyle/license_header.txt")
 		def delimiter = LicenseHeaderStep.DEFAULT_JAVA_HEADER_DELIMITER
 		licenseHeaderFile(header_file, delimiter).updateYearWithLatest(true)

@@ -32,12 +32,10 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
-import net.wimods.chestesp.test.ChestESPTestClient;
 import net.wimods.chestesp.util.ChunkUtils;
 import net.wimods.chestesp.util.PlausibleAnalytics;
 import net.wimods.chestesp.util.RenderUtils;
@@ -85,19 +83,10 @@ public final class ChestEspMod
 		plausible.pageview("/");
 		
 		// Register mod bus events
-		modBus.addListener(this::onClientSetup);
 		modBus.addListener(this::onRegisterKeyMappings);
 		
 		// Register NeoForge bus events
 		NeoForge.EVENT_BUS.addListener(this::onClientTick);
-	}
-	
-	@SubscribeEvent
-	private void onClientSetup(FMLClientSetupEvent event)
-	{
-		// Run end-to-end test, if enabled
-		if(System.getProperty("chestesp.e2eTest") != null)
-			ChestESPTestClient.start();
 	}
 	
 	@SubscribeEvent
