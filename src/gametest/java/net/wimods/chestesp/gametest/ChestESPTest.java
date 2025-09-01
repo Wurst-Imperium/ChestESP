@@ -16,7 +16,6 @@ import org.lwjgl.glfw.GLFW;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.TestInput;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
 
@@ -39,20 +38,20 @@ public final class ChestESPTest implements FabricClientGameTest
 		waitForTitleScreenFade(context);
 		
 		System.out.println("Reached title screen");
-		context.takeScreenshot(
-			TestScreenshotOptions.of("title_screen").withTickDelta(0));
+		assertScreenshotEquals(context, "title_screen",
+			"https://i.imgur.com/Asj9iIx.png");
 		
 		System.out.println("Clicking mods button");
 		context.clickScreenButton("fml.menu.mods");
 		
 		System.out.println("Selecting ChestESP entry");
 		input.pressKey(GLFW.GLFW_KEY_DOWN);
-		assertScreenshotEqualsUrl(context, "mod_list",
-			"https://i.imgur.com/DK8eJrs.png");
+		assertScreenshotEquals(context, "mod_list",
+			"https://i.imgur.com/kacCcYJ.png");
 		
 		System.out.println("Clicking config button");
 		context.clickScreenButton("fml.menu.mods.config");
-		assertScreenshotEqualsUrl(context, "cloth_config",
+		assertScreenshotEquals(context, "cloth_config",
 			"https://i.imgur.com/MXdxdap.png");
 		
 		System.out.println("Returning to title screen");
