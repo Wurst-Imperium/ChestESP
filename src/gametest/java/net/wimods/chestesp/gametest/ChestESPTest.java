@@ -232,6 +232,8 @@ public final class ChestESPTest implements FabricClientGameTest
 		runCommand(server,
 			"summon bamboo_chest_raft ^-1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
 		
+		// TODO: Copper chests!
+		
 		// Wait for the blocks to appear
 		context.waitTicks(2);
 		world.waitForChunksRender();
