@@ -89,8 +89,11 @@ public enum WiModsTestHelper
 			throw new AssertionError(
 				"Screenshot and template dimensions do not match");
 		
-		Vector2i result = TestScreenshotComparisonAlgorithm.defaultAlgorithm()
-			.findColor(maskedScreenshotImage, maskedTemplateImage);
+		TestScreenshotComparisonAlgorithm algo =
+			TestScreenshotComparisonAlgorithm.meanSquaredDifference(5e-6F);
+		
+		Vector2i result =
+			algo.findColor(maskedScreenshotImage, maskedTemplateImage);
 		if(result == null)
 			throw new AssertionError("Screenshot '" + fileName
 				+ "' does not match template '" + templateUrl + "'");

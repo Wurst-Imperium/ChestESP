@@ -9,43 +9,62 @@ package net.wimods.chestesp.gametest;
 
 import static net.wimods.chestesp.gametest.WiModsTestHelper.*;
 
+import java.awt.Color;
 import java.util.function.Consumer;
 
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.MixinEnvironment;
+
+import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.TestInput;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
+import net.fabricmc.fabric.api.client.gametest.v1.world.TestWorldBuilder;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.screen.world.CreateWorldScreen;
-import net.minecraft.client.gui.screen.world.SelectWorldScreen;
+import net.minecraft.client.gui.screen.world.WorldCreator;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.world.GameRules;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
 import net.wimods.chestesp.ChestEspStyle;
 
 public final class ChestESPTest implements FabricClientGameTest
 {
+	public static final Logger LOGGER =
+		LoggerFactory.getLogger("ChestESP Test");
+	
 	@Override
 	public void runTest(ClientGameTestContext context)
 	{
-		System.out.println("Starting ChestESP Client GameTest");
+		LOGGER.info("Starting ChestESP Client GameTest");
 		context
 			.runOnClient(mc -> mc.options.getHideSplashTexts().setValue(true));
 		waitForTitleScreenFade(context);
 		
-		System.out.println("Reached title screen");
+		LOGGER.info("Reached title screen");
 		assertScreenshotEquals(context, "title_screen",
 			"https://i.imgur.com/egw0IEv.png");
 		
-		System.out.println("Clicking mods button");
+		// Check config values that aren't visible in screenshots
+		withConfig(context, config -> {
+			if(!config.plausible)
+				throw new AssertionError(
+					"Plausible should be enabled by default");
+		});
+		
+		LOGGER.info("Clicking mods button");
 		context.clickScreenButton("modmenu.title");
 		assertScreenshotEquals(context, "mod_menu",
 			"https://i.imgur.com/PU7EsPS.png");
 		
-		System.out.println("Clicking configure button");
+		LOGGER.info("Clicking configure button");
 		TestInput input = context.getInput();
 		input.pressKey(GLFW.GLFW_KEY_TAB);
 		input.pressKey(GLFW.GLFW_KEY_TAB);
@@ -54,164 +73,203 @@ public final class ChestESPTest implements FabricClientGameTest
 		assertScreenshotEquals(context, "cloth_config",
 			"https://i.imgur.com/MXdxdap.png");
 		
-		System.out.println("Returning to title screen");
+		LOGGER.info("Returning to title screen");
 		context.clickScreenButton("gui.cancel");
 		context.clickScreenButton("gui.done");
 		
-		// System.out.println("Clicking singleplayer button");
-		// clickButton("menu.singleplayer");
+		LOGGER.info("Creating test world");
+		TestWorldBuilder worldBuilder = context.worldBuilder();
+		worldBuilder.adjustSettings(creator -> {
+			String mcVersion = SharedConstants.getGameVersion().name();
+			creator.setWorldName("E2E Test " + mcVersion);
+			creator.setGameMode(WorldCreator.Mode.CREATIVE);
+			creator.getGameRules().get(GameRules.SEND_COMMAND_FEEDBACK)
+				.set(false, null);
+		});
 		
-		// if(submitAndGet(mc ->
-		// !mc.getLevelStorage().getLevelList().isEmpty()))
-		// {
-		// System.out.println("World list is not empty. Waiting for it");
-		// waitForScreen(SelectWorldScreen.class);
-		// System.out.println("Reached select world screen");
-		// takeScreenshot("select_world_screen");
-		// clickButton("selectWorld.create");
-		// }
+		try(TestSingleplayerContext spContext = worldBuilder.create())
+		{
+			testInWorld(context, spContext);
+			LOGGER.info("Exiting test world");
+		}
 		
-		// waitForScreen(CreateWorldScreen.class);
-		// System.out.println("Reached create world screen");
-		
-		// // Set MC version as world name
-		// setTextFieldText(0,
-		// "E2E Test " + SharedConstants.getGameVersion().name());
-		// // Select creative mode
-		// clickButton("selectWorld.gameMode");
-		// clickButton("selectWorld.gameMode");
-		// takeScreenshot("create_world_screen");
-		
-		// System.out.println("Creating test world");
-		// clickButton("selectWorld.create");
-		
-		// waitForWorldLoad();
-		// dismissTutorialToasts();
-		// waitForWorldTicks(200);
-		// runChatCommand("seed");
-		// System.out.println("Reached singleplayer world");
-		// takeScreenshot("in_game", Duration.ZERO);
-		
-		// System.out.println("Building test rig");
-		// buildTestRig();
-		// waitForWorldTicks(20);
-		// clearChat();
-		// takeScreenshot("ChestESP_default_settings");
-		
-		// System.out.println("Enabling all ChestESP groups");
-		// updateConfig(config -> {
-		// config.include_pots = true;
-		// config.include_hoppers = true;
-		// config.include_hopper_carts = true;
-		// config.include_droppers = true;
-		// config.include_dispensers = true;
-		// config.include_crafters = true;
-		// config.include_furnaces = true;
-		// });
-		// takeScreenshot("ChestESP_all_boxes");
-		
-		// System.out.println("Changing style to lines");
-		// updateConfig(config -> {
-		// config.style = ChestEspStyle.LINES;
-		// });
-		// takeScreenshot("ChestESP_all_lines");
-		
-		// System.out.println("Changing style to lines and boxes");
-		// updateConfig(config -> {
-		// config.style = ChestEspStyle.LINES_AND_BOXES;
-		// });
-		// takeScreenshot("ChestESP_all_lines_and_boxes");
-		
-		// System.out.println("Changing all color settings to purple");
-		// updateConfig(config -> {
-		// config.chest_color = 0xFF00FF;
-		// config.trap_chest_color = 0xFF00FF;
-		// config.ender_chest_color = 0xFF00FF;
-		// config.chest_cart_color = 0xFF00FF;
-		// config.chest_boat_color = 0xFF00FF;
-		// config.barrel_color = 0xFF00FF;
-		// config.pot_color = 0xFF00FF;
-		// config.shulker_box_color = 0xFF00FF;
-		// config.hopper_color = 0xFF00FF;
-		// config.hopper_cart_color = 0xFF00FF;
-		// config.dropper_color = 0xFF00FF;
-		// config.dispenser_color = 0xFF00FF;
-		// config.crafter_color = 0xFF00FF;
-		// config.furnace_color = 0xFF00FF;
-		// });
-		// takeScreenshot("ChestESP_all_purple");
-		
-		// System.out.println("Opening debug menu");
-		// toggleDebugHud();
-		// takeScreenshot("debug_menu");
-		
-		// System.out.println("Closing debug menu");
-		// toggleDebugHud();
-		
-		// System.out.println("Checking for broken mixins");
-		// MixinEnvironment.getCurrentEnvironment().audit();
-		
-		// System.out.println("Opening inventory");
-		// openInventory();
-		// takeScreenshot("inventory");
-		
-		// System.out.println("Closing inventory");
-		// closeScreen();
-		
-		// System.out.println("Opening game menu");
-		// openGameMenu();
-		// takeScreenshot("game_menu");
-		
-		// System.out.println("Returning to title screen");
-		// clickButton("menu.returnToMenu");
-		// waitForScreen(TitleScreen.class);
-		
-		// System.out.println("Stopping the game");
-		// clickButton("menu.quit");
+		LOGGER.info("Test complete");
 	}
 	
-	private void buildTestRig()
+	private void testInWorld(ClientGameTestContext context,
+		TestSingleplayerContext spContext)
 	{
-		// Clear area and create platform
-		runChatCommand("fill ^-8 ^ ^ ^8 ^10 ^10 air");
-		runChatCommand("fill ^-8 ^-1 ^ ^8 ^-1 ^10 stone");
-		runChatCommand("fill ^-8 ^ ^10 ^8 ^10 ^10 stone");
+		TestInput input = context.getInput();
+		TestClientWorldContext world = spContext.getClientWorld();
+		TestServerContext server = spContext.getServer();
 		
-		// simple storage blocks
-		runChatCommand("setblock ^-5 ^ ^5 chest");
-		runChatCommand("setblock ^-3 ^ ^5 trapped_chest");
-		runChatCommand("setblock ^-1 ^ ^5 ender_chest");
-		runChatCommand("setblock ^1 ^ ^5 barrel");
-		runChatCommand("setblock ^3 ^ ^5 shulker_box");
-		runChatCommand("setblock ^5 ^ ^5 decorated_pot");
+		LOGGER.info("Teleporting player to world origin");
+		runCommand(server, "tp 0 -60 0");
 		
-		// vehicles
-		runChatCommand("setblock ^3 ^ ^7 rail");
-		runChatCommand("summon chest_minecart ^3 ^ ^7");
-		runChatCommand("summon oak_chest_boat ^ ^ ^7");
-		runChatCommand("setblock ^-3 ^ ^7 rail");
-		runChatCommand("summon hopper_minecart ^-3 ^ ^7");
+		LOGGER.info("Loading chunks");
+		world.waitForChunksRender();
 		
-		// redstone and smelting
-		runChatCommand("setblock ^-5 ^2 ^7 hopper");
-		runChatCommand("setblock ^-3 ^2 ^7 dropper");
-		runChatCommand("setblock ^-1 ^2 ^7 dispenser");
-		runChatCommand("setblock ^1 ^2 ^7 furnace");
-		runChatCommand("setblock ^3 ^2 ^7 blast_furnace");
-		runChatCommand("setblock ^5 ^2 ^7 smoker");
+		LOGGER.info("Reached singleplayer world");
+		assertScreenshotEquals(context, "in_game",
+			"https://i.imgur.com/XrGpZZV.png");
 		
-		// double chests
-		runChatCommand("setblock ^-2 ^4 ^7 chest[type=left]");
-		runChatCommand("setblock ^-1 ^4 ^7 chest[type=right]");
-		runChatCommand("setblock ^1 ^4 ^7 trapped_chest[type=left]");
-		runChatCommand("setblock ^2 ^4 ^7 trapped_chest[type=right]");
+		LOGGER.info("Recording debug menu");
+		input.pressKey(GLFW.GLFW_KEY_F3);
+		context.takeScreenshot("debug_menu");
+		input.pressKey(GLFW.GLFW_KEY_F3);
+		
+		LOGGER.info("Opening inventory");
+		input.pressKey(GLFW.GLFW_KEY_E);
+		assertScreenshotEquals(context, "inventory",
+			"https://i.imgur.com/9barXvh.png");
+		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
+		
+		LOGGER.info("Opening game menu");
+		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
+		assertScreenshotEquals(context, "game_menu",
+			"https://i.imgur.com/rNf37jd.png");
+		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
+		
+		LOGGER.info("Building test rig");
+		buildTestRig(context, spContext);
+		assertScreenshotEquals(context, "ChestESP_default_settings",
+			"https://i.imgur.com/PmJ4itt.png");
+		
+		LOGGER.info("Enabling all ChestESP groups");
+		withConfig(context, config -> {
+			config.include_pots = true;
+			config.include_hoppers = true;
+			config.include_hopper_carts = true;
+			config.include_droppers = true;
+			config.include_dispensers = true;
+			config.include_crafters = true;
+			config.include_furnaces = true;
+		});
+		assertScreenshotEquals(context, "ChestESP_boxes",
+			"https://i.imgur.com/npoKuj3.png");
+		
+		LOGGER.info("Changing style to lines");
+		withConfig(context, config -> {
+			config.style = ChestEspStyle.LINES;
+		});
+		assertScreenshotEquals(context, "ChestESP_lines",
+			"https://i.imgur.com/xMM5fKc.png");
+		
+		LOGGER.info("Changing style to lines and boxes");
+		withConfig(context, config -> {
+			config.style = ChestEspStyle.LINES_AND_BOXES;
+		});
+		assertScreenshotEquals(context, "ChestESP_lines_and_boxes",
+			"https://i.imgur.com/VQWhfFR.png");
+		
+		LOGGER.info("Changing all color settings");
+		withConfig(context, config -> {
+			int total = 14;
+			config.chest_color = rainbowColor(0, total);
+			config.trap_chest_color = rainbowColor(1, total);
+			config.ender_chest_color = rainbowColor(2, total);
+			config.chest_cart_color = rainbowColor(3, total);
+			config.chest_boat_color = rainbowColor(4, total);
+			config.barrel_color = rainbowColor(5, total);
+			config.pot_color = rainbowColor(6, total);
+			config.shulker_box_color = rainbowColor(7, total);
+			config.hopper_color = rainbowColor(8, total);
+			config.hopper_cart_color = rainbowColor(9, total);
+			config.dropper_color = rainbowColor(10, total);
+			config.dispenser_color = rainbowColor(11, total);
+			config.crafter_color = rainbowColor(12, total);
+			config.furnace_color = rainbowColor(13, total);
+		});
+		assertScreenshotEquals(context, "ChestESP_custom_colors",
+			"https://i.imgur.com/7r0yidB.png");
+		
+		LOGGER.info("Checking for broken mixins");
+		MixinEnvironment.getCurrentEnvironment().audit();
 	}
 	
-	public static void updateConfig(Consumer<ChestEspConfig> configUpdater)
+	private void buildTestRig(ClientGameTestContext context,
+		TestSingleplayerContext spContext)
 	{
-		submitAndWait(mc -> {
+		TestClientWorldContext world = spContext.getClientWorld();
+		TestServerContext server = spContext.getServer();
+		
+		// Set up background
+		runCommand(server, "fill ^-12 ^-1 ^ ^12 ^-1 ^10 stone");
+		runCommand(server, "fill ^-12 ^ ^10 ^12 ^12 ^10 stone");
+		runCommand(server, "tp ^ ^3 ^");
+		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ stone");
+		
+		// Top row: normal chests
+		runCommand(server, "setblock ^5 ^4 ^7 chest");
+		runCommand(server, "setblock ^3 ^4 ^7 chest[type=right]");
+		runCommand(server, "setblock ^2 ^4 ^7 chest[type=left]");
+		runCommand(server, "setblock ^ ^4 ^7 ender_chest");
+		runCommand(server, "setblock ^-2 ^4 ^7 trapped_chest");
+		runCommand(server, "setblock ^-4 ^4 ^7 trapped_chest[type=right]");
+		runCommand(server, "setblock ^-5 ^4 ^7 trapped_chest[type=left]");
+		
+		// Second row: other containers
+		runCommand(server, "setblock ^5 ^2 ^7 barrel");
+		runCommand(server, "setblock ^3 ^2 ^7 shulker_box");
+		runCommand(server, "setblock ^1 ^2 ^7 decorated_pot");
+		runCommand(server, "setblock ^-1 ^2 ^7 furnace");
+		runCommand(server, "setblock ^-3 ^2 ^7 blast_furnace");
+		runCommand(server, "setblock ^-5 ^2 ^7 smoker");
+		
+		// Third row: redstone things
+		runCommand(server, "setblock ^5 ^ ^7 dispenser");
+		runCommand(server, "setblock ^3 ^ ^7 dropper");
+		runCommand(server, "setblock ^1 ^ ^7 hopper");
+		runCommand(server, "setblock ^-1 ^ ^7 crafter");
+		
+		// Fourth row: vehicles
+		runCommand(server,
+			"summon chest_minecart ^5 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
+		runCommand(server,
+			"summon hopper_minecart ^3 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
+		runCommand(server,
+			"summon oak_chest_boat ^1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
+		runCommand(server,
+			"summon bamboo_chest_raft ^-1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
+		
+		// Wait for the blocks to appear
+		context.waitTicks(2);
+		world.waitForChunksRender();
+	}
+	
+	private void runCommand(TestServerContext server, String command)
+	{
+		String commandWithPlayer = "execute as @p at @s run " + command;
+		server.runOnServer(mc -> {
+			ParseResults<ServerCommandSource> results =
+				mc.getCommandManager().getDispatcher().parse(commandWithPlayer,
+					mc.getCommandSource());
+			
+			if(!results.getExceptions().isEmpty())
+			{
+				StringBuilder errors =
+					new StringBuilder("Invalid command: /" + commandWithPlayer);
+				for(CommandSyntaxException e : results.getExceptions().values())
+					errors.append("\n").append(e.getMessage());
+				
+				throw new RuntimeException(errors.toString());
+			}
+			
+			mc.getCommandManager().execute(results, commandWithPlayer);
+		});
+	}
+	
+	public static void withConfig(ClientGameTestContext context,
+		Consumer<ChestEspConfig> configUpdater)
+	{
+		context.runOnClient(mc -> {
 			configUpdater.accept(
 				ChestEspMod.getInstance().getConfigHolder().getConfig());
 		});
+	}
+	
+	private static int rainbowColor(int index, int total)
+	{
+		return Color.HSBtoRGB((float)index / total, 0.8F, 1) & 0xFFFFFF;
 	}
 }
