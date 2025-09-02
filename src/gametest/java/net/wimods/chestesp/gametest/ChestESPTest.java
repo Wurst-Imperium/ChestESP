@@ -17,9 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
-import com.mojang.brigadier.ParseResults;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.TestInput;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -29,7 +26,6 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContex
 import net.fabricmc.fabric.api.client.gametest.v1.world.TestWorldBuilder;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screen.world.WorldCreator;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.world.GameRules;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
@@ -44,8 +40,7 @@ public final class ChestESPTest implements FabricClientGameTest
 	public void runTest(ClientGameTestContext context)
 	{
 		LOGGER.info("Starting ChestESP Client GameTest");
-		context
-			.runOnClient(mc -> mc.options.getHideSplashTexts().setValue(true));
+		hideSplashTexts(context);
 		waitForTitleScreenFade(context);
 		
 		LOGGER.info("Reached title screen");
@@ -237,28 +232,6 @@ public final class ChestESPTest implements FabricClientGameTest
 		// Wait for the blocks to appear
 		context.waitTicks(2);
 		world.waitForChunksRender();
-	}
-	
-	private void runCommand(TestServerContext server, String command)
-	{
-		String commandWithPlayer = "execute as @p at @s run " + command;
-		server.runOnServer(mc -> {
-			ParseResults<ServerCommandSource> results =
-				mc.getCommandManager().getDispatcher().parse(commandWithPlayer,
-					mc.getCommandSource());
-			
-			if(!results.getExceptions().isEmpty())
-			{
-				StringBuilder errors =
-					new StringBuilder("Invalid command: /" + commandWithPlayer);
-				for(CommandSyntaxException e : results.getExceptions().values())
-					errors.append("\n").append(e.getMessage());
-				
-				throw new RuntimeException(errors.toString());
-			}
-			
-			mc.getCommandManager().execute(results, commandWithPlayer);
-		});
 	}
 	
 	public static void withConfig(ClientGameTestContext context,
