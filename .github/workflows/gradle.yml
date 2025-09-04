@@ -108,7 +108,9 @@ jobs:
         echo "</details>" >> $GITHUB_STEP_SUMMARY
 
     - name: Run client gametest
-      run: ./gradlew runClientGameTest --stacktrace --warning-mode=fail
+      uses: GabrielBB/xvfb-action@v1.7
+      with:
+        run: ./gradlew runClientGameTest --stacktrace --warning-mode=fail
 
     # Needed because the screenshot gallery won't be created on pull requests.
     # Also useful if Imgur uploads fail.
