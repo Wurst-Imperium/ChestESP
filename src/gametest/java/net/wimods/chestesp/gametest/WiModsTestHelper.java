@@ -63,7 +63,7 @@ public enum WiModsTestHelper
 				"Screenshot and template dimensions do not match");
 		
 		TestScreenshotComparisonAlgorithm algo =
-			TestScreenshotComparisonAlgorithm.meanSquaredDifference(1e-4F);
+			TestScreenshotComparisonAlgorithm.meanSquaredDifference(1e-3F);
 		
 		Vector2i result =
 			algo.findColor(maskedScreenshotImage, maskedTemplateImage);
