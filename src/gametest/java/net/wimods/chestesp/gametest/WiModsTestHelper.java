@@ -10,8 +10,15 @@ package net.wimods.chestesp.gametest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Base64;
+import java.util.UUID;
 
 import org.joml.Vector2i;
 import org.lwjgl.system.MemoryUtil;
@@ -67,9 +74,22 @@ public enum WiModsTestHelper
 		
 		Vector2i result =
 			algo.findColor(maskedScreenshotImage, maskedTemplateImage);
-		if(result == null)
-			throw new AssertionError("Screenshot '" + fileName
-				+ "' does not match template '" + templateUrl + "'");
+		if(result != null)
+			return;
+		
+		ghSummary("### Screenshot " + fileName + " does not match template");
+		ghSummary("Expected:");
+		ghSummary("![" + fileName + "_template](" + templateUrl + ")");
+		ghSummary("Actual:");
+		String url = tryUploadToImgur(screenshotPath);
+		if(url != null)
+			ghSummary("![" + fileName + "](" + url + ")");
+		else
+			ghSummary("Couldn't upload " + fileName
+				+ ".png to Imgur. Check the Test Screenshots.zip artifact.");
+		
+		throw new AssertionError("Screenshot '" + fileName
+			+ "' does not match template '" + templateUrl + "'");
 	}
 	
 	private static boolean[][] alphaChannelToMask(NativeImage template)
@@ -185,5 +205,69 @@ public enum WiModsTestHelper
 			
 			mc.getCommandManager().execute(results, commandWithPlayer);
 		});
+	}
+	
+	public static void ghSummary(String s)
+	{
+		String summaryPath = System.getenv("GITHUB_STEP_SUMMARY");
+		System.out.println(s);
+		if(summaryPath == null)
+			return;
+		
+		try
+		{
+			Files.write(Paths.get(summaryPath), (s + "\n").getBytes(),
+				StandardOpenOption.APPEND);
+			
+		}catch(IOException e)
+		{
+			System.err.println("Couldn't write to GitHub step summary");
+			e.printStackTrace();
+		}
+	}
+	
+	public static String tryUploadToImgur(Path imagePath)
+	{
+		String imgurClientId = System.getenv("IMGUR_CLIENT_ID");
+		if(imgurClientId == null)
+			return null;
+		
+		try
+		{
+			HttpClient client = HttpClient.newHttpClient();
+			
+			String boundary = UUID.randomUUID().toString();
+			byte[] imageBytes = Files.readAllBytes(imagePath);
+			String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
+			
+			String data = "--" + boundary + "\r\n"
+				+ "Content-Disposition: form-data; name=\"image\"\r\n\r\n"
+				+ imageBase64 + "\r\n" + "--" + boundary + "--\r\n";
+			
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create("https://api.imgur.com/3/image"))
+				.header("Authorization", "Client-ID " + imgurClientId)
+				.header("Content-Type",
+					"multipart/form-data; boundary=" + boundary)
+				.POST(HttpRequest.BodyPublishers.ofString(data)).build();
+			
+			HttpResponse<String> response =
+				client.send(request, HttpResponse.BodyHandlers.ofString());
+			
+			if(response.statusCode() == 200)
+			{
+				String body = response.body();
+				int linkStart = body.indexOf("\"link\":\"") + 8;
+				int linkEnd = body.indexOf("\"", linkStart);
+				return body.substring(linkStart, linkEnd);
+			}
+			
+			return null;
+			
+		}catch(IOException | InterruptedException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
