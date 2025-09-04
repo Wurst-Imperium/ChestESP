@@ -59,6 +59,9 @@ public final class ChestESPTest implements FabricClientGameTest
 		assertScreenshotEquals(context, "mod_menu",
 			"https://i.imgur.com/PU7EsPS.png");
 		
+		assertScreenshotEquals(context, "wrong_on_purpose",
+			"https://i.imgur.com/egw0IEv.png");
+		
 		LOGGER.info("Clicking configure button");
 		TestInput input = context.getInput();
 		input.pressKey(GLFW.GLFW_KEY_TAB);
