@@ -50,7 +50,7 @@ public abstract class MinecraftDedicatedServerMixin
 	// client process.
 	@WrapOperation(method = "stopServer",
 		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/util/Util;shutdownExecutors()V"))
+			target = "Lnet/minecraft/Util;shutdownExecutors()V"))
 	private void dontStopExecutors(Operation<Void> original)
 	{
 		// Never needed, as this is a client mixin.

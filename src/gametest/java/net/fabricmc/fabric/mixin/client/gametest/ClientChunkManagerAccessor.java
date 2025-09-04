@@ -23,6 +23,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(ClientChunkCache.class)
 public interface ClientChunkManagerAccessor
 {
-	@Accessor
+	@Accessor("storage")
 	ClientChunkCache.Storage getChunks();
 }

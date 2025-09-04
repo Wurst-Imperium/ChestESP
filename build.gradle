@@ -119,6 +119,8 @@ runs {
 	clientGameTest {
 		runType("client")
 		jvmArguments("-Dchestesp.e2eTest", "-Dmixin.debug.verify=true", "-Dmixin.debug.countInjections=true")
+		systemProperties("fabric.client.gametest.disableNetworkSynchronizer": "true")
+		arguments("--username", "Wurst-Bot")
 		workingDirectory(file("build/run/clientGameTest"))
 		modSource project.sourceSets.gametest
 		mixin {
