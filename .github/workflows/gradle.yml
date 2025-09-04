@@ -107,10 +107,8 @@ jobs:
         done
         echo "</details>" >> $GITHUB_STEP_SUMMARY
 
-    - name: Run the mod and take screenshots
-      uses: GabrielBB/xvfb-action@v1.7
-      with:
-        run: ./gradlew runEndToEndTest --stacktrace --warning-mode=fail
+    - name: Run client gametest
+      run: ./gradlew runClientGameTest --stacktrace --warning-mode=fail
 
     # Needed because the screenshot gallery won't be created on pull requests.
     # Also useful if Imgur uploads fail.
@@ -119,7 +117,7 @@ jobs:
       if: always()
       with:
         name: Test Screenshots
-        path: run/screenshots
+        path: build/run/clientGameTest/screenshots
 
     - name: Create test screenshot gallery
       if: ${{ env.IMGUR_CLIENT_ID && (success() || failure()) }}
@@ -130,7 +128,7 @@ jobs:
         echo "<details open>" >> $GITHUB_STEP_SUMMARY
         echo "<summary>📸 Test Screenshots</summary>" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        for img in run/screenshots/*.png; do
+        for img in build/run/clientGameTest/screenshots/*.png; do
           if [ -f "$img" ]; then
             filename=$(basename "$img")
             name_without_ext="${filename%.*}"
