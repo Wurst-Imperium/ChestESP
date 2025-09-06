@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "chestesp_testmod",
+  "version": "1.0.0",
+  "name": "ChestESP Test Mod",
+  "license": "GPL-3.0-or-later",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": [
+      "net.wimods.chestesp.gametest.ChestESPTest"
+    ]
+  },
+  "mixins": [
+    "chestesp_testmod.mixins.json",
+    "fabric_api.mixins.json"
+  ]
+}
