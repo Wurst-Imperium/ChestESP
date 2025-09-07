@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "net.wimods.chestesp.gametest.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [],
+  "client": [
+    "NativeImageAccessor",
+    "TitleScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

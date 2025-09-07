@@ -1,6 +1,6 @@
 buildscript {
 	dependencies {
-		classpath "org.kohsuke:github-api:1.329"
+		classpath "org.kohsuke:github-api:1.330"
 	}
 }
 
@@ -32,7 +32,11 @@ repositories {
 // Override vulnerable dependencies until Minecraft updates to newer versions
 configurations.all {
 	resolutionStrategy {
-		// v4.1.97.Final, used by Minecraft 1.21 - 1.21.3, is vulnerable to CVE-2024-47535
+		// 3.12.0, used by Minecraft 1.18 - 1.20.1, is vulnerable to CVE-2025-48924
+		force "org.apache.commons:commons-lang3:3.18.0"
+		// v4.1.82.Final, used by Minecraft 1.19.3 - 1.20.1, is vulnerable to CVE-2025-58057
+		force "io.netty:netty-codec:4.1.125.Final"
+		// v4.1.82.Final, used by Minecraft 1.19.3 - 1.20.1, is vulnerable to CVE-2024-47535
 		force "io.netty:netty-common:4.1.118.Final"
 	}
 }
@@ -72,49 +76,12 @@ loom {
 	accessWidenerPath = file("src/main/resources/chestesp.accesswidener")
 }
 
-configurations {
-	productionRuntime {
-		extendsFrom configurations.minecraftLibraries
-		extendsFrom configurations.loaderLibraries
-		extendsFrom configurations.minecraftRuntimeLibraries
-	}
-}
-
-dependencies {
-	productionRuntime "net.fabricmc:fabric-loader:${project.loader_version}"
-	productionRuntime "net.fabricmc:intermediary:${project.minecraft_version}"
-}
-
-import net.fabricmc.loom.util.Platform
-tasks.register('runEndToEndTest', JavaExec) {
-	dependsOn remapJar, downloadAssets
-	classpath.from configurations.productionRuntime
-	mainClass = "net.fabricmc.loader.impl.launch.knot.KnotClient"
-	workingDir = file("run")
-	
-	doFirst {
-		classpath.from loom.minecraftProvider.minecraftClientJar
-		workingDir.mkdirs()
-		
-		args(
-			"--assetIndex", loom.minecraftProvider.versionInfo.assetIndex().fabricId(loom.minecraftProvider.minecraftVersion()),
-			"--assetsDir", new File(loom.files.userCache, "assets").absolutePath,
-			"--gameDir", workingDir.absolutePath
-		)
-		
-		if (Platform.CURRENT.operatingSystem.isMacOS()) {
-			jvmArgs("-XstartOnFirstThread")
-		}
-		
-		jvmArgs(
-			"-Dfabric.addMods=${configurations.modImplementation.find { it.name.contains('fabric-api') }.absolutePath}${File.pathSeparator}${remapJar.archiveFile.get().asFile.absolutePath}",
-			"-Dchestesp.e2eTest",
-			"-Dfabric-tag-conventions-v2.missingTagTranslationWarning=fail",
-			"-Dfabric-tag-conventions-v1.legacyTagWarning=fail",
-			"-Dmixin.debug.verify=true",
-			"-Dmixin.debug.countInjections=true"
-		)
-	}
+fabricApi.configureTests {
+	createSourceSet = true
+	enableGameTests = false
+	enableClientGameTests = true
+	modId = "chestesp_testmod"
+	username = "Wurst-Bot"
 }
 
 processResources {
@@ -160,7 +127,7 @@ spotless {
 		eclipse().configFile(file("codestyle/formatter.xml"))
 	}
 	format("licenseHeader") {
-		target("src/*/java/**/*.java", "src/test/java/**/*.java")
+		target("src/main/java/**/*.java", "src/test/java/**/*.java", "src/gametest/java/net/wimods/**/*.java")
 		def header_file = file("codestyle/license_header.txt")
 		def delimiter = LicenseHeaderStep.DEFAULT_JAVA_HEADER_DELIMITER
 		licenseHeaderFile(header_file, delimiter).updateYearWithLatest(true)
