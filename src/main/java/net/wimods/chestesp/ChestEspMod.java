@@ -56,7 +56,7 @@ public final class ChestEspMod
 		
 		toggleKey = KeyBindingHelper
 			.registerKeyBinding(new KeyBinding("key.chestesp.toggle",
-				InputUtil.UNKNOWN_KEY.getCode(), "ChestESP"));
+				InputUtil.UNKNOWN_KEY.getCode(), KeyBinding.Category.MISC));
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			boolean enabled = configHolder.get().enable;
