@@ -1,0 +1,38 @@
+{
+  "required": true,
+  "package": "net.fabricmc.fabric.mixin.client.gametest",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ClientChunkManagerAccessor",
+    "ClientChunkManagerClientChunkMapAccessor",
+    "ClientWorldAccessor",
+    "CyclingButtonWidgetAccessor",
+    "ScreenAccessor",
+    "input.GlCommandEncoderMixin",
+    "input.InputUtilMixin",
+    "input.KeyBindingAccessor",
+    "input.KeyboardAccessor",
+    "input.MinecraftClientMixin",
+    "input.MonitorTrackerMixin",
+    "input.MouseAccessor",
+    "input.WindowMixin",
+    "lifecycle.GameOptionsAccessor",
+    "lifecycle.GameOptionsMixin",
+    "lifecycle.MinecraftClientMixin",
+    "lifecycle.MinecraftDedicatedServerMixin",
+    "screenshot.NativeImageMixin",
+    "screenshot.RenderTickCounterConstantAccessor",
+    "threading.ClientConnectionMixin",
+    "threading.MinecraftClientMixin",
+    "threading.MinecraftServerMixin",
+    "threading.MainMixin",
+    "threading.ThreadExecutorMixin",
+    "world.CreateWorldScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
