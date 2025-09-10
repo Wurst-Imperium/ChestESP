@@ -1,6 +1,6 @@
 buildscript {
 	dependencies {
-		classpath "org.kohsuke:github-api:1.327"
+		classpath "org.kohsuke:github-api:1.329"
 	}
 }
 
@@ -10,10 +10,10 @@ plugins {
 	id "idea"
 	// NeoGradle. Check the latest version at:
 	// https://projects.neoforged.net/neoforged/neogradle
-	id "net.neoforged.gradle.userdev" version "7.0.183"
-	id "net.neoforged.gradle.mixin" version "7.0.183"
+	id "net.neoforged.gradle.userdev" version "7.0.190"
+	id "net.neoforged.gradle.mixin" version "7.0.190"
 	id "me.modmuss50.mod-publish-plugin" version "0.8.4"
-	id "com.diffplug.spotless" version "7.0.2"
+	id "com.diffplug.spotless" version "7.2.1"
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -59,11 +59,17 @@ tasks.named("build").configure {
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 mixin {
-	config 'chestesp.mixins.json'
+	config "chestesp.mixins.json"
 }
 
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 //minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
+
+sourceSets {
+    gametest {
+        depends.on sourceSets.main
+    }
+}
 
 // Default run configurations.
 // These can be tweaked, removed, or duplicated as needed.
@@ -108,6 +114,30 @@ runs {
 		
 		// Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
 		arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+	}
+
+	clientGameTest {
+		runType("client")
+		jvmArguments("-Dchestesp.e2eTest", "-Dmixin.debug.verify=true", "-Dmixin.debug.countInjections=true")
+		systemProperties("fabric.client.gametest.disableNetworkSynchronizer": "true")
+		arguments("--username", "Wurst-Bot")
+		workingDirectory(file("build/run/clientGameTest"))
+		modSource project.sourceSets.gametest
+		mixin {
+			config "fabric_api.mixins.json"
+			config "client_gametest.mixins.json"
+		}
+	}
+}
+
+tasks.withType(JavaExec).configureEach {
+	doFirst {
+		if (name == "runClientGameTest") {
+			def runDir = file("build/run/clientGameTest")
+			if(runDir.exists())
+				delete runDir
+			runDir.mkdirs()
+		}
 	}
 }
 
@@ -196,35 +226,6 @@ tasks.withType(ProcessResources).configureEach {
 	}
 }
 
-tasks.register('runEndToEndTest') {
-	group = 'NeoGradle/Runs'
-	description = 'Runs the game with end-to-end tests enabled'
-	dependsOn 'runClient'
-}
-
-// Modify runClient if it's running as a dependency of runEndToEndTest.
-// Since NeoGradle doesn't allow custom run types yet, this is the only way to
-// make runEndToEndTest work for now.
-tasks.withType(JavaExec).configureEach {
-	doFirst {
-		if (gradle.startParameter.taskNames.contains('runEndToEndTest')) {
-			jvmArgs += [
-				'-Dchestesp.e2eTest',
-				'-Dmixin.debug.verify=true',
-				'-Dmixin.debug.countInjections=true'
-			]
-		}
-	}
-}
-
-processResources {
-	inputs.property "version", project.version
-	
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
-}
-
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
@@ -237,6 +238,10 @@ idea {
 	}
 }
 
+jar {
+	exclude("intentionally_untranslated.json")
+}
+
 import com.diffplug.spotless.generic.LicenseHeaderStep
 spotless {
 	lineEndings = "WINDOWS"
@@ -247,8 +252,7 @@ spotless {
 		eclipse().configFile(file("codestyle/formatter.xml"))
 	}
 	format("licenseHeader") {
-		target("src/*/java/**/*.java", "src/test/java/**/*.java")
-		targetExclude("src/main/java/net/wimods/chestesp/test/fabric/**/*.java")
+		target("src/main/java/**/*.java", "src/test/java/**/*.java", "src/gametest/java/net/wimods/**/*.java")
 		def header_file = file("codestyle/license_header.txt")
 		def delimiter = LicenseHeaderStep.DEFAULT_JAVA_HEADER_DELIMITER
 		licenseHeaderFile(header_file, delimiter).updateYearWithLatest(true)
@@ -263,28 +267,49 @@ def getGhVersion() {
 	return "v" + version.substring(0, version.indexOf("-MC"))
 }
 
-def getChangelogUrl() {
-	def modSlug = mod_name.toLowerCase().replace(" ", "-")
-	def versionSlug = version.substring(0, version.indexOf("-MC")).replace(".", "-")
-	return "https://www.wimods.net/${modSlug}/${modSlug}-${versionSlug}/"
+def getChangelogLink(String platform, String from) {
+	def modSlug = project.archives_base_name.toLowerCase()
+	def versionSlug = getGhVersion().substring(1).replace(".", "-")
+	def shortURL = "https://www.wimods.net/${modSlug}/${modSlug}-${versionSlug}/"
+	def query = []
+	if (platform != "GitHub")
+		query.add("mc=${project.minecraft_version}")
+	query.add("utm_source=${platform}")
+	query.add("utm_medium=" + project.archives_base_name.replace("-", "+"))
+	def fullURL = shortURL + (query.isEmpty() ? "" : "?" + query.join("&"))
+	def encodedURL = java.net.URLEncoder.encode(fullURL, "UTF-8")
+	return "[${shortURL}](https://go.wimods.net/from/${from}?to=${encodedURL})"
+}
+
+def getChangelogImage(String from) {
+	return "![](https://img.wimods.net/${from})"
+}
+
+def getChangelog(String platform, String from) {
+	def prefix = platform == "GitHub" ? "" : "A changelog can be found at: "
+	def imgQuery = platform == "GitHub" ? "" : "?mc_version=${project.minecraft_version}&mod_loader=${project.mod_loader}"
+	return prefix + getChangelogLink(platform, from) + getChangelogImage(from + imgQuery)
 }
 
 publishMods {
+	def version = project.version
+	def archivesName = base.archivesName.get()
+	def modSlug = archivesName.toLowerCase()
+	
+	type = getGhVersion().contains("pre") ? BETA : STABLE
+	modLoaders.add(project.mod_loader.toLowerCase())
 	file = tasks.named("renameJarJar").flatMap { task ->
 		def libsDir = layout.buildDirectory.dir("libs").get().asFile
 		def jarFiles = libsDir.listFiles().findAll { it.name.endsWith(".jar") }
 		layout.file(providers.provider { jarFiles[0] })
 	}
-	type = getGhVersion().contains("pre") ? BETA : STABLE
-	modLoaders.add("neoforge")
-	def changelogUrl = getChangelogUrl()
 	
 	curseforge {
-		projectId = "870203"
+		projectId = project.cf_project_id
 		accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
-		minecraftVersions.add("${project.cf_game_version}")
+		minecraftVersions.add(project.cf_game_version)
 		embeds("cloth-config")
-		changelog = "A changelog can be found at: [${changelogUrl}](${changelogUrl}?mc=${project.minecraft_version}&utm_source=CurseForge&utm_medium=ChestESP&utm_campaign=Changelog&utm_content=CurseForge+ChestESP+MC${project.minecraft_version}-NeoForge)"
+		changelog = getChangelog("CurseForge", "curseforge.com/minecraft/mc-mods/${modSlug}/version/${version}")
 	}
 }
 
@@ -322,12 +347,14 @@ task github {
 	
 	doLast {
 		def github = GitHub.connectUsingOAuth(ENV.GITHUB_TOKEN as String)
-		def repository = github.getRepository("Wurst-Imperium-MCX/ChestESP")
+		def repoId = project.mcx_repo_id
+		def repository = github.getRepository(repoId)
 		def ghVersion = getGhVersion()
 		
 		def ghRelease = repository.getReleaseByTagName(ghVersion as String)
 		if(ghRelease == null) {
 			def releaseBuilder = new GHReleaseBuilder(repository, ghVersion as String)
+			releaseBuilder.body(getChangelogImage("github.com/${repoId}/releases/tag/${ghVersion}"))
 			releaseBuilder.prerelease(ghVersion.contains("pre"))
 			ghRelease = releaseBuilder.create()
 		}
@@ -340,10 +367,9 @@ task github {
 	}
 }
 
-import java.time.LocalDate
 import org.kohsuke.github.GHIssueState
 import org.kohsuke.github.GHMilestoneState
-import java.time.ZoneId
+import java.time.Instant
 
 task closeMilestone {
 	onlyIf {
@@ -352,7 +378,8 @@ task closeMilestone {
 	
 	doLast {
 		def github = GitHub.connectUsingOAuth(ENV.GITHUB_TOKEN as String)
-		def repository = github.getRepository("Wurst-Imperium/ChestESP")
+		def repoId = project.gh_repo_id
+		def repository = github.getRepository(repoId)
 		def ghVersion = getGhVersion()
 		
 		// Weird API design: listMilestones() requires GHIssueState while everything else uses GHMilestoneState.
@@ -362,8 +389,8 @@ task closeMilestone {
 		}
 		
 		if (milestone.getState() != GHMilestoneState.CLOSED) {
-			milestone.setDueOn(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()))
-			milestone.setDescription(getChangelogUrl())
+			milestone.setDueOn(Date.from(Instant.now()))
+			milestone.setDescription(getChangelog("GitHub", "github.com/${repoId}/milestone/${ghVersion}"))
 			milestone.close()
 		}
 	}

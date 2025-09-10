@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -28,6 +29,7 @@ import me.shedaniel.autoconfig.ConfigHolder;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.resources.language.LanguageManager;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -112,6 +114,8 @@ public final class PlausibleAnalytics
 	public void onWorldChange(ClientPlayerNetworkEvent.LoggingIn event)
 	{
 		Minecraft client = Minecraft.getInstance();
+		sessionProp("language", getLanguage(client));
+		
 		String path = getPathForServer(client.getCurrentServer());
 		LinkedHashMap<String, String> props = new LinkedHashMap<>();
 		props.put("enabled", "" + configHolder.get().enable);
@@ -125,6 +129,13 @@ public final class PlausibleAnalytics
 			props.put(key, value);
 		}
 		pageview(path, props);
+	}
+	
+	private String getLanguage(Minecraft client)
+	{
+		return Optional.ofNullable(client.getLanguageManager())
+			.map(LanguageManager::getSelected).map(String::toLowerCase)
+			.orElse(null);
 	}
 	
 	private String getPathForServer(ServerData server)
