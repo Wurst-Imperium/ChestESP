@@ -103,7 +103,8 @@ public final class ChestESPTest implements FabricClientGameTest
 		runCommand(server, "tp 0 -60 0");
 		
 		LOGGER.info("Loading chunks");
-		context.waitFor(mc -> mc.levelRenderer.countRenderedSections() >= 50);
+		context.waitFor(mc -> mc.levelRenderer.countRenderedSections() >= 50,
+			TestClientWorldContext.DEFAULT_CHUNK_LOAD_TIMEOUT);
 		world.waitForChunksRender(false);
 		
 		LOGGER.info("Reached singleplayer world");
