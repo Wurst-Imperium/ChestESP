@@ -27,6 +27,7 @@ import net.minecraft.entity.vehicle.ChestBoatEntity;
 import net.minecraft.entity.vehicle.ChestMinecartEntity;
 import net.minecraft.entity.vehicle.ChestRaftEntity;
 import net.minecraft.entity.vehicle.HopperMinecartEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.wimods.chestesp.util.ChunkUtils;
@@ -54,9 +55,11 @@ public final class ChestEspMod
 		
 		groups = new ChestEspGroupManager(configHolder);
 		
+		KeyBinding.Category kbCategory = KeyBinding.Category
+			.method_74698(Identifier.of("chestesp", "chestesp"));
 		toggleKey = KeyBindingHelper
 			.registerKeyBinding(new KeyBinding("key.chestesp.toggle",
-				InputUtil.UNKNOWN_KEY.getCode(), KeyBinding.Category.MISC));
+				InputUtil.UNKNOWN_KEY.getCode(), kbCategory));
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			boolean enabled = configHolder.get().enable;
