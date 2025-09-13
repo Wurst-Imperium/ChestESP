@@ -23,10 +23,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v5
 
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v6
+    - name: Check translations
+      uses: Wurst-Imperium/check-translations@v1
       with:
-        python-version: "3.12"
-
-    - name: Run check_translations.py
-      run: python scripts/check_translations.py
+        lang-dir: "src/main/resources/assets/chestesp/lang"
