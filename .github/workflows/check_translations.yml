@@ -3,16 +3,16 @@ name: Check Translations
 on:
   push:
     branches-ignore:
-      - "dependabot/**"
+    - "dependabot/**"
     tags-ignore:
-      - "**"
+    - "**"
     paths:
-      - "src/main/resources/assets/chestesp/lang/**.json"
-      - "src/main/resources/intentionally_untranslated.json"
+    - "src/main/resources/assets/chestesp/lang/**.json"
+    - "src/main/resources/intentionally_untranslated.json"
   pull_request:
     paths:
-      - "src/main/resources/assets/chestesp/lang/**.json"
-      - "src/main/resources/intentionally_untranslated.json"
+    - "src/main/resources/assets/chestesp/lang/**.json"
+    - "src/main/resources/intentionally_untranslated.json"
   workflow_dispatch:
 
 jobs:
