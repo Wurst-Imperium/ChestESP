@@ -61,14 +61,17 @@ jobs:
         build-scan-terms-of-use-url: "https://gradle.com/help/legal-terms-of-use"
         build-scan-terms-of-use-agree: "yes"
 
-    - name: Run migrateMappings task
+    - name: Migrate mappings for main source set
       run: |
-        ./gradlew migrateMappings --mappings ${{ github.event.inputs.yarn_mappings }}
-
-    - name: Replace src/main/java with remapped files
-      run: |
+        ./gradlew migrateMappings --mappings ${{ github.event.inputs.yarn_mappings }} --input "src/main/java" --output "src/main/java_"
         rm -rf ./src/main/java
-        mv ./remappedSrc ./src/main/java
+        mv ./src/main/java_ ./src/main/java
+
+    - name: Migrate mappings for gametest source set
+      run: |
+        ./gradlew migrateMappings --mappings ${{ github.event.inputs.yarn_mappings }} --input "src/gametest/java" --output "src/gametest/java_"
+        rm -rf ./src/gametest/java
+        mv ./src/gametest/java_ ./src/gametest/java
 
     - name: Update version constants
       run: |
