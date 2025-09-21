@@ -56,8 +56,8 @@ public final class ChestEspMod
 		
 		groups = new ChestEspGroupManager(configHolder);
 		
-		KeyBinding.Category kbCategory = KeyBinding.Category
-			.method_74698(Identifier.of("chestesp", "chestesp"));
+		KeyBinding.Category kbCategory =
+			KeyBinding.Category.create(Identifier.of("chestesp", "chestesp"));
 		toggleKey = KeyBindingHelper
 			.registerKeyBinding(new KeyBinding("key.chestesp.toggle",
 				InputUtil.UNKNOWN_KEY.getCode(), kbCategory));
