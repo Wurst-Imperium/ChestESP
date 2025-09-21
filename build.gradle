@@ -1,6 +1,6 @@
 buildscript {
 	dependencies {
-		classpath "org.kohsuke:github-api:1.329"
+		classpath "org.kohsuke:github-api:1.330"
 	}
 }
 
@@ -10,9 +10,9 @@ plugins {
 	id "idea"
 	// NeoGradle. Check the latest version at:
 	// https://projects.neoforged.net/neoforged/neogradle
-	id "net.neoforged.gradle.userdev" version "7.0.190"
-	id "net.neoforged.gradle.mixin" version "7.0.190"
-	id "me.modmuss50.mod-publish-plugin" version "0.8.4"
+	id "net.neoforged.gradle.userdev" version "7.0.192"
+	id "net.neoforged.gradle.mixin" version "7.0.192"
+	id "me.modmuss50.mod-publish-plugin" version "1.0.0"
 	id "com.diffplug.spotless" version "7.2.1"
 }
 
