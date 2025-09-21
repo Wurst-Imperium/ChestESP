@@ -31,6 +31,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.wimods.chestesp.util.ChunkUtils;
+import net.wimods.chestesp.util.LootrModCompat;
 import net.wimods.chestesp.util.PlausibleAnalytics;
 import net.wimods.chestesp.util.RenderUtils;
 
@@ -105,9 +106,11 @@ public final class ChestEspMod
 				groups.basicChests.add(blockEntity);
 			else if(blockEntity instanceof EnderChestBlockEntity)
 				groups.enderChests.add(blockEntity);
-			else if(blockEntity instanceof ShulkerBoxBlockEntity)
+			else if(blockEntity instanceof ShulkerBoxBlockEntity
+				|| LootrModCompat.isLootrShulkerBox(blockEntity))
 				groups.shulkerBoxes.add(blockEntity);
-			else if(blockEntity instanceof BarrelBlockEntity)
+			else if(blockEntity instanceof BarrelBlockEntity
+				|| LootrModCompat.isLootrBarrel(blockEntity))
 				groups.barrels.add(blockEntity);
 			else if(blockEntity instanceof DecoratedPotBlockEntity)
 				groups.pots.add(blockEntity);

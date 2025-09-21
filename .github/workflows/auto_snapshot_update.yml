@@ -20,7 +20,6 @@ on:
         description: "CurseForge GameVersion"
         required: true
       distinct_id:
-        description: "Automatically set by the return-dispatch action (leave blank if running manually)"
         required: false
 
 permissions:
@@ -34,8 +33,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Echo distinct ID ${{ github.event.inputs.distinct_id }}
-      run: echo ${{ github.event.inputs.distinct_id }}
+    - name: Echo distinct ID ${{ inputs.distinct_id }}
+      run: echo ${{ inputs.distinct_id }}
 
     - name: Checkout repository
       uses: actions/checkout@v5
@@ -61,23 +60,26 @@ jobs:
         build-scan-terms-of-use-url: "https://gradle.com/help/legal-terms-of-use"
         build-scan-terms-of-use-agree: "yes"
 
-    - name: Run migrateMappings task
+    - name: Migrate mappings for main source set
       run: |
-        ./gradlew migrateMappings --mappings ${{ github.event.inputs.yarn_mappings }}
-
-    - name: Replace src/main/java with remapped files
-      run: |
+        ./gradlew migrateMappings --mappings ${{ inputs.yarn_mappings }} --input "src/main/java" --output "src/main/java_"
         rm -rf ./src/main/java
-        mv ./remappedSrc ./src/main/java
+        mv ./src/main/java_ ./src/main/java
+
+    - name: Migrate mappings for gametest source set
+      run: |
+        ./gradlew migrateMappings --mappings ${{ inputs.yarn_mappings }} --input "src/gametest/java" --output "src/gametest/java_"
+        rm -rf ./src/gametest/java
+        mv ./src/gametest/java_ ./src/gametest/java
 
     - name: Update version constants
       run: |
         python scripts/update_version_constants.py \
-          "${{ github.event.inputs.mc_version }}" \
-          "${{ github.event.inputs.yarn_mappings }}" \
-          "${{ github.event.inputs.fabric_loader }}" \
-          "${{ github.event.inputs.fapi_version }}" \
-          "${{ github.event.inputs.cf_game_version }}"
+          "${{ inputs.mc_version }}" \
+          "${{ inputs.yarn_mappings }}" \
+          "${{ inputs.fabric_loader }}" \
+          "${{ inputs.fapi_version }}" \
+          "${{ inputs.cf_game_version }}"
 
     # To fix any style issues that the migration scripts might cause
     - name: Run spotlessApply task
@@ -88,24 +90,15 @@ jobs:
         git config --global user.name "Wurst-Bot"
         git config --global user.email "contact.wurstimperium@gmail.com"
         git add .
-        git commit -m "[Wurst-Bot] Update to ${{ github.event.inputs.mc_version }}"
+        git commit -m "[Wurst-Bot] Update to ${{ inputs.mc_version }}"
         git push
 
     - name: Trigger CI
-      id: ci_dispatch
-      uses: codex-/return-dispatch@v2
+      uses: Wurst-Imperium/dispatch-and-wait@v1
       with:
         token: ${{ github.token }}
-        owner: Wurst-Imperium
+        owner: ${{ github.repository_owner }}
         repo: ${{ github.event.repository.name }}
         ref: ${{ github.ref }}
         workflow: gradle.yml
-
-    - name: Wait for CI to finish (run ${{ steps.ci_dispatch.outputs.run_id }})
-      uses: codex-/await-remote-run@v1
-      with:
-        token: ${{ github.token }}
-        owner: Wurst-Imperium
-        repo: ${{ github.event.repository.name }}
-        run_id: ${{ steps.ci_dispatch.outputs.run_id }}
         run_timeout_seconds: 600  # 10 minutes
