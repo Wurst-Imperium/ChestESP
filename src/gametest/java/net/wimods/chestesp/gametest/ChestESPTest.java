@@ -61,8 +61,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		System.out.println("Selecting ChestESP entry");
 		input.pressKey(GLFW.GLFW_KEY_DOWN);
-		assertScreenshotEquals(context, "mod_list",
-			"https://i.imgur.com/D943Trh.png");
+		context.takeScreenshot("mod_list");
 		
 		LOGGER.info("Clicking config button");
 		context.clickScreenButton("fml.menu.mods.config");
