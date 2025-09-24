@@ -58,7 +58,7 @@ public abstract class ChestEspGroup
 	public int getColorI(int alpha)
 	{
 		int rgb = color.applyAsInt(configHolder.get());
-		return (alpha << 24) | rgb;
+		return alpha << 24 | rgb;
 	}
 	
 	public String getColorHex()
