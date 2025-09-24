@@ -135,7 +135,7 @@ public final class ChestEspMod
 	
 	public boolean shouldCancelViewBobbing()
 	{
-		return configHolder.get().style.hasLines();
+		return enabled && configHolder.get().style.hasLines();
 	}
 	
 	public void onRender(MatrixStack matrixStack, float partialTicks)
