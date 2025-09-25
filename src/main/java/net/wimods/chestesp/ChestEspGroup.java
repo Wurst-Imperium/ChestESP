@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
 
 import me.shedaniel.autoconfig.ConfigHolder;
 import net.minecraft.util.math.Box;
@@ -21,53 +19,46 @@ public abstract class ChestEspGroup
 {
 	private final ConfigHolder<ChestEspConfig> configHolder;
 	private final String name;
-	private final ToIntFunction<ChestEspConfig> color;
-	private final Predicate<ChestEspConfig> enabled;
-	
 	protected final ArrayList<Box> boxes = new ArrayList<>();
 	
-	/**
-	 * Creates a new ChestEspGroup controlled by the given settings. If
-	 * <code>enabled</code> is <code>null</code>, the group will always be
-	 * enabled.
-	 */
-	public ChestEspGroup(ConfigHolder<ChestEspConfig> configHolder, String name,
-		ToIntFunction<ChestEspConfig> color, Predicate<ChestEspConfig> enabled)
+	public ChestEspGroup(ConfigHolder<ChestEspConfig> configHolder, String name)
 	{
 		this.configHolder = Objects.requireNonNull(configHolder);
 		this.name = Objects.requireNonNull(name);
-		this.color = Objects.requireNonNull(color);
-		this.enabled = enabled;
 	}
 	
-	public String getName()
-	{
-		return name;
-	}
+	protected abstract boolean isEnabled(ChestEspConfig c);
+	
+	protected abstract int getColor(ChestEspConfig c);
 	
 	public void clear()
 	{
 		boxes.clear();
 	}
 	
-	public boolean isEnabled()
+	public final String getName()
 	{
-		return enabled == null || enabled.test(configHolder.get());
+		return name;
 	}
 	
-	public int getColorI(int alpha)
+	public final boolean isEnabled()
 	{
-		int rgb = color.applyAsInt(configHolder.get());
+		return isEnabled(configHolder.get());
+	}
+	
+	public final int getColorI(int alpha)
+	{
+		int rgb = getColor(configHolder.get());
 		return alpha << 24 | rgb;
 	}
 	
-	public String getColorHex()
+	public final String getColorHex()
 	{
-		int rgb = color.applyAsInt(configHolder.get());
+		int rgb = getColor(configHolder.get());
 		return String.format("#%06X", rgb);
 	}
 	
-	public List<Box> getBoxes()
+	public final List<Box> getBoxes()
 	{
 		return Collections.unmodifiableList(boxes);
 	}

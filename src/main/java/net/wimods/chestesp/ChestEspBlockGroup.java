@@ -7,9 +7,6 @@
  */
 package net.wimods.chestesp;
 
-import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
-
 import me.shedaniel.autoconfig.ConfigHolder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
@@ -20,17 +17,21 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.wimods.chestesp.util.BlockUtils;
 
-public final class ChestEspBlockGroup extends ChestEspGroup
+public abstract class ChestEspBlockGroup extends ChestEspGroup
 {
 	public ChestEspBlockGroup(ConfigHolder<ChestEspConfig> configHolder,
-		String name, ToIntFunction<ChestEspConfig> color,
-		Predicate<ChestEspConfig> enabled)
+		String name)
 	{
-		super(configHolder, name, color, enabled);
+		super(configHolder, name);
 	}
 	
-	public void add(BlockEntity be)
+	protected abstract boolean matches(BlockEntity be);
+	
+	public final void addIfMatches(BlockEntity be)
 	{
+		if(!matches(be))
+			return;
+		
 		Box box = getBox(be);
 		if(box == null)
 			return;
