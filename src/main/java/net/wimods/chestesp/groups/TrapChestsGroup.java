@@ -12,6 +12,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.TrappedChestBlockEntity;
 import net.wimods.chestesp.ChestEspBlockGroup;
 import net.wimods.chestesp.ChestEspConfig;
+import net.wimods.chestesp.util.LootrModCompat;
 
 public final class TrapChestsGroup extends ChestEspBlockGroup
 {
@@ -35,6 +36,7 @@ public final class TrapChestsGroup extends ChestEspBlockGroup
 	@Override
 	protected boolean matches(BlockEntity be)
 	{
-		return be instanceof TrappedChestBlockEntity;
+		return be instanceof TrappedChestBlockEntity
+			|| LootrModCompat.isLootrTrappedChest(be);
 	}
 }
