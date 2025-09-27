@@ -36,6 +36,9 @@ public final class ChestESPTest implements FabricClientGameTest
 	public static final Logger LOGGER =
 		LoggerFactory.getLogger("ChestESP Test");
 	
+	public static final boolean IS_LOOTR_TEST =
+		System.getProperty("chestesp.withLootr") != null;
+	
 	@Override
 	public void runTest(ClientGameTestContext context)
 	{
@@ -56,8 +59,12 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Clicking mods button");
 		context.clickScreenButton("modmenu.title");
-		assertScreenshotEquals(context, "mod_menu",
-			"https://i.imgur.com/PU7EsPS.png");
+		if(IS_LOOTR_TEST)
+			assertScreenshotEquals(context, "mod_menu",
+				"https://i.imgur.com/Q1IyYQG.png");
+		else
+			assertScreenshotEquals(context, "mod_menu",
+				"https://i.imgur.com/PU7EsPS.png");
 		
 		LOGGER.info("Clicking configure button");
 		TestInput input = context.getInput();

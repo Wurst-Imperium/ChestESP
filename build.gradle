@@ -27,6 +27,17 @@ repositories {
 	// for more information about repositories.
 	maven {url = "https://maven.shedaniel.me/"}
 	maven {url = "https://maven.terraformersmc.com/releases/"}
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = "https://api.modrinth.com/maven"
+			}
+		}
+		filter {
+			includeGroup "maven.modrinth"
+		}
+	}
 }
 
 // Override vulnerable dependencies until Minecraft updates to newer versions
@@ -76,16 +87,52 @@ dependencies {
 	}
 }
 
-loom {
-	accessWidenerPath = file("src/main/resources/chestesp.accesswidener")
-}
-
 fabricApi.configureTests {
 	createSourceSet = true
 	enableGameTests = false
 	enableClientGameTests = true
 	modId = "chestesp_testmod"
 	username = "Wurst-Bot"
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/chestesp.accesswidener")
+	
+	runs {
+		clientGametestWithLootr {
+			inherit client
+			source = sourceSets.gametest
+			runDir = "build/run/clientGameTestWithLootr"
+			vmArgs.add("-Dfabric.client.gametest")
+			vmArgs.add("-Dchestesp.withLootr=true")
+			programArgs.add("--username=Wurst-Bot")
+		}
+	}
+}
+
+configurations {
+	lootrMod {
+		transitive = false
+	}
+}
+
+dependencies {
+	lootrMod "maven.modrinth:lootr:${project.lootr_version}"
+}
+
+tasks.withType(net.fabricmc.loom.task.RunGameTask).configureEach {
+	doFirst {
+		if (name == "runClientGametestWithLootr") {
+			def runDir = file("build/run/clientGameTestWithLootr")
+			if(runDir.exists())
+				delete runDir
+			runDir.mkdirs()
+			copy {
+				from(configurations.lootrMod)
+				into(new File(runDir, "mods"))
+			}
+		}
+	}
 }
 
 processResources {
