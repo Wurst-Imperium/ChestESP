@@ -137,3 +137,5 @@ git clone https://github.com/Wurst-Imperium/ChestESP.git
 cd ChestESP
 ./gradlew genSources idea
 ```
+
+**Note:** IntelliJ IDEA is not yet fully compatible with configuration cache (see <https://github.com/FabricMC/fabric-loom/issues/1349>). You might need to set `org.gradle.configuration-cache=false` in `gradle.properties`. If you do, please remember to change it back to `true` before committing!
