@@ -29,9 +29,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
-      IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
     steps:
 
     - name: Echo distinct ID ${{ inputs.distinct_id }}
@@ -64,6 +61,8 @@ jobs:
 
     - name: Upload to VirusTotal for analysis
       id: virustotal
+      env:
+        VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
       if: ${{ env.VIRUSTOTAL_API_KEY }}
       uses: crazy-max/ghaction-virustotal@v4
       with:
@@ -90,6 +89,8 @@ jobs:
         echo "</details>" >> $GITHUB_STEP_SUMMARY
 
     - name: Run client gametest
+      env:
+        IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
       run: xvfb-run --auto-servernum ./gradlew runClientGameTest --stacktrace --warning-mode=fail
 
     - name: Upload Test Screenshots.zip artifact
