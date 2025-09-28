@@ -43,6 +43,13 @@ jobs:
         java-version: "21"
         distribution: "microsoft"
 
+    # The setup-gradle action doesn't include the loom-cache directory, but it's needed for configuration cache.
+    - name: Restore Loom cache
+      uses: actions/cache@v4
+      with:
+        path: .gradle/loom-cache
+        key: loom-cache-${{ runner.os }}-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties','gradle.properties') }}
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
