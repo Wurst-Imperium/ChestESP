@@ -107,9 +107,7 @@ jobs:
         echo "</details>" >> $GITHUB_STEP_SUMMARY
 
     - name: Run client gametest
-      uses: GabrielBB/xvfb-action@v1.7
-      with:
-        run: ./gradlew runClientGameTest --stacktrace --warning-mode=fail
+      run: xvfb-run --auto-servernum ./gradlew runClientGameTest --stacktrace --warning-mode=fail
 
     - name: Upload Test Screenshots.zip artifact
       uses: actions/upload-artifact@v4
