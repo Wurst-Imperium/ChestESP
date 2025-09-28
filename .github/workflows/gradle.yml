@@ -74,7 +74,7 @@ jobs:
       continue-on-error: true
 
     - name: Add VirusTotal links to build summary
-      if: ${{ env.VIRUSTOTAL_API_KEY && steps.virustotal.outputs.analysis }}
+      if: ${{ steps.virustotal.outputs.analysis }}
       run: |
         echo "<details open>" >> $GITHUB_STEP_SUMMARY
         echo "<summary>🛡️ VirusTotal Scans</summary>" >> $GITHUB_STEP_SUMMARY
