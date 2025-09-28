@@ -136,10 +136,11 @@ tasks.withType(net.fabricmc.loom.task.RunGameTask).configureEach {
 }
 
 processResources {
-	inputs.property "version", project.version
+	def modVersion = project.version
+	inputs.property("version", modVersion)
 	
 	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
+		expand(version: modVersion)
 	}
 }
 
