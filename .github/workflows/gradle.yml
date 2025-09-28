@@ -47,7 +47,9 @@ jobs:
     - name: Restore Loom cache
       uses: actions/cache@v4
       with:
-        path: .gradle/loom-cache
+        path: |
+          .gradle/loom-cache/minecraftMaven
+          .gradle/loom-cache/remapped_mods
         key: loom-cache-${{ runner.os }}-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties','gradle.properties') }}
 
     - name: Grant execute permission for gradlew
