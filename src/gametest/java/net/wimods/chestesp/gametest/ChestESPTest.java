@@ -36,6 +36,9 @@ public final class ChestESPTest implements FabricClientGameTest
 	public static final Logger LOGGER =
 		LoggerFactory.getLogger("ChestESP Test");
 	
+	public static final boolean IS_LOOTR_TEST =
+		System.getProperty("chestesp.withLootr") != null;
+	
 	@Override
 	public void runTest(ClientGameTestContext context)
 	{
@@ -56,8 +59,12 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Clicking mods button");
 		context.clickScreenButton("modmenu.title");
-		assertScreenshotEquals(context, "mod_menu",
-			"https://i.imgur.com/PU7EsPS.png");
+		if(IS_LOOTR_TEST)
+			assertScreenshotEquals(context, "mod_menu",
+				"https://i.imgur.com/Q1IyYQG.png");
+		else
+			assertScreenshotEquals(context, "mod_menu",
+				"https://i.imgur.com/PU7EsPS.png");
 		
 		LOGGER.info("Clicking configure button");
 		TestInput input = context.getInput();
@@ -126,6 +133,8 @@ public final class ChestESPTest implements FabricClientGameTest
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		LOGGER.info("Building test rig");
+		runCommand(server, "tp ^ ^3 ^");
+		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ stone");
 		buildTestRig(context, spContext);
 		assertScreenshotEquals(context, "ChestESP_default_settings",
 			"https://i.imgur.com/PmJ4itt.png");
@@ -189,10 +198,8 @@ public final class ChestESPTest implements FabricClientGameTest
 		TestServerContext server = spContext.getServer();
 		
 		// Set up background
-		runCommand(server, "fill ^-12 ^-1 ^ ^12 ^-1 ^10 stone");
-		runCommand(server, "fill ^-12 ^ ^10 ^12 ^12 ^10 stone");
-		runCommand(server, "tp ^ ^3 ^");
-		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ stone");
+		runCommand(server, "fill ^-12 ^-4 ^ ^12 ^-4 ^10 stone");
+		runCommand(server, "fill ^-12 ^-3 ^10 ^12 ^9 ^10 stone");
 		
 		// Top row: normal chests
 		runCommand(server, "setblock ^5 ^4 ^7 chest");
