@@ -138,4 +138,8 @@ cd ChestESP
 ./gradlew genSources idea --no-configuration-cache
 ```
 
-**Note:** IntelliJ IDEA is not yet fully compatible with Gradle's configuration cache (see <https://github.com/FabricMC/fabric-loom/issues/1349>). Because of this, you will need to run all Gradle commands with `--no-configuration-cache`.
+**Note:** IntelliJ IDEA is [not yet compatible](https://github.com/FabricMC/fabric-loom/issues/1349) with Gradle's configuration cache. You will run into issues.
+
+Possible workarounds:
+- Turn off args files ([this setting](https://i.imgur.com/zHqIOYg.png)). Won't work for some users because of a command length limit.
+- Add `--no-configuration-cache` to all of your Gradle commands.
