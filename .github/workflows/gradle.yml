@@ -93,9 +93,17 @@ jobs:
         IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
       run: xvfb-run --auto-servernum ./gradlew runClientGameTest --stacktrace --warning-mode=fail
 
-    - name: Upload Test Screenshots.zip artifact
+    - name: Upload screenshots.zip artifact
       uses: actions/upload-artifact@v4
-      if: always()
+      if: ${{ success() || failure() }}
       with:
-        name: Test Screenshots
+        name: screenshots
         path: build/run/clientGameTest/screenshots
+        compression-level: 0
+
+    - name: Upload crash-reports.zip artifact
+      uses: actions/upload-artifact@v4
+      if: ${{ failure() }}
+      with:
+        name: crash-reports
+        path: build/run/clientGameTest/crash-reports
