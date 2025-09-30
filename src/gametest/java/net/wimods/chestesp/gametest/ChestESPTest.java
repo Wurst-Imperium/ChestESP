@@ -29,7 +29,6 @@ import net.minecraft.client.gui.screen.world.WorldCreator;
 import net.minecraft.world.GameRules;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
-import net.wimods.chestesp.ChestEspStyle;
 
 public final class ChestESPTest implements FabricClientGameTest
 {
@@ -132,41 +131,27 @@ public final class ChestESPTest implements FabricClientGameTest
 			"https://i.imgur.com/rNf37jd.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
-		LOGGER.info("Building test rig");
+		LOGGER.info("Building vanilla test rig");
 		runCommand(server, "tp ^ ^3 ^");
-		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ stone");
-		buildTestRig(context, spContext);
-		assertScreenshotEquals(context, "ChestESP_default_settings",
-			"https://i.imgur.com/PmJ4itt.png");
+		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ smooth_stone");
+		VanillaTestRig.build(context, spContext);
+		VanillaTestRig.test(context);
 		
-		LOGGER.info("Enabling all ChestESP groups");
-		withConfig(context, config -> {
-			config.include_pots = true;
-			config.include_hoppers = true;
-			config.include_hopper_carts = true;
-			config.include_droppers = true;
-			config.include_dispensers = true;
-			config.include_crafters = true;
-			config.include_furnaces = true;
+		LOGGER.info("Checking for broken mixins");
+		MixinEnvironment.getCurrentEnvironment().audit();
+	}
+	
+	public static void withConfig(ClientGameTestContext context,
+		Consumer<ChestEspConfig> configUpdater)
+	{
+		context.runOnClient(mc -> {
+			configUpdater.accept(
+				ChestEspMod.getInstance().getConfigHolder().getConfig());
 		});
-		assertScreenshotEquals(context, "ChestESP_boxes",
-			"https://i.imgur.com/npoKuj3.png");
-		
-		LOGGER.info("Changing style to lines");
-		withConfig(context, config -> {
-			config.style = ChestEspStyle.LINES;
-		});
-		assertScreenshotEquals(context, "ChestESP_lines",
-			"https://i.imgur.com/xMM5fKc.png");
-		
-		LOGGER.info("Changing style to lines and boxes");
-		withConfig(context, config -> {
-			config.style = ChestEspStyle.LINES_AND_BOXES;
-		});
-		assertScreenshotEquals(context, "ChestESP_lines_and_boxes",
-			"https://i.imgur.com/VQWhfFR.png");
-		
-		LOGGER.info("Changing all color settings");
+	}
+	
+	public static void setRainbowColors(ClientGameTestContext context)
+	{
 		withConfig(context, config -> {
 			int total = 14;
 			config.chest_color = rainbowColor(0, total);
@@ -183,70 +168,6 @@ public final class ChestESPTest implements FabricClientGameTest
 			config.dispenser_color = rainbowColor(11, total);
 			config.crafter_color = rainbowColor(12, total);
 			config.furnace_color = rainbowColor(13, total);
-		});
-		assertScreenshotEquals(context, "ChestESP_custom_colors",
-			"https://i.imgur.com/7r0yidB.png");
-		
-		LOGGER.info("Checking for broken mixins");
-		MixinEnvironment.getCurrentEnvironment().audit();
-	}
-	
-	private void buildTestRig(ClientGameTestContext context,
-		TestSingleplayerContext spContext)
-	{
-		TestClientWorldContext world = spContext.getClientWorld();
-		TestServerContext server = spContext.getServer();
-		
-		// Set up background
-		runCommand(server, "fill ^-12 ^-4 ^ ^12 ^-4 ^10 stone");
-		runCommand(server, "fill ^-12 ^-3 ^10 ^12 ^9 ^10 stone");
-		
-		// Top row: normal chests
-		runCommand(server, "setblock ^5 ^4 ^7 chest");
-		runCommand(server, "setblock ^3 ^4 ^7 chest[type=right]");
-		runCommand(server, "setblock ^2 ^4 ^7 chest[type=left]");
-		runCommand(server, "setblock ^ ^4 ^7 ender_chest");
-		runCommand(server, "setblock ^-2 ^4 ^7 trapped_chest");
-		runCommand(server, "setblock ^-4 ^4 ^7 trapped_chest[type=right]");
-		runCommand(server, "setblock ^-5 ^4 ^7 trapped_chest[type=left]");
-		
-		// Second row: other containers
-		runCommand(server, "setblock ^5 ^2 ^7 barrel");
-		runCommand(server, "setblock ^3 ^2 ^7 shulker_box");
-		runCommand(server, "setblock ^1 ^2 ^7 decorated_pot");
-		runCommand(server, "setblock ^-1 ^2 ^7 furnace");
-		runCommand(server, "setblock ^-3 ^2 ^7 blast_furnace");
-		runCommand(server, "setblock ^-5 ^2 ^7 smoker");
-		
-		// Third row: redstone things
-		runCommand(server, "setblock ^5 ^ ^7 dispenser");
-		runCommand(server, "setblock ^3 ^ ^7 dropper");
-		runCommand(server, "setblock ^1 ^ ^7 hopper");
-		runCommand(server, "setblock ^-1 ^ ^7 crafter");
-		
-		// Fourth row: vehicles
-		runCommand(server,
-			"summon chest_minecart ^5 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
-		runCommand(server,
-			"summon hopper_minecart ^3 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
-		runCommand(server,
-			"summon oak_chest_boat ^1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
-		runCommand(server,
-			"summon bamboo_chest_raft ^-1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
-		
-		// TODO: Copper chests!
-		
-		// Wait for the blocks to appear
-		context.waitTicks(2);
-		world.waitForChunksRender();
-	}
-	
-	public static void withConfig(ClientGameTestContext context,
-		Consumer<ChestEspConfig> configUpdater)
-	{
-		context.runOnClient(mc -> {
-			configUpdater.accept(
-				ChestEspMod.getInstance().getConfigHolder().getConfig());
 		});
 	}
 	
