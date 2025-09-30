@@ -137,6 +137,13 @@ public final class ChestESPTest implements FabricClientGameTest
 		VanillaTestRig.build(context, spContext);
 		VanillaTestRig.test(context);
 		
+		if(IS_LOOTR_TEST)
+		{
+			LOGGER.info("Building lootr test rig");
+			LootrTestRig.build(context, spContext);
+			LootrTestRig.test(context);
+		}
+		
 		LOGGER.info("Checking for broken mixins");
 		MixinEnvironment.getCurrentEnvironment().audit();
 	}
@@ -174,5 +181,12 @@ public final class ChestESPTest implements FabricClientGameTest
 	private static int rainbowColor(int index, int total)
 	{
 		return Color.HSBtoRGB((float)index / total, 0.8F, 1) & 0xFFFFFF;
+	}
+	
+	public static void resetConfig(ClientGameTestContext context)
+	{
+		context.runOnClient(mc -> {
+			ChestEspMod.getInstance().getConfigHolder().resetToDefault();
+		});
 	}
 }
