@@ -99,7 +99,7 @@ loom {
 	accessWidenerPath = file("src/main/resources/chestesp.accesswidener")
 	
 	runs {
-		clientGametestWithLootr {
+		clientGameTestWithLootr {
 			inherit client
 			source = sourceSets.gametest
 			runDir = "build/run/clientGameTestWithLootr"
@@ -120,19 +120,13 @@ dependencies {
 	lootrMod "maven.modrinth:lootr:${project.lootr_version}"
 }
 
-tasks.withType(net.fabricmc.loom.task.RunGameTask).configureEach {
-	doFirst {
-		if (name == "runClientGametestWithLootr") {
-			def runDir = file("build/run/clientGameTestWithLootr")
-			if(runDir.exists())
-				delete runDir
-			runDir.mkdirs()
-			copy {
-				from(configurations.lootrMod)
-				into(new File(runDir, "mods"))
-			}
-		}
-	}
+def prepareClientGameTestWithLootr = tasks.register("prepareClientGameTestWithLootr", Sync) {
+	from configurations.lootrMod
+	into layout.buildDirectory.dir("run/clientGameTestWithLootr/mods")
+}
+
+tasks.named("runClientGameTestWithLootr") {
+	dependsOn prepareClientGameTestWithLootr
 }
 
 processResources {
