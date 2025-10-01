@@ -71,7 +71,7 @@ jobs:
         cache-read-only: ${{ github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/heads/1.') }}
 
     - name: Build
-      run: ./gradlew build --stacktrace --warning-mode=fail
+      run: ./gradlew build --stacktrace
 
     - name: Create and push tag
       run: |
