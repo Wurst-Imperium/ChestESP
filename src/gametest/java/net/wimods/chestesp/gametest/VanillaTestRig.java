@@ -33,6 +33,7 @@ public enum VanillaTestRig
 		runCommand(server, "setblock ^-2 ^4 ^7 trapped_chest");
 		runCommand(server, "setblock ^-4 ^4 ^7 trapped_chest[type=right]");
 		runCommand(server, "setblock ^-5 ^4 ^7 trapped_chest[type=left]");
+		runCommand(server, "fill ^5 ^4 ^6 ^-5 ^4 ^6 smooth_stone_slab[type=top]");
 		
 		// Second row: other containers
 		runCommand(server, "setblock ^5 ^2 ^7 barrel");
@@ -41,22 +42,25 @@ public enum VanillaTestRig
 		runCommand(server, "setblock ^-1 ^2 ^7 furnace");
 		runCommand(server, "setblock ^-3 ^2 ^7 blast_furnace");
 		runCommand(server, "setblock ^-5 ^2 ^7 smoker");
+		runCommand(server, "fill ^5 ^2 ^6 ^-5 ^2 ^6 smooth_stone_slab[type=top]");
 		
 		// Third row: redstone things
 		runCommand(server, "setblock ^5 ^ ^7 dispenser");
 		runCommand(server, "setblock ^3 ^ ^7 dropper");
 		runCommand(server, "setblock ^1 ^ ^7 hopper");
 		runCommand(server, "setblock ^-1 ^ ^7 crafter");
+		runCommand(server, "fill ^5 ^ ^6 ^-5 ^ ^6 smooth_stone_slab");
 		
 		// Fourth row: vehicles
 		runCommand(server,
-			"summon chest_minecart ^5 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
+		"summon chest_minecart ^5 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
 		runCommand(server,
-			"summon hopper_minecart ^3 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
+		"summon hopper_minecart ^3 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
 		runCommand(server,
-			"summon oak_chest_boat ^1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
+		"summon oak_chest_boat ^1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
 		runCommand(server,
-			"summon bamboo_chest_raft ^-1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
+		"summon bamboo_chest_raft ^-1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
+		runCommand(server, "fill ^5 ^-2 ^6 ^-5 ^-2 ^6 smooth_stone_slab");
 		
 		// TODO: Copper chests!
 		
@@ -68,7 +72,7 @@ public enum VanillaTestRig
 	public static void test(ClientGameTestContext context)
 	{
 		assertScreenshotEquals(context, "ChestESP_default_settings",
-			"https://i.imgur.com/l4kcXRJ.png");
+			"https://i.imgur.com/BQj2tYO.png");
 		
 		ChestESPTest.LOGGER.info("Enabling all ChestESP groups");
 		ChestESPTest.withConfig(context, config -> {
@@ -81,25 +85,25 @@ public enum VanillaTestRig
 			config.include_furnaces = true;
 		});
 		assertScreenshotEquals(context, "ChestESP_boxes",
-			"https://i.imgur.com/z2rFbxd.png");
+			"https://i.imgur.com/ugeznOe.png");
 		
 		ChestESPTest.LOGGER.info("Changing style to lines");
 		ChestESPTest.withConfig(context, config -> {
 			config.style = ChestEspStyle.LINES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lines",
-			"https://i.imgur.com/XpUqau7.png");
+			"https://i.imgur.com/P4Wl857.png");
 		
 		ChestESPTest.LOGGER.info("Changing style to lines and boxes");
 		ChestESPTest.withConfig(context, config -> {
 			config.style = ChestEspStyle.LINES_AND_BOXES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lines_and_boxes",
-			"https://i.imgur.com/JdWW00w.png");
+			"https://i.imgur.com/CEVa0Mw.png");
 		
 		ChestESPTest.LOGGER.info("Changing all color settings");
 		ChestESPTest.setRainbowColors(context);
 		assertScreenshotEquals(context, "ChestESP_custom_colors",
-			"https://i.imgur.com/4moA6R0.png");
+			"https://i.imgur.com/Lx9B5Vt.png");
 	}
 }

@@ -41,6 +41,8 @@ public enum LootrTestRig
 			"setblock ^-3 ^2 ^7 lootr:lootr_trapped_chest[type=right]");
 		runCommand(server,
 			"setblock ^-4 ^2 ^7 lootr:lootr_trapped_chest[type=left]");
+		runCommand(server,
+			"fill ^4 ^2 ^6 ^-4 ^2 ^6 smooth_stone_slab[type=top]");
 		
 		// Second row: other lootr containers
 		runCommand(server, "setblock ^4 ^ ^7 lootr:lootr_barrel");
@@ -50,6 +52,7 @@ public enum LootrTestRig
 			"setblock ^-2 ^ ^7 lootr:lootr_inventory[type=right]");
 		runCommand(server,
 			"setblock ^-3 ^ ^7 lootr:lootr_inventory[type=left]");
+		runCommand(server, "fill ^4 ^ ^6 ^-4 ^ ^6 smooth_stone_slab");
 		
 		// Wait for the blocks to appear
 		context.waitTicks(2);
@@ -59,7 +62,7 @@ public enum LootrTestRig
 	public static void test(ClientGameTestContext context)
 	{
 		assertScreenshotEquals(context, "ChestESP_lootr_default_settings",
-			"https://i.imgur.com/cyGgOkz.png");
+			"https://i.imgur.com/U6n82fV.png");
 		
 		ChestESPTest.LOGGER.info("Enabling all ChestESP groups for Lootr test");
 		ChestESPTest.withConfig(context, config -> {
@@ -72,14 +75,14 @@ public enum LootrTestRig
 			config.include_furnaces = true;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_boxes",
-			"https://i.imgur.com/cyGgOkz.png");
+			"https://i.imgur.com/U6n82fV.png");
 		
 		ChestESPTest.LOGGER.info("Changing style to lines for Lootr test");
 		ChestESPTest.withConfig(context, config -> {
 			config.style = net.wimods.chestesp.ChestEspStyle.LINES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_lines",
-			"https://i.imgur.com/CbaM4Oy.png");
+			"https://i.imgur.com/LbzU7OM.png");
 		
 		ChestESPTest.LOGGER
 			.info("Changing style to lines and boxes for Lootr test");
@@ -87,11 +90,11 @@ public enum LootrTestRig
 			config.style = net.wimods.chestesp.ChestEspStyle.LINES_AND_BOXES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_lines_and_boxes",
-			"https://i.imgur.com/lCr8YPN.png");
+			"https://i.imgur.com/URUnd2z.png");
 		
 		ChestESPTest.LOGGER.info("Changing all color settings for Lootr test");
 		ChestESPTest.setRainbowColors(context);
 		assertScreenshotEquals(context, "ChestESP_lootr_custom_colors",
-			"https://i.imgur.com/8fjAwXT.png");
+			"https://i.imgur.com/ldmYTpC.png");
 	}
 }
