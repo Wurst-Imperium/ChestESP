@@ -120,7 +120,12 @@ dependencies {
 	lootrMod "maven.modrinth:lootr:${project.lootr_version}"
 }
 
+def cleanClientGameTestWithLootr = tasks.register("cleanClientGameTestWithLootr", Delete) {
+	delete layout.buildDirectory.dir("run/clientGameTestWithLootr")
+}
+
 def prepareClientGameTestWithLootr = tasks.register("prepareClientGameTestWithLootr", Sync) {
+	dependsOn cleanClientGameTestWithLootr
 	from configurations.lootrMod
 	into layout.buildDirectory.dir("run/clientGameTestWithLootr/mods")
 }
