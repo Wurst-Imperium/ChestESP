@@ -33,7 +33,8 @@ public enum VanillaTestRig
 		runCommand(server, "setblock ^-2 ^4 ^7 trapped_chest");
 		runCommand(server, "setblock ^-4 ^4 ^7 trapped_chest[type=right]");
 		runCommand(server, "setblock ^-5 ^4 ^7 trapped_chest[type=left]");
-		runCommand(server, "fill ^5 ^4 ^6 ^-5 ^4 ^6 smooth_stone_slab[type=top]");
+		runCommand(server,
+			"fill ^5 ^4 ^6 ^-5 ^4 ^6 smooth_stone_slab[type=top]");
 		
 		// Second row: other containers
 		runCommand(server, "setblock ^5 ^2 ^7 barrel");
@@ -42,7 +43,8 @@ public enum VanillaTestRig
 		runCommand(server, "setblock ^-1 ^2 ^7 furnace");
 		runCommand(server, "setblock ^-3 ^2 ^7 blast_furnace");
 		runCommand(server, "setblock ^-5 ^2 ^7 smoker");
-		runCommand(server, "fill ^5 ^2 ^6 ^-5 ^2 ^6 smooth_stone_slab[type=top]");
+		runCommand(server,
+			"fill ^5 ^2 ^6 ^-5 ^2 ^6 smooth_stone_slab[type=top]");
 		
 		// Third row: redstone things
 		runCommand(server, "setblock ^5 ^ ^7 dispenser");
@@ -53,13 +55,13 @@ public enum VanillaTestRig
 		
 		// Fourth row: vehicles
 		runCommand(server,
-		"summon chest_minecart ^5 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
+			"summon chest_minecart ^5 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
 		runCommand(server,
-		"summon hopper_minecart ^3 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
+			"summon hopper_minecart ^3 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
 		runCommand(server,
-		"summon oak_chest_boat ^1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
+			"summon oak_chest_boat ^1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
 		runCommand(server,
-		"summon bamboo_chest_raft ^-1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
+			"summon bamboo_chest_raft ^-1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
 		runCommand(server, "fill ^5 ^-2 ^6 ^-5 ^-2 ^6 smooth_stone_slab");
 		
 		// TODO: Copper chests!
