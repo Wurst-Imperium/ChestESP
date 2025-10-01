@@ -104,15 +104,18 @@ public final class ChestESPTest implements FabricClientGameTest
 		TestClientWorldContext world = spContext.getClientWorld();
 		TestServerContext server = spContext.getServer();
 		
-		LOGGER.info("Teleporting player to world origin");
-		runCommand(server, "tp 0 -60 0");
+		LOGGER.info("Setting up test background");
+		runCommand(server, "tp 0 -57 0");
+		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ smooth_stone");
+		runCommand(server, "fill ^-12 ^-4 ^ ^12 ^-4 ^10 smooth_stone");
+		runCommand(server, "fill ^-12 ^-3 ^10 ^12 ^9 ^10 smooth_stone");
 		
 		LOGGER.info("Loading chunks");
+		context.waitTicks(2);
 		world.waitForChunksRender();
 		
-		LOGGER.info("Reached singleplayer world");
 		assertScreenshotEquals(context, "in_game",
-			"https://i.imgur.com/XrGpZZV.png");
+			"https://i.imgur.com/tl9n6xC.png");
 		
 		LOGGER.info("Recording debug menu");
 		input.pressKey(GLFW.GLFW_KEY_F3);
@@ -122,18 +125,16 @@ public final class ChestESPTest implements FabricClientGameTest
 		LOGGER.info("Opening inventory");
 		input.pressKey(GLFW.GLFW_KEY_E);
 		assertScreenshotEquals(context, "inventory",
-			"https://i.imgur.com/9barXvh.png");
+			"https://i.imgur.com/9mUN6Jn.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		LOGGER.info("Opening game menu");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		assertScreenshotEquals(context, "game_menu",
-			"https://i.imgur.com/rNf37jd.png");
+			"https://i.imgur.com/Kc4BMD3.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		LOGGER.info("Building vanilla test rig");
-		runCommand(server, "tp ^ ^3 ^");
-		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ smooth_stone");
 		VanillaTestRig.build(context, spContext);
 		VanillaTestRig.test(context);
 		

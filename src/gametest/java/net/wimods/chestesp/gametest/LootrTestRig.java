@@ -28,10 +28,6 @@ public enum LootrTestRig
 		runCommand(server, "fill ^-12 ^-3 ^1 ^12 ^9 ^9 air");
 		ChestESPTest.resetConfig(context);
 		
-		// Set up background
-		runCommand(server, "fill ^-12 ^-4 ^ ^12 ^-4 ^10 smooth_stone");
-		runCommand(server, "fill ^-12 ^-3 ^10 ^12 ^9 ^10 smooth_stone");
-		
 		// Delete vanilla test rig except for background
 		runCommand(server, "kill @e[type=!player]");
 		runCommand(server, "fill ^-12 ^-3 ^1 ^12 ^9 ^9 air");

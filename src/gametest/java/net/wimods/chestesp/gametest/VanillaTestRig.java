@@ -25,10 +25,6 @@ public enum VanillaTestRig
 		TestClientWorldContext world = spContext.getClientWorld();
 		TestServerContext server = spContext.getServer();
 		
-		// Set up background
-		runCommand(server, "fill ^-12 ^-4 ^ ^12 ^-4 ^10 stone");
-		runCommand(server, "fill ^-12 ^-3 ^10 ^12 ^9 ^10 stone");
-		
 		// Top row: normal chests
 		runCommand(server, "setblock ^5 ^4 ^7 chest");
 		runCommand(server, "setblock ^3 ^4 ^7 chest[type=right]");
@@ -72,7 +68,7 @@ public enum VanillaTestRig
 	public static void test(ClientGameTestContext context)
 	{
 		assertScreenshotEquals(context, "ChestESP_default_settings",
-			"https://i.imgur.com/PmJ4itt.png");
+			"https://i.imgur.com/l4kcXRJ.png");
 		
 		ChestESPTest.LOGGER.info("Enabling all ChestESP groups");
 		ChestESPTest.withConfig(context, config -> {
@@ -85,25 +81,25 @@ public enum VanillaTestRig
 			config.include_furnaces = true;
 		});
 		assertScreenshotEquals(context, "ChestESP_boxes",
-			"https://i.imgur.com/npoKuj3.png");
+			"https://i.imgur.com/z2rFbxd.png");
 		
 		ChestESPTest.LOGGER.info("Changing style to lines");
 		ChestESPTest.withConfig(context, config -> {
 			config.style = ChestEspStyle.LINES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lines",
-			"https://i.imgur.com/xMM5fKc.png");
+			"https://i.imgur.com/XpUqau7.png");
 		
 		ChestESPTest.LOGGER.info("Changing style to lines and boxes");
 		ChestESPTest.withConfig(context, config -> {
 			config.style = ChestEspStyle.LINES_AND_BOXES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lines_and_boxes",
-			"https://i.imgur.com/VQWhfFR.png");
+			"https://i.imgur.com/JdWW00w.png");
 		
 		ChestESPTest.LOGGER.info("Changing all color settings");
 		ChestESPTest.setRainbowColors(context);
 		assertScreenshotEquals(context, "ChestESP_custom_colors",
-			"https://i.imgur.com/7r0yidB.png");
+			"https://i.imgur.com/4moA6R0.png");
 	}
 }
