@@ -125,7 +125,9 @@ def prepareClientGameTestWithLootr = tasks.register("prepareClientGameTestWithLo
 	into layout.buildDirectory.dir("run/clientGameTestWithLootr/mods")
 }
 
+def doLootrTest = providers.gradleProperty("do_lootr_test").map { it.toBoolean() }.orElse(false)
 tasks.named("runClientGameTestWithLootr") {
+	onlyIf { doLootrTest.get() }
 	dependsOn prepareClientGameTestWithLootr
 }
 

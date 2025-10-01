@@ -28,10 +28,7 @@ on:
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set_matrix.outputs.matrix }}
     steps:
 
     - name: Echo distinct ID ${{ inputs.distinct_id }}
@@ -90,63 +87,29 @@ jobs:
         done
         echo "</details>" >> $GITHUB_STEP_SUMMARY
 
-    - name: Set up test matrix
-      id: set_matrix
-      run: |
-        DO_LOOTR_TEST=$(grep -E '^do_lootr_test=' gradle.properties | cut -d'=' -f2)
-        
-        if [ "$DO_LOOTR_TEST" = "true" ]; then
-          echo 'matrix={"include":[{"name":"default","task":"runClientGameTest"},{"name":"lootr","task":"runClientGameTestWithLootr"}]}' >> $GITHUB_OUTPUT
-        else
-          echo 'matrix={"include":[{"name":"default","task":"runClientGameTest"}]}' >> $GITHUB_OUTPUT
-        fi
-
-  test:
-    name: Run ${{ matrix.name }} client gametest
-    needs: build
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.build.outputs.matrix) }}
-    steps:
-
-    - name: Checkout repository
-      uses: actions/checkout@v5
-
-    - name: Set up Java 21
-      uses: actions/setup-java@v5
-      with:
-        java-version: "21"
-        distribution: "microsoft"
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        build-scan-publish: true
-        build-scan-terms-of-use-url: "https://gradle.com/help/legal-terms-of-use"
-        build-scan-terms-of-use-agree: "yes"
-        cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-        cache-read-only: ${{ github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/heads/1.') }}
-
-    - name: Run ${{ matrix.name }} client gametest
+    - name: Run client gametests
       env:
         IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
-      run: xvfb-run --auto-servernum ./gradlew ${{ matrix.task }} --build-cache --stacktrace --warning-mode=fail
+      run: xvfb-run --auto-servernum ./gradlew runClientGameTest runClientGameTestWithLootr --build-cache --stacktrace --warning-mode=fail
 
-    - name: Upload screenshots artifact
+    - name: Upload screenshots
       uses: actions/upload-artifact@v4
       if: ${{ success() || failure() }}
       with:
-        name: screenshots-${{ matrix.name }}
+        name: screenshots
         path: build/run/*/screenshots
         compression-level: 0
 
-    - name: Upload crash-reports artifact
+    - name: Upload logs
+      uses: actions/upload-artifact@v4
+      if: ${{ success() || failure() }}
+      with:
+        name: logs
+        path: build/run/*/logs/latest.log
+
+    - name: Upload crash reports
       uses: actions/upload-artifact@v4
       if: ${{ failure() }}
       with:
-        name: crash-reports-${{ matrix.name }}
+        name: crash-reports
         path: build/run/*/crash-reports
