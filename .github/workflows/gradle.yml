@@ -59,7 +59,7 @@ jobs:
         cache-read-only: ${{ github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/heads/1.') }}
 
     - name: Build
-      run: ./gradlew build --stacktrace --warning-mode=fail
+      run: ./gradlew build --build-cache --stacktrace --warning-mode=fail
 
     - name: Upload to VirusTotal for analysis
       id: virustotal
@@ -134,7 +134,7 @@ jobs:
     - name: Run ${{ matrix.name }} client gametest
       env:
         IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
-      run: xvfb-run --auto-servernum ./gradlew ${{ matrix.task }} --stacktrace --warning-mode=fail
+      run: xvfb-run --auto-servernum ./gradlew ${{ matrix.task }} --build-cache --stacktrace --warning-mode=fail
 
     - name: Upload screenshots artifact
       uses: actions/upload-artifact@v4
