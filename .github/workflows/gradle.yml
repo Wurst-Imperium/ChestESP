@@ -91,7 +91,7 @@ jobs:
       timeout-minutes: 30
       env:
         IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
-      run: xvfb-run --auto-servernum ./gradlew runClientGameTest runClientGameTestWithLootr --stacktrace --no-parallel --no-build-cache --no-configuration-cache
+      run: xvfb-run --auto-servernum ./gradlew runClientGameTest runClientGameTestWithLootr --stacktrace --no-parallel
 
     - name: Upload screenshots
       uses: actions/upload-artifact@v4
