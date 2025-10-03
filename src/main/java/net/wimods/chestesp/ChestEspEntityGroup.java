@@ -8,26 +8,28 @@
 package net.wimods.chestesp;
 
 import java.util.ArrayList;
-import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
 
 import me.shedaniel.autoconfig.ConfigHolder;
 import net.minecraft.world.entity.Entity;
 import net.wimods.chestesp.util.EntityUtils;
 
-public final class ChestEspEntityGroup extends ChestEspGroup
+public abstract class ChestEspEntityGroup extends ChestEspGroup
 {
 	private final ArrayList<Entity> entities = new ArrayList<>();
 	
 	public ChestEspEntityGroup(ConfigHolder<ChestEspConfig> configHolder,
-		String name, ToIntFunction<ChestEspConfig> color,
-		Predicate<ChestEspConfig> enabled)
+		String name)
 	{
-		super(configHolder, name, color, enabled);
+		super(configHolder, name);
 	}
 	
-	public void add(Entity e)
+	protected abstract boolean matches(Entity e);
+	
+	public final void addIfMatches(Entity e)
 	{
+		if(!matches(e))
+			return;
+		
 		entities.add(e);
 	}
 	

@@ -163,7 +163,6 @@ public final class PlausibleAnalytics
 	private void runBackgroundLoop()
 	{
 		while(!Thread.currentThread().isInterrupted())
-		{
 			try
 			{
 				sendEvent(eventQueue.take());
@@ -178,7 +177,6 @@ public final class PlausibleAnalytics
 			{
 				LOGGER.error("Plausible error", e);
 			}
-		}
 	}
 	
 	private void sendEvent(PlausibleEvent event)
