@@ -67,7 +67,7 @@ public enum VanillaTestRig
 		// TODO: Copper chests!
 		
 		// Wait for the blocks to appear
-		context.waitTicks(2);
+		context.waitTicks(3);
 		world.waitForChunksRender();
 	}
 	

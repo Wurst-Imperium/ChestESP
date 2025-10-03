@@ -55,7 +55,7 @@ public enum LootrTestRig
 		runCommand(server, "fill ^4 ^ ^6 ^-4 ^ ^6 smooth_stone_slab");
 		
 		// Wait for the blocks to appear
-		context.waitTicks(2);
+		context.waitTicks(3);
 		world.waitForChunksRender();
 	}
 	
