@@ -87,11 +87,17 @@ jobs:
         done
         echo "</details>" >> $GITHUB_STEP_SUMMARY
 
-    - name: Run client gametests
+    - name: Run normal client gametest
       timeout-minutes: 30
       env:
         IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
-      run: xvfb-run --auto-servernum ./gradlew runClientGameTest runClientGameTestWithLootr --stacktrace
+      run: xvfb-run --auto-servernum ./gradlew runClientGameTest --stacktrace
+
+    - name: Run client gametest with Lootr
+      timeout-minutes: 30
+      env:
+        IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
+      run: xvfb-run --auto-servernum ./gradlew runClientGameTestWithLootr --stacktrace
 
     - name: Upload screenshots
       uses: actions/upload-artifact@v4
