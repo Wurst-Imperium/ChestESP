@@ -235,10 +235,17 @@ dependencies {
 // Enable jarJar feature so Cloth Config can be embedded in the final jar
 jarJar.enable()
 
-def prepareClientGameTest = tasks.register("prepareClientGameTest", Sync) {
-	from({ temporaryDir })
-	into(layout.buildDirectory.dir("run/clientGameTest"))
-	includeEmptyDirs = true
+def cleanClientGameTest = tasks.register("cleanClientGameTest", Delete) {
+	delete layout.buildDirectory.dir("run/clientGameTest")
+}
+
+def prepareClientGameTest = tasks.register("prepareClientGameTest") {
+	dependsOn cleanClientGameTest
+	def outputDir = layout.buildDirectory.dir("run/clientGameTest")
+	outputs.dir(outputDir)
+	doLast {
+		outputDir.get().asFile.mkdirs()
+	}
 }
 
 tasks.matching { it.name == "runClientGameTest" }.configureEach {
