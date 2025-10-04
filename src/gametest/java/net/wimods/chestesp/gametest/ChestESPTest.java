@@ -105,6 +105,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		TestServerContext server = spContext.getServer();
 		
 		LOGGER.info("Setting up test background");
+		runCommand(server, "time set noon");
 		runCommand(server, "tp 0 -57 0");
 		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ smooth_stone");
 		runCommand(server, "fill ^-12 ^-4 ^ ^12 ^-4 ^10 smooth_stone");
@@ -115,7 +116,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		world.waitForChunksRender();
 		
 		assertScreenshotEquals(context, "in_game",
-			"https://i.imgur.com/tl9n6xC.png");
+			"https://i.imgur.com/E8j601u.png");
 		
 		LOGGER.info("Recording debug menu");
 		input.pressKey(GLFW.GLFW_KEY_F3);
@@ -124,14 +125,18 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Opening inventory");
 		input.pressKey(GLFW.GLFW_KEY_E);
-		assertScreenshotEquals(context, "inventory",
-			"https://i.imgur.com/9mUN6Jn.png");
+		if(IS_LOOTR_TEST)
+			assertScreenshotEquals(context, "inventory",
+				"https://i.imgur.com/8T8FDmg.png");
+		else
+			assertScreenshotEquals(context, "inventory",
+				"https://i.imgur.com/uaRQbyJ.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		LOGGER.info("Opening game menu");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		assertScreenshotEquals(context, "game_menu",
-			"https://i.imgur.com/Kc4BMD3.png");
+			"https://i.imgur.com/7g7wN11.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		LOGGER.info("Building vanilla test rig");
