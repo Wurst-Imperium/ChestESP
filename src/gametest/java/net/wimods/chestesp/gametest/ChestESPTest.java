@@ -63,7 +63,7 @@ public final class ChestESPTest implements FabricClientGameTest
 				"https://i.imgur.com/Q1IyYQG.png");
 		else
 			assertScreenshotEquals(context, "mod_menu",
-				"https://i.imgur.com/PU7EsPS.png");
+				"https://i.imgur.com/EY2sFws.png");
 		
 		LOGGER.info("Clicking configure button");
 		TestInput input = context.getInput();

@@ -28,10 +28,10 @@
   ],
   "accessWidener": "chestesp.accesswidener",
   "depends": {
-    "fabricloader": ">=0.16.14",
+    "fabricloader": ">=0.17.2",
     "fabric-api": ">=0.133.7",
-    "modmenu": "^15.0.0-beta.1",
-    "cloth-config": "^19.0.146",
+    "modmenu": "^16.0.0-rc.1",
+    "cloth-config": "^20.0.148",
     "minecraft": "~1.21.9-beta.2",
     "java": ">=21"
   },
