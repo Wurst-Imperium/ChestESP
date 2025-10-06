@@ -1,4 +1,4 @@
-#version 330
+#version 150
 
 #moj_import <minecraft:globals.glsl>
 #moj_import <minecraft:dynamictransforms.glsl>
