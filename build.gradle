@@ -45,10 +45,11 @@ base {
 jar {
 	archiveClassifier = "slim"
 	destinationDirectory = layout.buildDirectory.dir("devlibs")
+	def archivesName = base.archivesName
+	inputs.property("archivesName", archivesName)
 	
 	from("LICENSE.txt") {
-		def archivesName = base.archivesName.get()
-		rename { "LICENSE-${archivesName}.txt" }
+		rename { "LICENSE-${archivesName.get()}.txt" }
 	}
 	
 	exclude("intentionally_untranslated.json")
@@ -306,17 +307,6 @@ idea {
 		downloadSources = true
 		downloadJavadoc = true
 	}
-}
-
-jar {
-	def archivesName = base.archivesName.get()
-	inputs.property("archivesName", archivesName)
-	
-	from("LICENSE.txt") {
-		rename { "LICENSE-${archivesName.get()}.txt" }
-	}
-	
-	exclude("intentionally_untranslated.json")
 }
 
 import com.diffplug.spotless.generic.LicenseHeaderStep
