@@ -163,7 +163,7 @@ java {
 }
 
 jar {
-	def archivesName = base.archivesName.get()
+	def archivesName = base.archivesName
 	inputs.property("archivesName", archivesName)
 	
 	from("LICENSE.txt") {
