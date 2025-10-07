@@ -29,12 +29,12 @@ public abstract class WorldRendererMixin
 	implements ResourceManagerReloadListener, AutoCloseable
 {
 	@Inject(at = @At("RETURN"),
-		method = "renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V")
+		method = "renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V")
 	private void onRender(GraphicsResourceAllocator allocator,
 		DeltaTracker tickCounter, boolean renderBlockOutline, Camera camera,
 		Matrix4f positionMatrix, Matrix4f projectionMatrix,
-		GpuBufferSlice gpuBufferSlice, Vector4f vector4f, boolean bl,
-		CallbackInfo ci)
+		Matrix4f otherMatrix, GpuBufferSlice gpuBufferSlice, Vector4f vector4f,
+		boolean bl, CallbackInfo ci)
 	{
 		PoseStack matrixStack = new PoseStack();
 		matrixStack.mulPose(positionMatrix);
