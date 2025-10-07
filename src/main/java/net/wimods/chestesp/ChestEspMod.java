@@ -21,6 +21,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.wimods.chestesp.util.ChunkUtils;
@@ -48,9 +49,11 @@ public final class ChestEspMod
 		
 		groups = new ChestEspGroupManager(configHolder);
 		
+		KeyBinding.Category kbCategory =
+			KeyBinding.Category.create(Identifier.of("chestesp", "chestesp"));
 		toggleKey = KeyBindingHelper
 			.registerKeyBinding(new KeyBinding("key.chestesp.toggle",
-				InputUtil.UNKNOWN_KEY.getCode(), "ChestESP"));
+				InputUtil.UNKNOWN_KEY.getCode(), kbCategory));
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			boolean enabled = configHolder.get().enable;
