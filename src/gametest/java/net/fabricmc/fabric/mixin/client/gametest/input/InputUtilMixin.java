@@ -29,8 +29,8 @@ import net.fabricmc.fabric.impl.client.gametest.TestInputImpl;
 public class InputUtilMixin
 {
 	@Inject(method = "isKeyDown", at = @At("HEAD"), cancellable = true)
-	private static void useGameTestInputForKeyPressed(Window window, int keyCode,
-		CallbackInfoReturnable<Boolean> cir)
+	private static void useGameTestInputForKeyPressed(Window window,
+		int keyCode, CallbackInfoReturnable<Boolean> cir)
 	{
 		cir.setReturnValue(TestInputImpl.isKeyDown(keyCode));
 	}

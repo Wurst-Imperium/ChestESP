@@ -130,7 +130,8 @@ public class TestWorldBuilderImpl implements TestWorldBuilder
 	{
 		Path saveDirectory = context.computeOnClient(client -> {
 			Screen oldScreen = client.screen;
-			CreateWorldScreen.openFresh(client, () -> client.setScreen(oldScreen));
+			CreateWorldScreen.openFresh(client,
+				() -> client.setScreen(oldScreen));
 			
 			if(!(client.screen instanceof CreateWorldScreen createWorldScreen))
 			{

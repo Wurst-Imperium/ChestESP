@@ -118,8 +118,8 @@ public final class TestInputImpl implements TestInput
 	{
 		ThreadingImpl.checkOnGametestThread("holdControl");
 		
-		holdKey(IS_MACOS ? InputConstants.KEY_LSUPER
-			: InputConstants.KEY_LCONTROL);
+		holdKey(
+			IS_MACOS ? InputConstants.KEY_LSUPER : InputConstants.KEY_LCONTROL);
 	}
 	
 	@Override
@@ -192,8 +192,8 @@ public final class TestInputImpl implements TestInput
 	{
 		ThreadingImpl.checkOnGametestThread("releaseControl");
 		
-		releaseKey(IS_MACOS ? InputConstants.KEY_LSUPER
-			: InputConstants.KEY_LCONTROL);
+		releaseKey(
+			IS_MACOS ? InputConstants.KEY_LSUPER : InputConstants.KEY_LCONTROL);
 	}
 	
 	@Override
@@ -217,10 +217,12 @@ public final class TestInputImpl implements TestInput
 	{
 		switch(key.getType())
 		{
-			case KEYSYM -> ((KeyboardAccessor) client.keyboardHandler).invokeOnKey(
-				client.getWindow().handle(), action, new KeyEvent(key.getValue(), 0, 0));
-			case SCANCODE -> ((KeyboardAccessor) client.keyboardHandler).invokeOnKey(
-				client.getWindow().handle(), action, new KeyEvent(GLFW.GLFW_KEY_UNKNOWN, key.getValue(), 0));
+			case KEYSYM -> ((KeyboardAccessor)client.keyboardHandler)
+				.invokeOnKey(client.getWindow().handle(), action,
+					new KeyEvent(key.getValue(), 0, 0));
+			case SCANCODE -> ((KeyboardAccessor)client.keyboardHandler)
+				.invokeOnKey(client.getWindow().handle(), action,
+					new KeyEvent(GLFW.GLFW_KEY_UNKNOWN, key.getValue(), 0));
 			case MOUSE -> ((MouseAccessor)client.mouseHandler)
 				.invokeOnMouseButton(client.getWindow().handle(),
 					new MouseButtonInfo(key.getValue(), 0), action);
@@ -332,8 +334,9 @@ public final class TestInputImpl implements TestInput
 	{
 		ThreadingImpl.checkOnGametestThread("typeChar");
 		
-		context.runOnClient(client -> ((KeyboardAccessor)client.keyboardHandler)
-			.invokeOnChar(client.getWindow().handle(), new CharacterEvent(codePoint, 0)));
+		context.runOnClient(
+			client -> ((KeyboardAccessor)client.keyboardHandler).invokeOnChar(
+				client.getWindow().handle(), new CharacterEvent(codePoint, 0)));
 	}
 	
 	@Override
@@ -343,8 +346,9 @@ public final class TestInputImpl implements TestInput
 		
 		context.runOnClient(client -> {
 			chars.chars().forEach(codePoint -> {
-				((KeyboardAccessor)client.keyboardHandler)
-					.invokeOnChar(client.getWindow().handle(), new CharacterEvent(codePoint, 0));
+				((KeyboardAccessor)client.keyboardHandler).invokeOnChar(
+					client.getWindow().handle(),
+					new CharacterEvent(codePoint, 0));
 			});
 		});
 	}

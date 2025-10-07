@@ -25,7 +25,8 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface MouseAccessor
 {
 	@Invoker("onPress")
-	void invokeOnMouseButton(long window, MouseButtonInfo mouseInput, int action);
+	void invokeOnMouseButton(long window, MouseButtonInfo mouseInput,
+		int action);
 	
 	@Invoker("onScroll")
 	void invokeOnMouseScroll(long window, double horizontal, double vertical);
