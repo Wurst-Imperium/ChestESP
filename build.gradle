@@ -71,10 +71,6 @@ tasks.named("build").configure {
 // Mojang ships Java 21 to end users starting in 1.20.5 (24w14a), so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-mixin {
-	config "chestesp.mixins.json"
-}
-
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 //minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
 
@@ -102,6 +98,7 @@ runs {
 		systemProperty 'forge.logging.console.level', 'debug'
 		
 		modSource project.sourceSets.main
+		arguments("--mixin.config", "chestesp.mixins.json")
 	}
 	
 	client {
@@ -136,10 +133,8 @@ runs {
 		arguments("--username", "Wurst-Bot")
 		workingDirectory(file("build/run/clientGameTest"))
 		modSource project.sourceSets.gametest
-		mixin {
-			config "fabric_api.mixins.json"
-			config "client_gametest.mixins.json"
-		}
+		arguments("--mixin.config", "fabric_api.mixins.json")
+		arguments("--mixin.config", "client_gametest.mixins.json")
 	}
 	
 	clientGameTestWithLootr {
@@ -149,10 +144,8 @@ runs {
 		arguments("--username", "Wurst-Bot")
 		workingDirectory(file("build/run/clientGameTestWithLootr"))
 		modSource project.sourceSets.gametest
-		mixin {
-			config "fabric_api.mixins.json"
-			config "client_gametest.mixins.json"
-		}
+		arguments("--mixin.config", "fabric_api.mixins.json")
+		arguments("--mixin.config", "client_gametest.mixins.json")
 	}
 }
 
