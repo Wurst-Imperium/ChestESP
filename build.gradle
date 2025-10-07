@@ -309,6 +309,13 @@ idea {
 }
 
 jar {
+	def archivesName = base.archivesName.get()
+	inputs.property("archivesName", archivesName)
+	
+	from("LICENSE.txt") {
+		rename { "LICENSE-${archivesName.get()}.txt" }
+	}
+	
 	exclude("intentionally_untranslated.json")
 }
 
