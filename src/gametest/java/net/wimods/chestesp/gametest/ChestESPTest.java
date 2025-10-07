@@ -138,7 +138,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		LOGGER.info("Opening game menu");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		assertScreenshotEquals(context, "game_menu",
-			"https://i.imgur.com/E99f62Y.png");
+			"https://i.imgur.com/esZkMHn.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		LOGGER.info("Building vanilla test rig");
