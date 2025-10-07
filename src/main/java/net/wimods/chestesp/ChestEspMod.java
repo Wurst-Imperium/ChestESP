@@ -20,6 +20,7 @@ import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
@@ -28,7 +29,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.wimods.chestesp.util.ChunkUtils;
@@ -46,6 +46,7 @@ public final class ChestEspMod
 	private final ConfigHolder<ChestEspConfig> configHolder;
 	private final PlausibleAnalytics plausible;
 	private final ChestEspGroupManager groups;
+	private final KeyMapping.Category kbCategory;
 	private final KeyMapping toggleKey;
 	
 	private boolean enabled;
@@ -71,7 +72,7 @@ public final class ChestEspMod
 		
 		groups = new ChestEspGroupManager(configHolder);
 		
-		KeyMapping.Category kbCategory = KeyMapping.Category.register(
+		kbCategory = new KeyMapping.Category(
 			ResourceLocation.fromNamespaceAndPath("chestesp", "chestesp"));
 		toggleKey = new KeyMapping("key.chestesp.toggle",
 			InputConstants.UNKNOWN.getValue(), kbCategory);
@@ -89,6 +90,7 @@ public final class ChestEspMod
 	@SubscribeEvent
 	private void onRegisterKeyMappings(RegisterKeyMappingsEvent event)
 	{
+		event.registerCategory(kbCategory);
 		event.register(toggleKey);
 	}
 	
