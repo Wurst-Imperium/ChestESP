@@ -33,7 +33,7 @@ import net.minecraft.client.resources.language.LanguageManager;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforgespi.language.IModInfo;
@@ -156,7 +156,7 @@ public final class PlausibleAnalytics
 	
 	private boolean isDebugMode()
 	{
-		return !FMLLoader.isProduction()
+		return !FMLEnvironment.isProduction()
 			|| System.getProperty("chestesp.e2eTest") != null;
 	}
 	

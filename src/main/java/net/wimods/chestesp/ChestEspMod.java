@@ -28,6 +28,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.wimods.chestesp.util.ChunkUtils;
@@ -70,8 +71,10 @@ public final class ChestEspMod
 		
 		groups = new ChestEspGroupManager(configHolder);
 		
+		KeyMapping.Category kbCategory = KeyMapping.Category.register(
+			ResourceLocation.fromNamespaceAndPath("chestesp", "chestesp"));
 		toggleKey = new KeyMapping("key.chestesp.toggle",
-			InputConstants.UNKNOWN.getValue(), "ChestESP");
+			InputConstants.UNKNOWN.getValue(), kbCategory);
 		
 		plausible = new PlausibleAnalytics(configHolder, groups, toggleKey);
 		plausible.pageview("/");

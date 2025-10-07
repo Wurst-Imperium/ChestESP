@@ -118,7 +118,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		world.waitForChunksRender();
 		
 		assertScreenshotEquals(context, "in_game",
-			"https://i.imgur.com/E8j601u.png");
+			"https://i.imgur.com/i2Nr9is.png");
 		
 		LOGGER.info("Recording debug menu");
 		input.pressKey(GLFW.GLFW_KEY_F3);
@@ -132,7 +132,7 @@ public final class ChestESPTest implements FabricClientGameTest
 				"https://i.imgur.com/Z9vk4B8.png");
 		else
 			assertScreenshotEquals(context, "inventory",
-				"https://i.imgur.com/uaRQbyJ.png");
+				"https://i.imgur.com/GP74ZNS.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		LOGGER.info("Opening game menu");
