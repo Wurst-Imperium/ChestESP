@@ -47,7 +47,6 @@ public class ThreadExecutorMixin
 	@Inject(method = "doRunTask",
 		at = @At(value = "INVOKE",
 			target = "Ljava/lang/Runnable;run()V",
-			remap = false,
 			shift = At.Shift.AFTER))
 	private void onPacketHandlerRun(Runnable task, CallbackInfo ci)
 	{

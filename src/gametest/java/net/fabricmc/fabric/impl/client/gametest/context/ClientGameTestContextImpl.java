@@ -38,6 +38,7 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -70,6 +71,7 @@ import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.tutorial.TutorialSteps;
 import net.minecraft.network.chat.Component;
@@ -309,11 +311,13 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 	private static boolean pressMatchingButton(AbstractWidget widget,
 		String text)
 	{
+		var clickEvent = new MouseButtonInfo(GLFW.GLFW_KEY_UNKNOWN, 0);
+		
 		if(widget instanceof Button buttonWidget)
 		{
 			if(text.equals(buttonWidget.getMessage().getString()))
 			{
-				buttonWidget.onPress();
+				buttonWidget.onPress(clickEvent);
 				return true;
 			}
 		}
@@ -325,7 +329,7 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 			
 			if(text.equals(accessor.getOptionText().getString()))
 			{
-				buttonWidget.onPress();
+				buttonWidget.onPress(clickEvent);
 				return true;
 			}
 		}

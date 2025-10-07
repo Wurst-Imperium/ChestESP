@@ -34,10 +34,15 @@ import net.fabricmc.fabric.mixin.client.gametest.input.MouseAccessor;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.Util;
 
 public final class TestInputImpl implements TestInput
 {
 	private static final Set<InputConstants.Key> KEYS_DOWN = new HashSet<>();
+	private static final boolean IS_MACOS = Util.getPlatform() == Util.OS.OSX;
 	private final ClientGameTestContext context;
 	
 	public TestInputImpl(ClientGameTestContext context)
@@ -113,7 +118,7 @@ public final class TestInputImpl implements TestInput
 	{
 		ThreadingImpl.checkOnGametestThread("holdControl");
 		
-		holdKey(Minecraft.ON_OSX ? InputConstants.KEY_LWIN
+		holdKey(IS_MACOS ? InputConstants.KEY_LSUPER
 			: InputConstants.KEY_LCONTROL);
 	}
 	
@@ -187,7 +192,7 @@ public final class TestInputImpl implements TestInput
 	{
 		ThreadingImpl.checkOnGametestThread("releaseControl");
 		
-		releaseKey(Minecraft.ON_OSX ? InputConstants.KEY_LWIN
+		releaseKey(IS_MACOS ? InputConstants.KEY_LSUPER
 			: InputConstants.KEY_LCONTROL);
 	}
 	
@@ -212,14 +217,13 @@ public final class TestInputImpl implements TestInput
 	{
 		switch(key.getType())
 		{
-			case KEYSYM -> client.keyboardHandler.keyPress(
-				client.getWindow().getWindow(), key.getValue(), 0, action, 0);
-			case SCANCODE -> client.keyboardHandler.keyPress(
-				client.getWindow().getWindow(), GLFW.GLFW_KEY_UNKNOWN,
-				key.getValue(), action, 0);
+			case KEYSYM -> ((KeyboardAccessor) client.keyboardHandler).invokeOnKey(
+				client.getWindow().handle(), action, new KeyEvent(key.getValue(), 0, 0));
+			case SCANCODE -> ((KeyboardAccessor) client.keyboardHandler).invokeOnKey(
+				client.getWindow().handle(), action, new KeyEvent(GLFW.GLFW_KEY_UNKNOWN, key.getValue(), 0));
 			case MOUSE -> ((MouseAccessor)client.mouseHandler)
-				.invokeOnMouseButton(client.getWindow().getWindow(),
-					key.getValue(), action, 0);
+				.invokeOnMouseButton(client.getWindow().handle(),
+					new MouseButtonInfo(key.getValue(), 0), action);
 		}
 	}
 	
@@ -329,7 +333,7 @@ public final class TestInputImpl implements TestInput
 		ThreadingImpl.checkOnGametestThread("typeChar");
 		
 		context.runOnClient(client -> ((KeyboardAccessor)client.keyboardHandler)
-			.invokeOnChar(client.getWindow().getWindow(), codePoint, 0));
+			.invokeOnChar(client.getWindow().handle(), new CharacterEvent(codePoint, 0)));
 	}
 	
 	@Override
@@ -340,7 +344,7 @@ public final class TestInputImpl implements TestInput
 		context.runOnClient(client -> {
 			chars.chars().forEach(codePoint -> {
 				((KeyboardAccessor)client.keyboardHandler)
-					.invokeOnChar(client.getWindow().getWindow(), codePoint, 0);
+					.invokeOnChar(client.getWindow().handle(), new CharacterEvent(codePoint, 0));
 			});
 		});
 	}
@@ -360,7 +364,7 @@ public final class TestInputImpl implements TestInput
 		
 		context.runOnClient(
 			client -> ((MouseAccessor)client.mouseHandler).invokeOnMouseScroll(
-				client.getWindow().getWindow(), xAmount, yAmount));
+				client.getWindow().handle(), xAmount, yAmount));
 	}
 	
 	@Override
@@ -369,7 +373,7 @@ public final class TestInputImpl implements TestInput
 		ThreadingImpl.checkOnGametestThread("setCursorPos");
 		
 		context.runOnClient(client -> ((MouseAccessor)client.mouseHandler)
-			.invokeOnCursorPos(client.getWindow().getWindow(), x, y));
+			.invokeOnCursorPos(client.getWindow().handle(), x, y));
 	}
 	
 	@Override
@@ -381,7 +385,7 @@ public final class TestInputImpl implements TestInput
 			double newX = client.mouseHandler.xpos() + deltaX;
 			double newY = client.mouseHandler.ypos() + deltaY;
 			((MouseAccessor)client.mouseHandler)
-				.invokeOnCursorPos(client.getWindow().getWindow(), newX, newY);
+				.invokeOnCursorPos(client.getWindow().handle(), newX, newY);
 		});
 	}
 	

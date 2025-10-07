@@ -26,10 +26,8 @@ import net.minecraft.server.Main;
 public class MainMixin
 {
 	@WrapWithCondition(method = "main",
-		remap = false,
 		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/Util;startTimerHackThread()V",
-			remap = true))
+			target = "Lnet/minecraft/Util;startTimerHackThread()V"))
 	private static boolean dontStartAnotherTimerHack()
 	{
 		return false;

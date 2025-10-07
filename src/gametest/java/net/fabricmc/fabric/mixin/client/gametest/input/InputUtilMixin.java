@@ -22,13 +22,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import net.fabricmc.fabric.impl.client.gametest.TestInputImpl;
 
 @Mixin(InputConstants.class)
 public class InputUtilMixin
 {
 	@Inject(method = "isKeyDown", at = @At("HEAD"), cancellable = true)
-	private static void useGameTestInputForKeyPressed(long window, int keyCode,
+	private static void useGameTestInputForKeyPressed(Window window, int keyCode,
 		CallbackInfoReturnable<Boolean> cir)
 	{
 		cir.setReturnValue(TestInputImpl.isKeyDown(keyCode));

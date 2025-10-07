@@ -86,6 +86,7 @@ public final class ClientGameTestImpl
 	
 	private static boolean isWorldLoadingFinished(Minecraft client)
 	{
+		LOGGER.info("World loading finished: {} screen: {}", client.level, client.screen);
 		return client.level != null
 			&& !(client.screen instanceof LevelLoadingScreen);
 	}

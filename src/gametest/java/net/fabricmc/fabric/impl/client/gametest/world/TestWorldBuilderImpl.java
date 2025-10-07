@@ -26,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.Holder;
@@ -128,7 +129,8 @@ public class TestWorldBuilderImpl implements TestWorldBuilder
 	private Path navigateCreateWorldScreen()
 	{
 		Path saveDirectory = context.computeOnClient(client -> {
-			CreateWorldScreen.openFresh(client, client.screen);
+			Screen oldScreen = client.screen;
+			CreateWorldScreen.openFresh(client, () -> client.setScreen(oldScreen));
 			
 			if(!(client.screen instanceof CreateWorldScreen createWorldScreen))
 			{

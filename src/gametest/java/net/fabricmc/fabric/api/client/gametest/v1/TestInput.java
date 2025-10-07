@@ -19,8 +19,8 @@ package net.fabricmc.fabric.api.client.gametest.v1;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.function.Function;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -114,7 +114,7 @@ public interface TestInput
 	/**
 	 * Starts holding down left control, or left super on macOS. Suitable for
 	 * triggering
-	 * {@link Screen#hasControlDown()}. The key will be held until it is
+	 * {@link Minecraft#isCtrlPressed()}. The key will be held until it is
 	 * released. Does nothing if the key is already
 	 * being held.
 	 *
@@ -124,7 +124,7 @@ public interface TestInput
 	
 	/**
 	 * Starts holding down left shift. Suitable for triggering
-	 * {@link Screen#hasShiftDown()}. The key will be held until
+	 * {@link Minecraft#isShiftPressed()}. The key will be held until
 	 * it is released. Does nothing if the key is already being held.
 	 *
 	 * @see #releaseShift()
@@ -133,7 +133,7 @@ public interface TestInput
 	
 	/**
 	 * Starts holding down left alt. Suitable for triggering
-	 * {@link Screen#hasAltDown()}. The key will be held until it
+	 * {@link Minecraft#isAltPressed()}. The key will be held until it
 	 * is released. Does nothing if the key is already being held.
 	 *
 	 * @see #releaseAlt()
@@ -213,7 +213,7 @@ public interface TestInput
 	
 	/**
 	 * Releases left control, or left super on macOS. Suitable for un-triggering
-	 * {@link Screen#hasControlDown()}. Does
+	 * {@link Minecraft#isCtrlPressed()}. Does
 	 * nothing if the key is not being held.
 	 *
 	 * @see #holdControl()
@@ -222,19 +222,19 @@ public interface TestInput
 	
 	/**
 	 * Releases left shift. Suitable for un-triggering
-	 * {@link Screen#hasShiftDown()}. Does nothing if the key is not
+	 * {@link Minecraft#isShiftPressed()}. Does nothing if the key is not
 	 * being held.
 	 *
-	 * @see #holdShift()
+	 * @see #releaseShift()
 	 */
 	void releaseShift();
 	
 	/**
 	 * Releases left alt. Suitable for un-triggering
-	 * {@link Screen#hasAltDown()}. Does nothing if the key is not being
+	 * {@link Minecraft#isAltPressed()}. Does nothing if the key is not being
 	 * held.
 	 *
-	 * @see #holdAlt()
+	 * @see #releaseAlt()
 	 */
 	void releaseAlt();
 	

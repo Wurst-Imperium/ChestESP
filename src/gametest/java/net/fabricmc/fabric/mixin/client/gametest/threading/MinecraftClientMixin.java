@@ -150,8 +150,7 @@ public class MinecraftClientMixin
 	
 	@Inject(method = "doWorldLoad",
 		at = @At(value = "INVOKE",
-			target = "Ljava/lang/Thread;sleep(J)V",
-			remap = false))
+			target = "Lnet/minecraft/client/Minecraft;managedBlock(Ljava/util/function/BooleanSupplier;)V"))
 	private void onStartIntegratedServerBusyWait(CallbackInfo ci)
 	{
 		// give the server a chance to tick too
