@@ -60,7 +60,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		context.clickScreenButton("modmenu.title");
 		if(IS_LOOTR_TEST)
 			assertScreenshotEquals(context, "mod_menu",
-				"https://i.imgur.com/Q1IyYQG.png");
+				"https://i.imgur.com/1bYR8j0.png");
 		else
 			assertScreenshotEquals(context, "mod_menu",
 				"https://i.imgur.com/EY2sFws.png");
