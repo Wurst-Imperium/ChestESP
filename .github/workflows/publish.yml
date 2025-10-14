@@ -25,7 +25,7 @@ on:
         type: boolean
         default: true
       update_website:
-        description: "Update wimods.net post (only works if there already is one and publish_curseforge is true)"
+        description: "Update wimods.net post (only works if there already is one)"
         required: false
         type: boolean
         default: false
@@ -115,14 +115,14 @@ jobs:
 
     - name: Build website update inputs
       id: website_inputs
-      if: ${{ inputs.update_website && inputs.publish_curseforge }}
+      if: ${{ inputs.update_website }}
       run: |
         echo "mod_version=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2 | tr -d ' \r' | sed 's/-MC.*$//')" >> "$GITHUB_OUTPUT"
         echo "mc_version=$(grep '^minecraft_version=' gradle.properties | cut -d'=' -f2 | tr -d ' \r')" >> "$GITHUB_OUTPUT"
         echo "fapi_version=$(grep '^fabric_version=' gradle.properties | cut -d'=' -f2 | tr -d ' \r')" >> "$GITHUB_OUTPUT"
 
     - name: Trigger website update
-      if: ${{ inputs.update_website && inputs.publish_curseforge }}
+      if: ${{ inputs.update_website }}
       uses: Wurst-Imperium/dispatch-and-wait@v1
       with:
         token: ${{ secrets.WIMODS_NET_PUBLISH_TOKEN }}
