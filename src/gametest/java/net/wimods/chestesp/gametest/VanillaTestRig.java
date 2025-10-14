@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
+import net.minecraft.block.Blocks;
 import net.wimods.chestesp.ChestEspStyle;
 
 public enum VanillaTestRig
@@ -26,48 +27,51 @@ public enum VanillaTestRig
 		TestServerContext server = spContext.getServer();
 		
 		// Top row: normal chests
-		runCommand(server, "setblock ^5 ^4 ^7 chest");
-		runCommand(server, "setblock ^3 ^4 ^7 chest[type=right]");
-		runCommand(server, "setblock ^2 ^4 ^7 chest[type=left]");
-		runCommand(server, "setblock ^ ^4 ^7 ender_chest");
-		runCommand(server, "setblock ^-2 ^4 ^7 trapped_chest");
-		runCommand(server, "setblock ^-4 ^4 ^7 trapped_chest[type=right]");
-		runCommand(server, "setblock ^-5 ^4 ^7 trapped_chest[type=left]");
+		runCommand(server, "setblock ~5 ~4 ~7 chest");
+		runCommand(server, "setblock ~3 ~4 ~7 chest[type=right]");
+		runCommand(server, "setblock ~2 ~4 ~7 chest[type=left]");
+		runCommand(server, "setblock ~ ~4 ~7 ender_chest");
+		runCommand(server, "setblock ~-2 ~4 ~7 trapped_chest");
+		runCommand(server, "setblock ~-4 ~4 ~7 trapped_chest[type=right]");
+		runCommand(server, "setblock ~-5 ~4 ~7 trapped_chest[type=left]");
 		runCommand(server,
-			"fill ^5 ^4 ^6 ^-5 ^4 ^6 smooth_stone_slab[type=top]");
+			"fill ~5 ~4 ~6 ~-5 ~4 ~6 smooth_stone_slab[type=top]");
 		
 		// Second row: other containers
-		runCommand(server, "setblock ^5 ^2 ^7 barrel");
-		runCommand(server, "setblock ^3 ^2 ^7 shulker_box");
-		runCommand(server, "setblock ^1 ^2 ^7 decorated_pot");
-		runCommand(server, "setblock ^-1 ^2 ^7 furnace");
-		runCommand(server, "setblock ^-3 ^2 ^7 blast_furnace");
-		runCommand(server, "setblock ^-5 ^2 ^7 smoker");
+		runCommand(server, "setblock ~5 ~2 ~7 barrel");
+		runCommand(server, "setblock ~3 ~2 ~7 shulker_box");
+		runCommand(server, "setblock ~1 ~2 ~7 decorated_pot");
+		runCommand(server, "setblock ~-1 ~2 ~7 furnace");
+		runCommand(server, "setblock ~-3 ~2 ~7 blast_furnace");
+		runCommand(server, "setblock ~-5 ~2 ~7 smoker");
 		runCommand(server,
-			"fill ^5 ^2 ^6 ^-5 ^2 ^6 smooth_stone_slab[type=top]");
+			"fill ~5 ~2 ~6 ~-5 ~2 ~6 smooth_stone_slab[type=top]");
 		
 		// Third row: redstone things
-		runCommand(server, "setblock ^5 ^ ^7 dispenser");
-		runCommand(server, "setblock ^3 ^ ^7 dropper");
-		runCommand(server, "setblock ^1 ^ ^7 hopper");
-		runCommand(server, "setblock ^-1 ^ ^7 crafter");
-		runCommand(server, "fill ^5 ^ ^6 ^-5 ^ ^6 smooth_stone_slab");
+		runCommand(server, "setblock ~5 ~ ~7 dispenser");
+		runCommand(server, "setblock ~3 ~ ~7 dropper");
+		runCommand(server, "setblock ~1 ~ ~7 hopper");
+		runCommand(server, "setblock ~-1 ~ ~7 crafter");
+		runCommand(server, "fill ~5 ~ ~6 ~-5 ~ ~6 smooth_stone_slab");
 		
 		// Fourth row: vehicles
 		runCommand(server,
-			"summon chest_minecart ^5 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
+			"summon chest_minecart ~5 ~-2 ~7 {Rotation:[90f,0f],NoGravity:1b}");
 		runCommand(server,
-			"summon hopper_minecart ^3 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
+			"summon hopper_minecart ~3 ~-2 ~7 {Rotation:[90f,0f],NoGravity:1b}");
 		runCommand(server,
-			"summon oak_chest_boat ^1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
+			"summon oak_chest_boat ~1 ~-2 ~7 {Rotation:[180f,0f],NoGravity:1b}");
 		runCommand(server,
-			"summon bamboo_chest_raft ^-1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
-		runCommand(server, "fill ^5 ^-2 ^6 ^-5 ^-2 ^6 smooth_stone_slab");
+			"summon bamboo_chest_raft ~-1 ~-2 ~7 {Rotation:[180f,0f],NoGravity:1b}");
+		runCommand(server, "fill ~5 ~-2 ~6 ~-5 ~-2 ~6 smooth_stone_slab");
 		
 		// TODO: Copper chests!
 		
 		// Wait for the blocks to appear
-		context.waitTicks(2);
+		context.waitFor(
+			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-5, -2, 6))
+				.getBlock() == Blocks.SMOOTH_STONE_SLAB);
+		context.waitTick();
 		world.waitForChunksRender();
 	}
 	
