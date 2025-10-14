@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
+import net.minecraft.world.level.block.Blocks;
 
 public enum LootrTestRig
 {
@@ -25,37 +26,43 @@ public enum LootrTestRig
 		TestServerContext server = spContext.getServer();
 		
 		// Remove vanilla test rig and reset config
-		runCommand(server, "fill ^-12 ^-3 ^1 ^12 ^9 ^9 air");
+		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
 		ChestESPTest.resetConfig(context);
+		context.waitFor(mc -> mc.level
+			.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
+			.getBlock() == Blocks.AIR);
 		
 		// Delete vanilla test rig except for background
 		runCommand(server, "kill @e[type=!player]");
-		runCommand(server, "fill ^-12 ^-3 ^1 ^12 ^9 ^9 air");
+		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
 		
 		// Top row: lootr chests
-		runCommand(server, "setblock ^4 ^2 ^7 lootr:lootr_chest");
-		runCommand(server, "setblock ^2 ^2 ^7 lootr:lootr_chest[type=right]");
-		runCommand(server, "setblock ^1 ^2 ^7 lootr:lootr_chest[type=left]");
-		runCommand(server, "setblock ^-1 ^2 ^7 lootr:lootr_trapped_chest");
+		runCommand(server, "setblock ~4 ~2 ~7 lootr:lootr_chest");
+		runCommand(server, "setblock ~2 ~2 ~7 lootr:lootr_chest[type=right]");
+		runCommand(server, "setblock ~1 ~2 ~7 lootr:lootr_chest[type=left]");
+		runCommand(server, "setblock ~-1 ~2 ~7 lootr:lootr_trapped_chest");
 		runCommand(server,
-			"setblock ^-3 ^2 ^7 lootr:lootr_trapped_chest[type=right]");
+			"setblock ~-3 ~2 ~7 lootr:lootr_trapped_chest[type=right]");
 		runCommand(server,
-			"setblock ^-4 ^2 ^7 lootr:lootr_trapped_chest[type=left]");
+			"setblock ~-4 ~2 ~7 lootr:lootr_trapped_chest[type=left]");
 		runCommand(server,
-			"fill ^4 ^2 ^6 ^-4 ^2 ^6 smooth_stone_slab[type=top]");
+			"fill ~4 ~2 ~6 ~-4 ~2 ~6 smooth_stone_slab[type=top]");
 		
 		// Second row: other lootr containers
-		runCommand(server, "setblock ^4 ^ ^7 lootr:lootr_barrel");
-		runCommand(server, "setblock ^2 ^ ^7 lootr:lootr_shulker");
-		runCommand(server, "setblock ^ ^ ^7 lootr:lootr_inventory");
+		runCommand(server, "setblock ~4 ~ ~7 lootr:lootr_barrel");
+		runCommand(server, "setblock ~2 ~ ~7 lootr:lootr_shulker");
+		runCommand(server, "setblock ~ ~ ~7 lootr:lootr_inventory");
 		runCommand(server,
-			"setblock ^-2 ^ ^7 lootr:lootr_inventory[type=right]");
+			"setblock ~-2 ~ ~7 lootr:lootr_inventory[type=right]");
 		runCommand(server,
-			"setblock ^-3 ^ ^7 lootr:lootr_inventory[type=left]");
-		runCommand(server, "fill ^4 ^ ^6 ^-4 ^ ^6 smooth_stone_slab");
+			"setblock ~-3 ~ ~7 lootr:lootr_inventory[type=left]");
+		runCommand(server, "fill ~4 ~ ~6 ~-4 ~ ~6 smooth_stone_slab");
 		
 		// Wait for the blocks to appear
-		context.waitTicks(3);
+		context.waitFor(mc -> mc.level
+			.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
+			.getBlock() == Blocks.SMOOTH_STONE_SLAB);
+		context.waitTick();
 		world.waitForChunksRender();
 	}
 	
