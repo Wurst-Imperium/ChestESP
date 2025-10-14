@@ -28,6 +28,9 @@ public enum LootrTestRig
 		// Remove vanilla test rig and reset config
 		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
 		ChestESPTest.resetConfig(context);
+		context.waitFor(
+			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-4, 0, 6))
+				.getBlock() == Blocks.AIR);
 		
 		// Delete vanilla test rig except for background
 		runCommand(server, "kill @e[type=!player]");
