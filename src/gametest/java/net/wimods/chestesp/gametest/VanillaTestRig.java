@@ -71,6 +71,7 @@ public enum VanillaTestRig
 		context.waitFor(
 			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-5, -2, 6))
 				.getBlock() == Blocks.SMOOTH_STONE_SLAB);
+		context.waitTick();
 		world.waitForChunksRender();
 	}
 	

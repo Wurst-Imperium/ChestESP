@@ -62,6 +62,7 @@ public enum LootrTestRig
 		context.waitFor(
 			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-4, 0, 6))
 				.getBlock() == Blocks.SMOOTH_STONE_SLAB);
+		context.waitTick();
 		world.waitForChunksRender();
 	}
 	
