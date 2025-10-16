@@ -63,7 +63,9 @@ jobs:
         cache-read-only: ${{ github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/heads/1.') }}
 
     - name: Migrate mappings
-      run: ./scripts/migrate_mappings.sh "${{ inputs.yarn_mappings }}"
+      run: |
+        chmod +x ./scripts/migrate_mappings.sh
+        ./scripts/migrate_mappings.sh "${{ inputs.yarn_mappings }}"
 
     - name: Update version constants
       run: |
