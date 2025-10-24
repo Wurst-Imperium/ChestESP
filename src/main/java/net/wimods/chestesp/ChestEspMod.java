@@ -17,20 +17,13 @@ import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.block.entity.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.vehicle.ChestBoatEntity;
-import net.minecraft.entity.vehicle.ChestMinecartEntity;
-import net.minecraft.entity.vehicle.ChestRaftEntity;
-import net.minecraft.entity.vehicle.HopperMinecartEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.wimods.chestesp.util.ChunkUtils;
-import net.wimods.chestesp.util.LootrModCompat;
 import net.wimods.chestesp.util.PlausibleAnalytics;
 import net.wimods.chestesp.util.RenderUtils;
 
@@ -96,46 +89,16 @@ public final class ChestEspMod
 		
 		groups.allGroups.forEach(ChestEspGroup::clear);
 		
-		ChunkUtils.getLoadedBlockEntities().forEach(blockEntity -> {
-			if(blockEntity instanceof TrappedChestBlockEntity)
-				groups.trapChests.add(blockEntity);
-			else if(blockEntity instanceof ChestBlockEntity)
-				groups.basicChests.add(blockEntity);
-			else if(blockEntity instanceof EnderChestBlockEntity)
-				groups.enderChests.add(blockEntity);
-			else if(blockEntity instanceof ShulkerBoxBlockEntity
-				|| LootrModCompat.isLootrShulkerBox(blockEntity))
-				groups.shulkerBoxes.add(blockEntity);
-			else if(blockEntity instanceof BarrelBlockEntity
-				|| LootrModCompat.isLootrBarrel(blockEntity))
-				groups.barrels.add(blockEntity);
-			else if(blockEntity instanceof DecoratedPotBlockEntity)
-				groups.pots.add(blockEntity);
-			else if(blockEntity instanceof HopperBlockEntity)
-				groups.hoppers.add(blockEntity);
-			else if(blockEntity instanceof DropperBlockEntity)
-				groups.droppers.add(blockEntity);
-			else if(blockEntity instanceof DispenserBlockEntity)
-				groups.dispensers.add(blockEntity);
-			else if(blockEntity instanceof CrafterBlockEntity)
-				groups.crafters.add(blockEntity);
-			else if(blockEntity instanceof AbstractFurnaceBlockEntity)
-				groups.furnaces.add(blockEntity);
-		});
+		ChunkUtils.getLoadedBlockEntities().forEach(
+			be -> groups.blockGroups.forEach(group -> group.addIfMatches(be)));
 		
-		for(Entity entity : MC.world.getEntities())
-			if(entity instanceof ChestMinecartEntity)
-				groups.chestCarts.add(entity);
-			else if(entity instanceof HopperMinecartEntity)
-				groups.hopperCarts.add(entity);
-			else if(entity instanceof ChestBoatEntity
-				|| entity instanceof ChestRaftEntity)
-				groups.chestBoats.add(entity);
+		MC.world.getEntities().forEach(
+			e -> groups.entityGroups.forEach(group -> group.addIfMatches(e)));
 	}
 	
 	public boolean shouldCancelViewBobbing()
 	{
-		return configHolder.get().style.hasLines();
+		return enabled && configHolder.get().style.hasLines();
 	}
 	
 	public void onRender(MatrixStack matrixStack, float partialTicks)
