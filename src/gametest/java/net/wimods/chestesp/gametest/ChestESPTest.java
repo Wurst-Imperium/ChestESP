@@ -29,12 +29,14 @@ import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.world.level.GameRules;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
-import net.wimods.chestesp.ChestEspStyle;
 
 public final class ChestESPTest implements FabricClientGameTest
 {
 	public static final Logger LOGGER =
 		LoggerFactory.getLogger("ChestESP Test");
+	
+	public static final boolean IS_LOOTR_TEST =
+		System.getProperty("chestesp.withLootr") != null;
 	
 	@Override
 	public void runTest(ClientGameTestContext context)
@@ -98,17 +100,21 @@ public final class ChestESPTest implements FabricClientGameTest
 		TestClientWorldContext world = spContext.getClientWorld();
 		TestServerContext server = spContext.getServer();
 		
-		LOGGER.info("Teleporting player to world origin");
-		runCommand(server, "tp 0 -60 0");
+		LOGGER.info("Setting up test background");
+		runCommand(server, "time set noon");
+		runCommand(server, "tp 0 -57 0");
+		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ smooth_stone");
+		runCommand(server, "fill ^-12 ^-4 ^ ^12 ^-4 ^10 smooth_stone");
+		runCommand(server, "fill ^-12 ^-3 ^10 ^12 ^9 ^10 smooth_stone");
 		
 		LOGGER.info("Loading chunks");
+		context.waitTicks(2);
 		context.waitFor(mc -> mc.levelRenderer.countRenderedSections() >= 50,
 			TestClientWorldContext.DEFAULT_CHUNK_LOAD_TIMEOUT);
 		world.waitForChunksRender(false);
 		
-		LOGGER.info("Reached singleplayer world");
 		assertScreenshotEquals(context, "in_game",
-			"https://i.imgur.com/xAtoE05.png");
+			"https://i.imgur.com/E8j601u.png");
 		
 		LOGGER.info("Recording debug menu");
 		input.pressKey(GLFW.GLFW_KEY_F3);
@@ -117,49 +123,46 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Opening inventory");
 		input.pressKey(GLFW.GLFW_KEY_E);
-		assertScreenshotEquals(context, "inventory",
-			"https://i.imgur.com/nkeB4Qb.png");
+		if(IS_LOOTR_TEST)
+			assertScreenshotEquals(context, "inventory",
+				"https://i.imgur.com/IsKI0f6.png");
+		else
+			assertScreenshotEquals(context, "inventory",
+				"https://i.imgur.com/rnTyQFK.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		LOGGER.info("Opening game menu");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		assertScreenshotEquals(context, "game_menu",
-			"https://i.imgur.com/odUYeql.png");
+			"https://i.imgur.com/MpiKRrh.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
-		LOGGER.info("Building test rig");
-		buildTestRig(context, spContext);
-		assertScreenshotEquals(context, "ChestESP_default_settings",
-			"https://i.imgur.com/vb6QrX7.png");
+		LOGGER.info("Building vanilla test rig");
+		VanillaTestRig.build(context, spContext);
+		VanillaTestRig.test(context);
 		
-		LOGGER.info("Enabling all ChestESP groups");
-		withConfig(context, config -> {
-			config.include_pots = true;
-			config.include_hoppers = true;
-			config.include_hopper_carts = true;
-			config.include_droppers = true;
-			config.include_dispensers = true;
-			config.include_crafters = true;
-			config.include_furnaces = true;
+		if(IS_LOOTR_TEST)
+		{
+			LOGGER.info("Building lootr test rig");
+			LootrTestRig.build(context, spContext);
+			LootrTestRig.test(context);
+		}
+		
+		LOGGER.info("Checking for broken mixins");
+		MixinEnvironment.getCurrentEnvironment().audit();
+	}
+	
+	public static void withConfig(ClientGameTestContext context,
+		Consumer<ChestEspConfig> configUpdater)
+	{
+		context.runOnClient(mc -> {
+			configUpdater.accept(
+				ChestEspMod.getInstance().getConfigHolder().getConfig());
 		});
-		assertScreenshotEquals(context, "ChestESP_boxes",
-			"https://i.imgur.com/5pOiIP2.png");
-		
-		LOGGER.info("Changing style to lines");
-		withConfig(context, config -> {
-			config.style = ChestEspStyle.LINES;
-		});
-		assertScreenshotEquals(context, "ChestESP_lines",
-			"https://i.imgur.com/WmZKtQ2.png");
-		
-		LOGGER.info("Changing style to lines and boxes");
-		withConfig(context, config -> {
-			config.style = ChestEspStyle.LINES_AND_BOXES;
-		});
-		assertScreenshotEquals(context, "ChestESP_lines_and_boxes",
-			"https://i.imgur.com/UKuHTbH.png");
-		
-		LOGGER.info("Changing all color settings");
+	}
+	
+	public static void setRainbowColors(ClientGameTestContext context)
+	{
 		withConfig(context, config -> {
 			int total = 14;
 			config.chest_color = rainbowColor(0, total);
@@ -177,76 +180,17 @@ public final class ChestESPTest implements FabricClientGameTest
 			config.crafter_color = rainbowColor(12, total);
 			config.furnace_color = rainbowColor(13, total);
 		});
-		assertScreenshotEquals(context, "ChestESP_custom_colors",
-			"https://i.imgur.com/r9fwqqW.png");
-		
-		LOGGER.info("Checking for broken mixins");
-		MixinEnvironment.getCurrentEnvironment().audit();
-	}
-	
-	private void buildTestRig(ClientGameTestContext context,
-		TestSingleplayerContext spContext)
-	{
-		TestClientWorldContext world = spContext.getClientWorld();
-		TestServerContext server = spContext.getServer();
-		
-		// Set up background
-		runCommand(server, "fill ^-12 ^-1 ^ ^12 ^-1 ^10 stone");
-		runCommand(server, "fill ^-12 ^ ^10 ^12 ^12 ^10 stone");
-		runCommand(server, "tp ^ ^3 ^");
-		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ stone");
-		
-		// Top row: normal chests
-		runCommand(server, "setblock ^5 ^4 ^7 chest");
-		runCommand(server, "setblock ^3 ^4 ^7 chest[type=right]");
-		runCommand(server, "setblock ^2 ^4 ^7 chest[type=left]");
-		runCommand(server, "setblock ^ ^4 ^7 ender_chest");
-		runCommand(server, "setblock ^-2 ^4 ^7 trapped_chest");
-		runCommand(server, "setblock ^-4 ^4 ^7 trapped_chest[type=right]");
-		runCommand(server, "setblock ^-5 ^4 ^7 trapped_chest[type=left]");
-		
-		// Second row: other containers
-		runCommand(server, "setblock ^5 ^2 ^7 barrel");
-		runCommand(server, "setblock ^3 ^2 ^7 shulker_box");
-		runCommand(server, "setblock ^1 ^2 ^7 decorated_pot");
-		runCommand(server, "setblock ^-1 ^2 ^7 furnace");
-		runCommand(server, "setblock ^-3 ^2 ^7 blast_furnace");
-		runCommand(server, "setblock ^-5 ^2 ^7 smoker");
-		
-		// Third row: redstone things
-		runCommand(server, "setblock ^5 ^ ^7 dispenser");
-		runCommand(server, "setblock ^3 ^ ^7 dropper");
-		runCommand(server, "setblock ^1 ^ ^7 hopper");
-		runCommand(server, "setblock ^-1 ^ ^7 crafter");
-		
-		// Fourth row: vehicles
-		runCommand(server,
-			"summon chest_minecart ^5 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
-		runCommand(server,
-			"summon hopper_minecart ^3 ^-2 ^7 {Rotation:[90f,0f],NoGravity:1b}");
-		runCommand(server,
-			"summon chest_boat ^1 ^-2 ^7 {Rotation:[180f,0f],NoGravity:1b}");
-		runCommand(server,
-			"summon chest_boat ^-1 ^-2 ^7 {Type:\"bamboo\",Rotation:[180f,0f],NoGravity:1b}");
-		
-		// TODO: Copper chests!
-		
-		// Wait for the blocks to appear
-		context.waitTicks(2);
-		world.waitForChunksRender(false);
-	}
-	
-	public static void withConfig(ClientGameTestContext context,
-		Consumer<ChestEspConfig> configUpdater)
-	{
-		context.runOnClient(mc -> {
-			configUpdater.accept(
-				ChestEspMod.getInstance().getConfigHolder().getConfig());
-		});
 	}
 	
 	private static int rainbowColor(int index, int total)
 	{
 		return Color.HSBtoRGB((float)index / total, 0.8F, 1) & 0xFFFFFF;
+	}
+	
+	public static void resetConfig(ClientGameTestContext context)
+	{
+		context.runOnClient(mc -> {
+			ChestEspMod.getInstance().getConfigHolder().resetToDefault();
+		});
 	}
 }
