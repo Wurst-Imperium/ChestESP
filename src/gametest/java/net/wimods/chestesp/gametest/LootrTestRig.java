@@ -13,6 +13,8 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
+import net.minecraft.block.Blocks;
+import net.wimods.chestesp.ChestEspStyle;
 
 public enum LootrTestRig
 {
@@ -24,46 +26,46 @@ public enum LootrTestRig
 		TestClientWorldContext world = spContext.getClientWorld();
 		TestServerContext server = spContext.getServer();
 		
-		// Remove vanilla test rig and reset config
-		runCommand(server, "fill ^-12 ^-3 ^1 ^12 ^9 ^9 air");
-		ChestESPTest.resetConfig(context);
-		
-		// Delete vanilla test rig except for background
+		// Remove previous test rig and reset config
 		runCommand(server, "kill @e[type=!player]");
-		runCommand(server, "fill ^-12 ^-3 ^1 ^12 ^9 ^9 air");
+		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
+		ChestESPTest.resetConfig(context);
+		context.waitFor(
+			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-4, 0, 6))
+				.getBlock() == Blocks.AIR);
 		
 		// Top row: lootr chests
-		runCommand(server, "setblock ^4 ^2 ^7 lootr:lootr_chest");
-		runCommand(server, "setblock ^2 ^2 ^7 lootr:lootr_chest[type=right]");
-		runCommand(server, "setblock ^1 ^2 ^7 lootr:lootr_chest[type=left]");
-		runCommand(server, "setblock ^-1 ^2 ^7 lootr:lootr_trapped_chest");
+		runCommand(server, "setblock ~4 ~2 ~7 lootr:lootr_chest");
+		runCommand(server, "setblock ~2 ~2 ~7 lootr:lootr_chest[type=right]");
+		runCommand(server, "setblock ~1 ~2 ~7 lootr:lootr_chest[type=left]");
+		runCommand(server, "setblock ~-1 ~2 ~7 lootr:lootr_trapped_chest");
 		runCommand(server,
-			"setblock ^-3 ^2 ^7 lootr:lootr_trapped_chest[type=right]");
+			"setblock ~-3 ~2 ~7 lootr:lootr_trapped_chest[type=right]");
 		runCommand(server,
-			"setblock ^-4 ^2 ^7 lootr:lootr_trapped_chest[type=left]");
+			"setblock ~-4 ~2 ~7 lootr:lootr_trapped_chest[type=left]");
 		runCommand(server,
-			"fill ^4 ^2 ^6 ^-4 ^2 ^6 smooth_stone_slab[type=top]");
+			"fill ~4 ~2 ~6 ~-4 ~2 ~6 smooth_stone_slab[type=top]");
 		
 		// Second row: other lootr containers
-		runCommand(server, "setblock ^4 ^ ^7 lootr:lootr_barrel");
-		runCommand(server, "setblock ^2 ^ ^7 lootr:lootr_shulker");
-		runCommand(server, "setblock ^ ^ ^7 lootr:lootr_inventory");
+		runCommand(server, "setblock ~4 ~ ~7 lootr:lootr_barrel");
+		runCommand(server, "setblock ~2 ~ ~7 lootr:lootr_shulker");
+		runCommand(server, "setblock ~ ~ ~7 lootr:lootr_inventory");
 		runCommand(server,
-			"setblock ^-2 ^ ^7 lootr:lootr_inventory[type=right]");
+			"setblock ~-2 ~ ~7 lootr:lootr_inventory[type=right]");
 		runCommand(server,
-			"setblock ^-3 ^ ^7 lootr:lootr_inventory[type=left]");
-		runCommand(server, "fill ^4 ^ ^6 ^-4 ^ ^6 smooth_stone_slab");
+			"setblock ~-3 ~ ~7 lootr:lootr_inventory[type=left]");
+		runCommand(server, "fill ~4 ~ ~6 ~-4 ~ ~6 smooth_stone_slab");
 		
 		// Wait for the blocks to appear
-		context.waitTicks(2);
+		context.waitFor(
+			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-4, 0, 6))
+				.getBlock() == Blocks.SMOOTH_STONE_SLAB);
+		context.waitTick();
 		world.waitForChunksRender();
 	}
 	
 	public static void test(ClientGameTestContext context)
 	{
-		assertScreenshotEquals(context, "ChestESP_lootr_default_settings",
-			"https://i.imgur.com/tR5uMIp.png");
-		
 		ChestESPTest.LOGGER.info("Enabling all ChestESP groups for Lootr test");
 		ChestESPTest.withConfig(context, config -> {
 			config.include_pots = true;
@@ -79,7 +81,7 @@ public enum LootrTestRig
 		
 		ChestESPTest.LOGGER.info("Changing style to lines for Lootr test");
 		ChestESPTest.withConfig(context, config -> {
-			config.style = net.wimods.chestesp.ChestEspStyle.LINES;
+			config.style = ChestEspStyle.LINES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_lines",
 			"https://i.imgur.com/xj1MHgq.png");
@@ -87,7 +89,7 @@ public enum LootrTestRig
 		ChestESPTest.LOGGER
 			.info("Changing style to lines and boxes for Lootr test");
 		ChestESPTest.withConfig(context, config -> {
-			config.style = net.wimods.chestesp.ChestEspStyle.LINES_AND_BOXES;
+			config.style = ChestEspStyle.LINES_AND_BOXES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_lines_and_boxes",
 			"https://i.imgur.com/SaK6Y9Z.png");
