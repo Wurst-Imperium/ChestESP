@@ -33,7 +33,7 @@ public enum RenderUtils
 	
 	public static Vec3 getCameraPos()
 	{
-		Camera camera = MC.getBlockEntityRenderDispatcher().camera;
+		Camera camera = MC.gameRenderer.getMainCamera();
 		if(camera == null)
 			return Vec3.ZERO;
 		

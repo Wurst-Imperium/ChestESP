@@ -25,7 +25,7 @@ on:
         type: boolean
         default: true
       update_website:
-        description: "Update wimods.net post (only works if there already is one and publish_curseforge is true)"
+        description: "Update wimods.net post (only works if there already is one)"
         required: false
         type: boolean
         default: false
@@ -41,10 +41,6 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    env:
-      WI_BACKUPS_API_KEY: ${{ secrets.WI_BACKUPS_API_KEY }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
     steps:
 
     - name: Echo distinct ID ${{ inputs.distinct_id }}
@@ -66,10 +62,16 @@ jobs:
       run: chmod +x gradlew
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
+      uses: gradle/actions/setup-gradle@v5
+      with:
+        build-scan-publish: true
+        build-scan-terms-of-use-url: "https://gradle.com/help/legal-terms-of-use"
+        build-scan-terms-of-use-agree: "yes"
+        cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+        cache-read-only: ${{ github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/heads/1.') }}
 
     - name: Build
-      run: ./gradlew build --stacktrace --warning-mode=fail
+      run: ./gradlew build --stacktrace
 
     - name: Create and push tag
       run: |
@@ -81,39 +83,45 @@ jobs:
 
     - name: Close milestone
       if: ${{ inputs.close_milestone }}
-      run: ./gradlew closeMilestone --stacktrace
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: ./gradlew closeMilestone --stacktrace --no-configuration-cache --warning-mode all
 
     - name: Upload backups
       if: ${{ inputs.upload_backups }}
-      run: ./gradlew uploadBackups --stacktrace
+      env:
+        WI_BACKUPS_API_KEY: ${{ secrets.WI_BACKUPS_API_KEY }}
+      run: ./gradlew uploadBackups --stacktrace --no-configuration-cache --warning-mode all
 
     - name: Publish to GitHub
       if: ${{ inputs.publish_github }}
       env:
         GITHUB_TOKEN: ${{ secrets.MCX_PUBLISH_TOKEN }}
-      run: ./gradlew github --stacktrace
+      run: ./gradlew github --stacktrace --no-configuration-cache --warning-mode all
 
     - name: Publish to CurseForge
       if: ${{ inputs.publish_curseforge }}
-      run: ./gradlew publishCurseforge --stacktrace
+      env:
+        CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
+      run: ./gradlew publishCurseforge --stacktrace --no-configuration-cache --warning-mode all
 
     - name: Get CurseForge file ID
       id: cf_file_id
       if: ${{ inputs.publish_curseforge }}
       run: |
-        file_id=$(./gradlew getCurseforgeId -x publishCurseforge | grep -o 'CURSEFORGE_FILE_ID=[0-9]*' | grep -o '[0-9]*')
+        file_id=$(./gradlew getCurseforgeId -x publishCurseforge --no-configuration-cache --warning-mode none | grep -o 'CURSEFORGE_FILE_ID=[0-9]*' | grep -o '[0-9]*')
         echo "file_id=$file_id" >> "$GITHUB_OUTPUT"
         echo "CurseForge file ID: \`$file_id\`" >> $GITHUB_STEP_SUMMARY
 
     - name: Build website update inputs
       id: website_inputs
-      if: ${{ inputs.update_website && inputs.publish_curseforge }}
+      if: ${{ inputs.update_website }}
       run: |
         echo "mod_version=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2 | tr -d ' \r' | sed 's/-MC.*$//')" >> "$GITHUB_OUTPUT"
         echo "mc_version=$(grep '^minecraft_version=' gradle.properties | cut -d'=' -f2 | tr -d ' \r')" >> "$GITHUB_OUTPUT"
 
     - name: Trigger website update
-      if: ${{ inputs.update_website && inputs.publish_curseforge }}
+      if: ${{ inputs.update_website }}
       uses: Wurst-Imperium/dispatch-and-wait@v1
       with:
         token: ${{ secrets.WIMODS_NET_PUBLISH_TOKEN }}
