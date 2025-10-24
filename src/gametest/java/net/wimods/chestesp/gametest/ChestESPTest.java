@@ -145,6 +145,10 @@ public final class ChestESPTest implements FabricClientGameTest
 		VanillaTestRig.build(context, spContext);
 		VanillaTestRig.test(context);
 		
+		LOGGER.info("Building copper test rig");
+		CopperTestRig.build(context, spContext);
+		CopperTestRig.test(context);
+		
 		if(IS_LOOTR_TEST)
 		{
 			LOGGER.info("Building lootr test rig");
