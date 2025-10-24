@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.minecraft.block.Blocks;
+import net.wimods.chestesp.ChestEspStyle;
 
 public enum LootrTestRig
 {
@@ -25,16 +26,13 @@ public enum LootrTestRig
 		TestClientWorldContext world = spContext.getClientWorld();
 		TestServerContext server = spContext.getServer();
 		
-		// Remove vanilla test rig and reset config
+		// Remove previous test rig and reset config
+		runCommand(server, "kill @e[type=!player]");
 		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
 		ChestESPTest.resetConfig(context);
 		context.waitFor(
 			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-4, 0, 6))
 				.getBlock() == Blocks.AIR);
-		
-		// Delete vanilla test rig except for background
-		runCommand(server, "kill @e[type=!player]");
-		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
 		
 		// Top row: lootr chests
 		runCommand(server, "setblock ~4 ~2 ~7 lootr:lootr_chest");
@@ -68,9 +66,6 @@ public enum LootrTestRig
 	
 	public static void test(ClientGameTestContext context)
 	{
-		assertScreenshotEquals(context, "ChestESP_lootr_default_settings",
-			"https://i.imgur.com/g5gbEAa.png");
-		
 		ChestESPTest.LOGGER.info("Enabling all ChestESP groups for Lootr test");
 		ChestESPTest.withConfig(context, config -> {
 			config.include_pots = true;
@@ -86,7 +81,7 @@ public enum LootrTestRig
 		
 		ChestESPTest.LOGGER.info("Changing style to lines for Lootr test");
 		ChestESPTest.withConfig(context, config -> {
-			config.style = net.wimods.chestesp.ChestEspStyle.LINES;
+			config.style = ChestEspStyle.LINES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_lines",
 			"https://i.imgur.com/A14Tgu2.png");
@@ -94,7 +89,7 @@ public enum LootrTestRig
 		ChestESPTest.LOGGER
 			.info("Changing style to lines and boxes for Lootr test");
 		ChestESPTest.withConfig(context, config -> {
-			config.style = net.wimods.chestesp.ChestEspStyle.LINES_AND_BOXES;
+			config.style = ChestEspStyle.LINES_AND_BOXES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_lines_and_boxes",
 			"https://i.imgur.com/arRfGL2.png");

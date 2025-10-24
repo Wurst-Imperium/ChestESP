@@ -65,8 +65,6 @@ public enum VanillaTestRig
 			"summon bamboo_chest_raft ~-1 ~-2 ~7 {Rotation:[180f,0f],NoGravity:1b}");
 		runCommand(server, "fill ~5 ~-2 ~6 ~-5 ~-2 ~6 smooth_stone_slab");
 		
-		// TODO: Copper chests!
-		
 		// Wait for the blocks to appear
 		context.waitFor(
 			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-5, -2, 6))
