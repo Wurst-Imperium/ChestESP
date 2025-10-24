@@ -25,16 +25,13 @@ public enum LootrTestRig
 		TestClientWorldContext world = spContext.getClientWorld();
 		TestServerContext server = spContext.getServer();
 		
-		// Remove vanilla test rig and reset config
+		// Remove previous test rig and reset config
+		runCommand(server, "kill @e[type=!player]");
 		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
 		ChestESPTest.resetConfig(context);
 		context.waitFor(
 			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-4, 0, 6))
 				.getBlock() == Blocks.AIR);
-		
-		// Delete vanilla test rig except for background
-		runCommand(server, "kill @e[type=!player]");
-		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
 		
 		// Top row: lootr chests
 		runCommand(server, "setblock ~4 ~2 ~7 lootr:lootr_chest");
