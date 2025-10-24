@@ -10,9 +10,8 @@ plugins {
 	id "idea"
 	// NeoGradle. Check the latest version at:
 	// https://projects.neoforged.net/neoforged/neogradle
-	id "net.neoforged.gradle.userdev" version "7.0.192"
-	id "net.neoforged.gradle.mixin" version "7.0.192"
-	id "me.modmuss50.mod-publish-plugin" version "1.0.0"
+	id "net.neoforged.gradle.userdev" version "7.1.1"
+	id "me.modmuss50.mod-publish-plugin" version "1.1.0"
 	id "com.diffplug.spotless" version "8.0.0"
 }
 
@@ -71,10 +70,6 @@ tasks.named("build").configure {
 // Mojang ships Java 21 to end users starting in 1.20.5 (24w14a), so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-mixin {
-	config "chestesp.mixins.json"
-}
-
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 //minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
 
@@ -102,6 +97,7 @@ runs {
 		systemProperty 'forge.logging.console.level', 'debug'
 		
 		modSource project.sourceSets.main
+		arguments("--mixin.config", "chestesp.mixins.json")
 	}
 	
 	client {
@@ -136,10 +132,8 @@ runs {
 		arguments("--username", "Wurst-Bot")
 		workingDirectory(file("build/run/clientGameTest"))
 		modSource project.sourceSets.gametest
-		mixin {
-			config "fabric_api.mixins.json"
-			config "client_gametest.mixins.json"
-		}
+		arguments("--mixin.config", "fabric_api.mixins.json")
+		arguments("--mixin.config", "client_gametest.mixins.json")
 	}
 	
 	clientGameTestWithLootr {
@@ -149,10 +143,8 @@ runs {
 		arguments("--username", "Wurst-Bot")
 		workingDirectory(file("build/run/clientGameTestWithLootr"))
 		modSource project.sourceSets.gametest
-		mixin {
-			config "fabric_api.mixins.json"
-			config "client_gametest.mixins.json"
-		}
+		arguments("--mixin.config", "fabric_api.mixins.json")
+		arguments("--mixin.config", "client_gametest.mixins.json")
 	}
 }
 
