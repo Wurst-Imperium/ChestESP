@@ -11,9 +11,6 @@ import net.minecraft.block.entity.BlockEntity;
 
 /**
  * Detects block entities from the Lootr mod for use in ChestESP.
- *
- * <p>
- * Last tested with lootr-fabric-1.21-1.10.35.91.
  */
 public enum LootrModCompat
 {
@@ -23,6 +20,8 @@ public enum LootrModCompat
 		"noobanidus.mods.lootr.common.block.entity.LootrBarrelBlockEntity");
 	private static final Class<?> lootrShulkerBoxClass = getClassIfExists(
 		"noobanidus.mods.lootr.common.block.entity.LootrShulkerBlockEntity");
+	private static final Class<?> lootrTrappedChestClass = getClassIfExists(
+		"noobanidus.mods.lootr.common.block.entity.LootrTrappedChestBlockEntity");
 	
 	public static boolean isLootrBarrel(BlockEntity blockEntity)
 	{
@@ -38,6 +37,14 @@ public enum LootrModCompat
 			return false;
 		
 		return lootrShulkerBoxClass.isInstance(blockEntity);
+	}
+	
+	public static boolean isLootrTrappedChest(BlockEntity blockEntity)
+	{
+		if(blockEntity == null || lootrTrappedChestClass == null)
+			return false;
+		
+		return lootrTrappedChestClass.isInstance(blockEntity);
 	}
 	
 	private static Class<?> getClassIfExists(String name)

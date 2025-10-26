@@ -34,7 +34,7 @@ public enum RenderUtils
 	
 	public static Vec3d getCameraPos()
 	{
-		Camera camera = MC.getBlockEntityRenderDispatcher().camera;
+		Camera camera = MC.gameRenderer.getCamera();
 		if(camera == null)
 			return Vec3d.ZERO;
 		
