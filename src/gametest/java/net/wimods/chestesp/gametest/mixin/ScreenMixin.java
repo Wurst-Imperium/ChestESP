@@ -31,9 +31,7 @@ public abstract class ScreenMixin extends AbstractContainerEventHandler
 	 * Replaces the panorama background with a gray background to make test
 	 * screenshots consistent.
 	 */
-	@Inject(at = @At("HEAD"),
-		method = "renderPanorama",
-		cancellable = true)
+	@Inject(at = @At("HEAD"), method = "renderPanorama", cancellable = true)
 	public void renderPanoramaBackground(GuiGraphics context, float deltaTicks,
 		CallbackInfo ci)
 	{

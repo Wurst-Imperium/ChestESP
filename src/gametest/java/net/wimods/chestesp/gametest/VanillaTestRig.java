@@ -66,9 +66,9 @@ public enum VanillaTestRig
 		runCommand(server, "fill ~5 ~-2 ~6 ~-5 ~-2 ~6 smooth_stone_slab");
 		
 		// Wait for the blocks to appear
-		context.waitFor(
-			mc -> mc.level.getBlockState(mc.player.blockPosition().offset(-5, -2, 6))
-				.getBlock() == Blocks.SMOOTH_STONE_SLAB);
+		context.waitFor(mc -> mc.level
+			.getBlockState(mc.player.blockPosition().offset(-5, -2, 6))
+			.getBlock() == Blocks.SMOOTH_STONE_SLAB);
 		context.waitTick();
 		world.waitForChunksRender();
 	}

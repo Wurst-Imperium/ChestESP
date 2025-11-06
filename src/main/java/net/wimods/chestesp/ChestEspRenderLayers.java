@@ -18,38 +18,43 @@ public enum ChestEspRenderLayers
 	/**
 	 * Similar to {@link RenderType#lines()}, but with line width 2.
 	 */
-	public static final RenderType.CompositeRenderType LINES = RenderType.create(
-		"chestesp:lines", 1536, ChestEspPipelines.DEPTH_TEST_LINES,
-		RenderType.CompositeState.builder()
-			.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
-			.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
-			.setOutputState(RenderType.ITEM_ENTITY_TARGET).createCompositeState(false));
+	public static final RenderType.CompositeRenderType LINES = RenderType
+		.create("chestesp:lines", 1536, ChestEspPipelines.DEPTH_TEST_LINES,
+			RenderType.CompositeState.builder()
+				.setLineState(
+					new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
+				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+				.setOutputState(RenderType.ITEM_ENTITY_TARGET)
+				.createCompositeState(false));
 	
 	/**
 	 * Similar to {@link RenderType#lines()}, but with line width 2 and no
 	 * depth test.
 	 */
-	public static final RenderType.CompositeRenderType ESP_LINES =
-		RenderType.create("chestesp:esp_lines", 1536, ChestEspPipelines.ESP_LINES,
+	public static final RenderType.CompositeRenderType ESP_LINES = RenderType
+		.create("chestesp:esp_lines", 1536, ChestEspPipelines.ESP_LINES,
 			RenderType.CompositeState.builder()
-				.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
+				.setLineState(
+					new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
 				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
-				.setOutputState(RenderType.ITEM_ENTITY_TARGET).createCompositeState(false));
+				.setOutputState(RenderType.ITEM_ENTITY_TARGET)
+				.createCompositeState(false));
 	
 	/**
 	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled.
 	 */
-	public static final RenderType.CompositeRenderType QUADS = RenderType.create(
-		"chestesp:quads", 1536, false, true, ChestEspPipelines.QUADS,
-		RenderType.CompositeState.builder().createCompositeState(false));
+	public static final RenderType.CompositeRenderType QUADS = RenderType
+		.create("chestesp:quads", 1536, false, true, ChestEspPipelines.QUADS,
+			RenderType.CompositeState.builder().createCompositeState(false));
 	
 	/**
 	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled
 	 * and no depth test.
 	 */
-	public static final RenderType.CompositeRenderType ESP_QUADS = RenderType.create(
-		"chestesp:esp_quads", 1536, false, true, ChestEspPipelines.ESP_QUADS,
-		RenderType.CompositeState.builder().createCompositeState(false));
+	public static final RenderType.CompositeRenderType ESP_QUADS =
+		RenderType.create("chestesp:esp_quads", 1536, false, true,
+			ChestEspPipelines.ESP_QUADS,
+			RenderType.CompositeState.builder().createCompositeState(false));
 	
 	/**
 	 * Returns either {@link #QUADS} or {@link #ESP_QUADS} depending on the

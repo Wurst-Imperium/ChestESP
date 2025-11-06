@@ -27,7 +27,8 @@ public enum ChestEspPipelines
 		.builder(RenderPipelines.MATRICES_FOG_SNIPPET,
 			RenderPipelines.GLOBALS_SNIPPET)
 		.withVertexShader(ResourceLocation.parse("chestesp:core/fogless_lines"))
-		.withFragmentShader(ResourceLocation.parse("chestesp:core/fogless_lines"))
+		.withFragmentShader(
+			ResourceLocation.parse("chestesp:core/fogless_lines"))
 		.withBlend(BlendFunction.TRANSLUCENT).withCull(false)
 		.withVertexFormat(DefaultVertexFormat.POSITION_COLOR_NORMAL, Mode.LINES)
 		.buildSnippet();
@@ -37,7 +38,8 @@ public enum ChestEspPipelines
 	 */
 	public static final RenderPipeline DEPTH_TEST_LINES =
 		RenderPipelines.register(RenderPipeline.builder(FOGLESS_LINES_SNIPPET)
-			.withLocation(ResourceLocation.parse("chestesp:pipeline/depth_test_lines"))
+			.withLocation(
+				ResourceLocation.parse("chestesp:pipeline/depth_test_lines"))
 			.build());
 	
 	/**
@@ -53,8 +55,8 @@ public enum ChestEspPipelines
 	 */
 	public static final RenderPipeline DEPTH_TEST_LINE_STRIP =
 		RenderPipelines.register(RenderPipeline.builder(FOGLESS_LINES_SNIPPET)
-			.withLocation(
-				ResourceLocation.parse("chestesp:pipeline/depth_test_line_strip"))
+			.withLocation(ResourceLocation
+				.parse("chestesp:pipeline/depth_test_line_strip"))
 			.withVertexFormat(DefaultVertexFormat.POSITION_COLOR_NORMAL,
 				Mode.LINE_STRIP)
 			.build());
@@ -64,7 +66,8 @@ public enum ChestEspPipelines
 	 */
 	public static final RenderPipeline ESP_LINE_STRIP =
 		RenderPipelines.register(RenderPipeline.builder(FOGLESS_LINES_SNIPPET)
-			.withLocation(ResourceLocation.parse("chestesp:pipeline/esp_line_strip"))
+			.withLocation(
+				ResourceLocation.parse("chestesp:pipeline/esp_line_strip"))
 			.withVertexFormat(DefaultVertexFormat.POSITION_COLOR_NORMAL,
 				Mode.LINE_STRIP)
 			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST).build());
