@@ -64,8 +64,9 @@ jobs:
 
     - name: Migrate mappings
       run: |
-        chmod +x ./scripts/migrate_mappings.sh
-        ./scripts/migrate_mappings.sh "${{ inputs.yarn_mappings }}"
+        ./gradlew migrateMappings --mappings ${{ inputs.yarn_mappings }} --overrideInputsIHaveABackup
+        ./gradlew migrateGametestMappings --mappings ${{ inputs.yarn_mappings }} --overrideInputsIHaveABackup
+        ./gradlew migrateClassTweakerMappings --mappings ${{ inputs.yarn_mappings }} --overrideInputsIHaveABackup
 
     - name: Update version constants
       run: |

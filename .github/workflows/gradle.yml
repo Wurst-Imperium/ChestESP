@@ -93,7 +93,7 @@ jobs:
       run: xvfb-run --auto-servernum ./gradlew runClientGameTest runClientGameTestWithLootr --stacktrace --no-configuration-cache
 
     - name: Upload screenshots
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: ${{ success() || failure() }}
       with:
         name: screenshots
@@ -101,14 +101,14 @@ jobs:
         compression-level: 0
 
     - name: Upload logs
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: ${{ success() || failure() }}
       with:
         name: logs
         path: build/run/*/logs/latest.log
 
     - name: Upload crash reports
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: ${{ failure() }}
       with:
         name: crash-reports
