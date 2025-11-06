@@ -223,8 +223,7 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 			return waitFor(client -> client.screen == null);
 		}else
 		{
-			return waitFor(
-				client -> screenClass.isInstance(client.screen));
+			return waitFor(client -> screenClass.isInstance(client.screen));
 		}
 	}
 	
@@ -245,8 +244,8 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 			if(!tryClickScreenButtonImpl(client.screen, translationKey))
 			{
 				throw new AssertionError(
-					"Could not find button '%s' in screen '%s'".formatted(
-						translationKey, Optionull.map(client.screen,
+					"Could not find button '%s' in screen '%s'"
+						.formatted(translationKey, Optionull.map(client.screen,
 							screen -> screen.getClass().getName())));
 			}
 		});
@@ -258,8 +257,8 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 		ThreadingImpl.checkOnGametestThread("tryClickScreenButton");
 		Preconditions.checkNotNull(translationKey, "translationKey");
 		
-		return computeOnClient(client -> tryClickScreenButtonImpl(
-			client.screen, translationKey));
+		return computeOnClient(
+			client -> tryClickScreenButtonImpl(client.screen, translationKey));
 	}
 	
 	private static boolean tryClickScreenButtonImpl(@Nullable Screen screen,
@@ -270,7 +269,8 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 			return false;
 		}
 		
-		final String buttonText = Component.translatable(translationKey).getString();
+		final String buttonText =
+			Component.translatable(translationKey).getString();
 		final ScreenAccessor screenAccessor = (ScreenAccessor)screen;
 		
 		for(Renderable drawable : screenAccessor.getDrawables())
@@ -616,7 +616,8 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 					
 					@SuppressWarnings("unchecked")
 					@Override
-					public <T> void process(String key, OptionInstance<T> option)
+					public <T> void process(String key,
+						OptionInstance<T> option)
 					{
 						option.set((T)DEFAULT_GAME_OPTIONS.get(key));
 					}
@@ -631,8 +632,7 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 		ThreadingImpl.checkOnGametestThread("runOnClient");
 		Preconditions.checkNotNull(action, "action");
 		
-		ThreadingImpl
-			.runOnClient(() -> action.accept(Minecraft.getInstance()));
+		ThreadingImpl.runOnClient(() -> action.accept(Minecraft.getInstance()));
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -644,8 +644,8 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 		Preconditions.checkNotNull(function, "function");
 		
 		MutableObject<T> result = new MutableObject<>();
-		ThreadingImpl.runOnClient(() -> result
-			.setValue(function.apply(Minecraft.getInstance())));
+		ThreadingImpl.runOnClient(
+			() -> result.setValue(function.apply(Minecraft.getInstance())));
 		return result.getValue();
 	}
 }

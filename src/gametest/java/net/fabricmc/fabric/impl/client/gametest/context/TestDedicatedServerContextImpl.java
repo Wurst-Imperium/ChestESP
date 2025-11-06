@@ -48,8 +48,8 @@ public class TestDedicatedServerContextImpl extends TestServerContextImpl
 			final var serverInfo = new ServerData("localhost",
 				getConnectionAddress(), ServerData.Type.OTHER);
 			ConnectScreen.startConnecting(client.screen, client,
-				ServerAddress.parseString(getConnectionAddress()), serverInfo, false,
-				null);
+				ServerAddress.parseString(getConnectionAddress()), serverInfo,
+				false, null);
 		});
 		
 		ClientGameTestImpl.waitForWorldLoad(context);
@@ -69,7 +69,8 @@ public class TestDedicatedServerContextImpl extends TestServerContextImpl
 	{
 		ThreadingImpl.checkOnGametestThread("close");
 		
-		if(!ThreadingImpl.isServerRunning || !server.getRunningThread().isAlive())
+		if(!ThreadingImpl.isServerRunning
+			|| !server.getRunningThread().isAlive())
 		{
 			throw new AssertionError(
 				"Stopped the dedicated server before closing the dedicated server context");

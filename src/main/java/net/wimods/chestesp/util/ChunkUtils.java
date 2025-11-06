@@ -53,8 +53,7 @@ public enum ChunkUtils
 			
 			return new ChunkPos(x, z);
 			
-		}).limit(diameter * diameter)
-			.filter(c -> MC.level.hasChunk(c.x, c.z))
+		}).limit(diameter * diameter).filter(c -> MC.level.hasChunk(c.x, c.z))
 			.map(c -> MC.level.getChunk(c.x, c.z)).filter(Objects::nonNull);
 		
 		return stream;

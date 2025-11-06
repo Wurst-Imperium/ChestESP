@@ -70,7 +70,8 @@ public abstract class ChestEspBlockGroup extends ChestEspGroup
 		// larger box for double chest
 		if(chestType != ChestType.SINGLE)
 		{
-			BlockPos pos2 = pos.relative(ChestBlock.getConnectedDirection(state));
+			BlockPos pos2 =
+				pos.relative(ChestBlock.getConnectedDirection(state));
 			
 			if(BlockUtils.canBeClicked(pos2))
 			{

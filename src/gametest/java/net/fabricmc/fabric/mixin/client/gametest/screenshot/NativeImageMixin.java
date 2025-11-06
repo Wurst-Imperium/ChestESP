@@ -60,8 +60,7 @@ public abstract class NativeImageMixin implements NativeImageHooks
 					int red = MemoryUtil.memGetByte(pixels + i * 4) & 0xff;
 					int green =
 						MemoryUtil.memGetByte(pixels + i * 4 + 1) & 0xff;
-					int blue =
-						MemoryUtil.memGetByte(pixels + i * 4 + 2) & 0xff;
+					int blue = MemoryUtil.memGetByte(pixels + i * 4 + 2) & 0xff;
 					result[i] = toGrayscale(red, green, blue);
 				}
 			}
@@ -72,8 +71,7 @@ public abstract class NativeImageMixin implements NativeImageHooks
 					int red = MemoryUtil.memGetByte(pixels + i * 3) & 0xff;
 					int green =
 						MemoryUtil.memGetByte(pixels + i * 3 + 1) & 0xff;
-					int blue =
-						MemoryUtil.memGetByte(pixels + i * 3 + 2) & 0xff;
+					int blue = MemoryUtil.memGetByte(pixels + i * 3 + 2) & 0xff;
 					result[i] = toGrayscale(red, green, blue);
 				}
 			}
@@ -122,8 +120,7 @@ public abstract class NativeImageMixin implements NativeImageHooks
 					int red = MemoryUtil.memGetByte(pixels + i * 3) & 0xff;
 					int green =
 						MemoryUtil.memGetByte(pixels + i * 3 + 1) & 0xff;
-					int blue =
-						MemoryUtil.memGetByte(pixels + i * 3 + 2) & 0xff;
+					int blue = MemoryUtil.memGetByte(pixels + i * 3 + 2) & 0xff;
 					result[i] = (red << 16) | (green << 8) | blue;
 				}
 				

@@ -64,7 +64,8 @@ public interface TestWorldBuilder
 	 *            The function to adjust the world settings
 	 * @return This world builder instance
 	 */
-	TestWorldBuilder adjustSettings(Consumer<WorldCreationUiState> settingsAdjuster);
+	TestWorldBuilder adjustSettings(
+		Consumer<WorldCreationUiState> settingsAdjuster);
 	
 	/**
 	 * Creates and joins a singleplayer world with the configured world

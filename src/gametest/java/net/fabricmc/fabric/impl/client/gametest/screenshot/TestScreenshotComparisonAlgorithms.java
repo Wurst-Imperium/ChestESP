@@ -70,16 +70,13 @@ public class TestScreenshotComparisonAlgorithms
 						int haystackColor =
 							haystackData[(needleY + y) * haystackWidth + needleX
 								+ x];
-						int haystackRed =
-							FastColor.ARGB32.red(haystackColor);
+						int haystackRed = FastColor.ARGB32.red(haystackColor);
 						int haystackGreen =
 							FastColor.ARGB32.green(haystackColor);
-						int haystackBlue =
-							FastColor.ARGB32.blue(haystackColor);
+						int haystackBlue = FastColor.ARGB32.blue(haystackColor);
 						int needleColor = needleData[y * needleWidth + x];
 						int needleRed = FastColor.ARGB32.red(needleColor);
-						int needleGreen =
-							FastColor.ARGB32.green(needleColor);
+						int needleGreen = FastColor.ARGB32.green(needleColor);
 						int needleBlue = FastColor.ARGB32.blue(needleColor);
 						sumSquaredDifference +=
 							Mth.square(haystackRed - needleRed)
@@ -133,8 +130,8 @@ public class TestScreenshotComparisonAlgorithms
 								+ x] & 0xff;
 						int needleLuminance =
 							needleData[y * needleWidth + x] & 0xff;
-						sumSquaredDifference += Mth
-							.square(haystackLuminance - needleLuminance);
+						sumSquaredDifference +=
+							Mth.square(haystackLuminance - needleLuminance);
 						
 						if(sumSquaredDifference >= threshold)
 						{

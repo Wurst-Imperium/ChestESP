@@ -46,8 +46,8 @@ public class CreateWorldScreenMixin
 	{
 		if(DedicatedServerImplUtil.saveLevelDataTo != null)
 		{
-			CompoundTag levelDatInner = saveProperties.createTag(
-				combinedDynamicRegistries.compositeAccess(), null);
+			CompoundTag levelDatInner = saveProperties
+				.createTag(combinedDynamicRegistries.compositeAccess(), null);
 			CompoundTag levelDat = new CompoundTag();
 			levelDat.put("Data", levelDatInner);
 			

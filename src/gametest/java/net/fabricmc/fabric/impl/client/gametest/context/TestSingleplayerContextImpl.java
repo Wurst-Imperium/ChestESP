@@ -75,8 +75,8 @@ public class TestSingleplayerContextImpl implements TestSingleplayerContext
 			}
 			
 			client.level.disconnect();
-			client.disconnect(
-				new GenericMessageScreen(Component.translatable("menu.savingLevel")));
+			client.disconnect(new GenericMessageScreen(
+				Component.translatable("menu.savingLevel")));
 		});
 		
 		context.waitFor(

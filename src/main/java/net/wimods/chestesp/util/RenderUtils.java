@@ -90,8 +90,8 @@ public enum RenderUtils
 		float x1, float y1, float z1, float x2, float y2, float z2, int color)
 	{
 		Vector3f normal = new Vector3f(x2, y2, z2).sub(x1, y1, z1).normalize();
-		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry, normal.x,
-			normal.y, normal.z);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry,
+			normal.x, normal.y, normal.z);
 		
 		// If the line goes through the screen, add another vertex there. This
 		// works around a bug in Minecraft's line shader.
@@ -106,8 +106,8 @@ public enum RenderUtils
 				normal.x, normal.y, normal.z);
 		}
 		
-		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry, normal.x,
-			normal.y, normal.z);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry,
+			normal.x, normal.y, normal.z);
 	}
 	
 	public static void drawSolidBoxes(PoseStack matrices, List<AABB> boxes,
@@ -200,33 +200,57 @@ public enum RenderUtils
 		float z2 = (float)box.maxZ;
 		
 		// bottom lines
-		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry, 1, 0, 0);
-		buffer.addVertex(entry, x2, y1, z1).setColor(color).setNormal(entry, 1, 0, 0);
-		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry, 0, 0, 1);
-		buffer.addVertex(entry, x1, y1, z2).setColor(color).setNormal(entry, 0, 0, 1);
-		buffer.addVertex(entry, x2, y1, z1).setColor(color).setNormal(entry, 0, 0, 1);
-		buffer.addVertex(entry, x2, y1, z2).setColor(color).setNormal(entry, 0, 0, 1);
-		buffer.addVertex(entry, x1, y1, z2).setColor(color).setNormal(entry, 1, 0, 0);
-		buffer.addVertex(entry, x2, y1, z2).setColor(color).setNormal(entry, 1, 0, 0);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x2, y1, z1).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x1, y1, z2).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x2, y1, z1).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x2, y1, z2).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x1, y1, z2).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x2, y1, z2).setColor(color).setNormal(entry, 1,
+			0, 0);
 		
 		// top lines
-		buffer.addVertex(entry, x1, y2, z1).setColor(color).setNormal(entry, 1, 0, 0);
-		buffer.addVertex(entry, x2, y2, z1).setColor(color).setNormal(entry, 1, 0, 0);
-		buffer.addVertex(entry, x1, y2, z1).setColor(color).setNormal(entry, 0, 0, 1);
-		buffer.addVertex(entry, x1, y2, z2).setColor(color).setNormal(entry, 0, 0, 1);
-		buffer.addVertex(entry, x2, y2, z1).setColor(color).setNormal(entry, 0, 0, 1);
-		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry, 0, 0, 1);
-		buffer.addVertex(entry, x1, y2, z2).setColor(color).setNormal(entry, 1, 0, 0);
-		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry, 1, 0, 0);
+		buffer.addVertex(entry, x1, y2, z1).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x2, y2, z1).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x1, y2, z1).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x1, y2, z2).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x2, y2, z1).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x1, y2, z2).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry, 1,
+			0, 0);
 		
 		// side lines
-		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry, 0, 1, 0);
-		buffer.addVertex(entry, x1, y2, z1).setColor(color).setNormal(entry, 0, 1, 0);
-		buffer.addVertex(entry, x2, y1, z1).setColor(color).setNormal(entry, 0, 1, 0);
-		buffer.addVertex(entry, x2, y2, z1).setColor(color).setNormal(entry, 0, 1, 0);
-		buffer.addVertex(entry, x1, y1, z2).setColor(color).setNormal(entry, 0, 1, 0);
-		buffer.addVertex(entry, x1, y2, z2).setColor(color).setNormal(entry, 0, 1, 0);
-		buffer.addVertex(entry, x2, y1, z2).setColor(color).setNormal(entry, 0, 1, 0);
-		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry, 0, 1, 0);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x1, y2, z1).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x2, y1, z1).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x2, y2, z1).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x1, y1, z2).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x1, y2, z2).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x2, y1, z2).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry, 0,
+			1, 0);
 	}
 }

@@ -41,8 +41,8 @@ public class TestServerContextImpl implements TestServerContext
 		ThreadingImpl.checkOnGametestThread("runCommand");
 		Preconditions.checkNotNull(command, "command");
 		
-		runOnServer(server -> server.getCommands()
-			.performPrefixedCommand(server.createCommandSourceStack(), command));
+		runOnServer(server -> server.getCommands().performPrefixedCommand(
+			server.createCommandSourceStack(), command));
 	}
 	
 	@Override

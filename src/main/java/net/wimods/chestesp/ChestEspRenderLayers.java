@@ -20,12 +20,13 @@ public enum ChestEspRenderLayers
 	/**
 	 * Similar to {@link RenderType#lines()}, but with line width 2.
 	 */
-	public static final RenderType.CompositeRenderType LINES =
-		RenderType.create("chestesp:lines", DefaultVertexFormat.POSITION_COLOR_NORMAL,
+	public static final RenderType.CompositeRenderType LINES = RenderType
+		.create("chestesp:lines", DefaultVertexFormat.POSITION_COLOR_NORMAL,
 			VertexFormat.Mode.LINES, 1536, false, true,
 			RenderType.CompositeState.builder()
 				.setShaderState(RenderType.RENDERTYPE_LINES_SHADER)
-				.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
+				.setLineState(
+					new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
 				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
 				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 				.setOutputState(RenderType.ITEM_ENTITY_TARGET)
@@ -44,12 +45,13 @@ public enum ChestEspRenderLayers
 	 *          drawn with depth test set to LEQUAL (only visible if not
 	 *          obstructed).
 	 */
-	public static final RenderType.CompositeRenderType ESP_LINES =
-		RenderType.create("chestesp:esp_lines", DefaultVertexFormat.POSITION_COLOR_NORMAL,
+	public static final RenderType.CompositeRenderType ESP_LINES = RenderType
+		.create("chestesp:esp_lines", DefaultVertexFormat.POSITION_COLOR_NORMAL,
 			VertexFormat.Mode.LINES, 1536, false, true,
 			RenderType.CompositeState.builder()
 				.setShaderState(RenderType.RENDERTYPE_LINES_SHADER)
-				.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
+				.setLineState(
+					new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
 				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
 				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 				.setOutputState(RenderType.ITEM_ENTITY_TARGET)
@@ -66,7 +68,8 @@ public enum ChestEspRenderLayers
 			RenderType.CompositeState.builder()
 				.setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
 				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
-				.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST).createCompositeState(false));
+				.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+				.createCompositeState(false));
 	
 	/**
 	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled
@@ -79,13 +82,14 @@ public enum ChestEspRenderLayers
 	 *          drawn with depth test set to LEQUAL (only visible if not
 	 *          obstructed).
 	 */
-	public static final RenderType.CompositeRenderType ESP_QUADS =
-		RenderType.create("chestesp:esp_quads", DefaultVertexFormat.POSITION_COLOR,
+	public static final RenderType.CompositeRenderType ESP_QUADS = RenderType
+		.create("chestesp:esp_quads", DefaultVertexFormat.POSITION_COLOR,
 			VertexFormat.Mode.QUADS, 1536, false, true,
 			RenderType.CompositeState.builder()
 				.setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
 				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
-				.setDepthTestState(RenderType.NO_DEPTH_TEST).createCompositeState(false));
+				.setDepthTestState(RenderType.NO_DEPTH_TEST)
+				.createCompositeState(false));
 	
 	/**
 	 * Returns either {@link #QUADS} or {@link #ESP_QUADS} depending on the

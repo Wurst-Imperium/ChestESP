@@ -156,15 +156,18 @@ public class TestWorldBuilderImpl implements TestWorldBuilder
 	
 	private static void setConsistentSettings(WorldCreationUiState creator)
 	{
-		Holder<WorldPreset> flatPreset =
-			creator.getSettings().worldgenLoadContext()
-				.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.FLAT);
-		creator.setWorldType(new WorldCreationUiState.WorldTypeEntry(flatPreset));
+		Holder<WorldPreset> flatPreset = creator.getSettings()
+			.worldgenLoadContext().registryOrThrow(Registries.WORLD_PRESET)
+			.getHolderOrThrow(WorldPresets.FLAT);
+		creator
+			.setWorldType(new WorldCreationUiState.WorldTypeEntry(flatPreset));
 		creator.setSeed("1");
 		creator.setGenerateStructures(false);
 		creator.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false,
 			null);
-		creator.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, null);
-		creator.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(false, null);
+		creator.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false,
+			null);
+		creator.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(false,
+			null);
 	}
 }

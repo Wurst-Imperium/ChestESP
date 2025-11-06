@@ -189,8 +189,7 @@ public final class ThreadingImpl
 			{
 				if(clientCanAcceptTasks)
 				{
-					runOnClient(
-						() -> Minecraft.getInstance().stop());
+					runOnClient(() -> Minecraft.getInstance().stop());
 				}
 				
 				if(testFailureException != null)

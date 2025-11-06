@@ -46,8 +46,8 @@ public final class DedicatedServerImplUtil
 			
 			// disable sync-chunk-writes on unix systems, it slows world saving
 			// down a LOT and doesn't really help anything
-			properties.setProperty("sync-chunk-writes", String.valueOf(
-				Util.getPlatform() == Util.OS.WINDOWS));
+			properties.setProperty("sync-chunk-writes",
+				String.valueOf(Util.getPlatform() == Util.OS.WINDOWS));
 			
 			// allow non-opped players to place blocks at spawn
 			properties.setProperty("spawn-protection", "0");
@@ -62,8 +62,7 @@ public final class DedicatedServerImplUtil
 	@Nullable
 	public static Path saveLevelDataTo = null;
 	@Nullable
-	public static CompletableFuture<DedicatedServer> serverFuture =
-		null;
+	public static CompletableFuture<DedicatedServer> serverFuture = null;
 	
 	private DedicatedServerImplUtil()
 	{}

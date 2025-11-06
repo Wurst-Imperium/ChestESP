@@ -42,9 +42,7 @@ public class InputUtilMixin
 		ci.cancel();
 	}
 	
-	@Inject(method = "grabOrReleaseMouse",
-		at = @At("HEAD"),
-		cancellable = true)
+	@Inject(method = "grabOrReleaseMouse", at = @At("HEAD"), cancellable = true)
 	private static void disableCursorLocking(CallbackInfo ci)
 	{
 		ci.cancel();

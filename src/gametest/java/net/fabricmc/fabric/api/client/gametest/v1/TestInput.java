@@ -278,7 +278,8 @@ public interface TestInput
 	 * <p>
 	 * A tick is waited because most key bindings need a tick to happen to react
 	 * to the press. If you don't want the
-	 * delay, use {@link #holdKeyFor(InputConstants.Key, int) holdKeyFor} with a tick
+	 * delay, use {@link #holdKeyFor(InputConstants.Key, int) holdKeyFor} with a
+	 * tick
 	 * count of {@code 0}.
 	 *
 	 * @param key
@@ -358,8 +359,7 @@ public interface TestInput
 	 * @see #holdKey(Function)
 	 * @see #holdKeyFor(Function, int)
 	 */
-	void holdKeyFor(Function<Options, KeyMapping> keyBindingGetter,
-		int ticks);
+	void holdKeyFor(Function<Options, KeyMapping> keyBindingGetter, int ticks);
 	
 	/**
 	 * Holds a key or mouse button for the specified number of ticks and then

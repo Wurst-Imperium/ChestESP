@@ -212,13 +212,14 @@ public final class TestInputImpl implements TestInput
 	{
 		switch(key.getType())
 		{
-			case KEYSYM -> client.keyboardHandler.keyPress(client.getWindow().getWindow(),
-				key.getValue(), 0, action, 0);
+			case KEYSYM -> client.keyboardHandler.keyPress(
+				client.getWindow().getWindow(), key.getValue(), 0, action, 0);
 			case SCANCODE -> client.keyboardHandler.keyPress(
 				client.getWindow().getWindow(), GLFW.GLFW_KEY_UNKNOWN,
 				key.getValue(), action, 0);
-			case MOUSE -> ((MouseAccessor)client.mouseHandler).invokeOnMouseButton(
-				client.getWindow().getWindow(), key.getValue(), action, 0);
+			case MOUSE -> ((MouseAccessor)client.mouseHandler)
+				.invokeOnMouseButton(client.getWindow().getWindow(),
+					key.getValue(), action, 0);
 		}
 	}
 	
@@ -398,7 +399,8 @@ public final class TestInputImpl implements TestInput
 	private static InputConstants.Key getBoundKey(KeyMapping keyBinding,
 		String action)
 	{
-		InputConstants.Key boundKey = ((KeyBindingAccessor)keyBinding).getBoundKey();
+		InputConstants.Key boundKey =
+			((KeyBindingAccessor)keyBinding).getBoundKey();
 		
 		if(boundKey == InputConstants.UNKNOWN)
 		{

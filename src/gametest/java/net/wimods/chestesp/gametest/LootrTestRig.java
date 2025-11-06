@@ -30,9 +30,9 @@ public enum LootrTestRig
 		runCommand(server, "kill @e[type=!player]");
 		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
 		ChestESPTest.resetConfig(context);
-		context.waitFor(
-			mc -> mc.level.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
-				.getBlock() == Blocks.AIR);
+		context.waitFor(mc -> mc.level
+			.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
+			.getBlock() == Blocks.AIR);
 		
 		// Top row: lootr chests
 		runCommand(server, "setblock ~4 ~2 ~7 lootr:lootr_chest");
@@ -57,9 +57,9 @@ public enum LootrTestRig
 		runCommand(server, "fill ~4 ~ ~6 ~-4 ~ ~6 smooth_stone_slab");
 		
 		// Wait for the blocks to appear
-		context.waitFor(
-			mc -> mc.level.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
-				.getBlock() == Blocks.SMOOTH_STONE_SLAB);
+		context.waitFor(mc -> mc.level
+			.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
+			.getBlock() == Blocks.SMOOTH_STONE_SLAB);
 		context.waitTick();
 		world.waitForChunksRender(false);
 	}

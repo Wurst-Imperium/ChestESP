@@ -75,10 +75,10 @@ public class FabricClientGameTestRunner
 		context.runOnClient(client -> ((WindowHooks)(Object)client.getWindow())
 			.fabric_resetSize());
 		context.getInput().setCursorPos(
-			context.computeOnClient(client -> client.getWindow().getScreenWidth())
-				* 0.5,
-			context.computeOnClient(client -> client.getWindow().getScreenHeight())
-				* 0.5);
+			context.computeOnClient(
+				client -> client.getWindow().getScreenWidth()) * 0.5,
+			context.computeOnClient(
+				client -> client.getWindow().getScreenHeight()) * 0.5);
 		
 		if(ThreadingImpl.isServerRunning)
 		{

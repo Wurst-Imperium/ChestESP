@@ -103,9 +103,7 @@ public abstract class WindowMixin implements WindowHooks
 			this.windowedHeight = this.framebufferHeight = defaultHeight;
 	}
 	
-	@Inject(
-		method = {"onFocus", "onEnter",
-			"onMinimizeChanged"},
+	@Inject(method = {"onFocus", "onEnter", "onMinimizeChanged"},
 		at = @At("HEAD"),
 		cancellable = true)
 	private void cancelEvents(CallbackInfo ci)
@@ -113,9 +111,7 @@ public abstract class WindowMixin implements WindowHooks
 		ci.cancel();
 	}
 	
-	@Inject(method = "onResize",
-		at = @At("HEAD"),
-		cancellable = true)
+	@Inject(method = "onResize", at = @At("HEAD"), cancellable = true)
 	private void cancelWindowSizeChanged(long window, int width, int height,
 		CallbackInfo ci)
 	{
@@ -206,7 +202,8 @@ public abstract class WindowMixin implements WindowHooks
 		// Move the top left corner of the window so that the window
 		// expands/contracts from its center, while also
 		// trying to keep the window within the monitor's bounds
-		Monitor monitor = this.screenManager.findBestMonitor((Window)(Object)this);
+		Monitor monitor =
+			this.screenManager.findBestMonitor((Window)(Object)this);
 		
 		if(monitor != null)
 		{
@@ -228,8 +225,7 @@ public abstract class WindowMixin implements WindowHooks
 			
 			if(this.y + height > monitor.getY() + videoMode.getHeight())
 			{
-				this.y =
-					monitor.getY() + videoMode.getHeight() - height;
+				this.y = monitor.getY() + videoMode.getHeight() - height;
 			}
 			
 			if(this.y < monitor.getY())

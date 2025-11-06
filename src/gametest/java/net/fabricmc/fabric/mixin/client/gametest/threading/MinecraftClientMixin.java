@@ -133,19 +133,17 @@ public class MinecraftClientMixin
 		}
 	}
 	
-	@Inject(method = "doWorldLoad",
-		at = @At("HEAD"),
-		cancellable = true)
-	private void deferStartIntegratedServer(LevelStorageSource.LevelStorageAccess session,
-		PackRepository dataPackManager, WorldStem saveLoader,
-		boolean newWorld, CallbackInfo ci)
+	@Inject(method = "doWorldLoad", at = @At("HEAD"), cancellable = true)
+	private void deferStartIntegratedServer(
+		LevelStorageSource.LevelStorageAccess session,
+		PackRepository dataPackManager, WorldStem saveLoader, boolean newWorld,
+		CallbackInfo ci)
 	{
 		if(ThreadingImpl.taskToRun != null)
 		{
 			// don't start the integrated server (which busywaits) inside a task
-			deferredTask =
-				() -> Minecraft.getInstance().doWorldLoad(
-					session, dataPackManager, saveLoader, newWorld);
+			deferredTask = () -> Minecraft.getInstance().doWorldLoad(session,
+				dataPackManager, saveLoader, newWorld);
 			ci.cancel();
 		}
 	}
