@@ -17,6 +17,7 @@
 package net.fabricmc.fabric.impl.client.gametest.context;
 
 import java.util.Objects;
+
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
 import net.fabricmc.fabric.impl.client.gametest.threading.ThreadingImpl;
@@ -61,11 +62,11 @@ public class TestClientWorldContextImpl implements TestClientWorldContext
 		int viewDistance = client.options.getEffectiveRenderDistance();
 		ClientLevel world = Objects.requireNonNull(client.level);
 		ClientChunkCache.Storage chunks =
-			((ClientChunkManagerAccessor)world.getChunkSource()).getChunks();
+			((ClientChunkManagerAccessor)world.getChunkSource()).getStorage();
 		ClientChunkMapAccessor chunksAccessor =
 			(ClientChunkMapAccessor)(Object)chunks;
-		int centerChunkX = chunksAccessor.getCenterChunkX();
-		int centerChunkZ = chunksAccessor.getCenterChunkZ();
+		int centerChunkX = chunksAccessor.getViewCenterX();
+		int centerChunkZ = chunksAccessor.getViewCenterZ();
 		
 		for(int dz = -viewDistance; dz <= viewDistance; dz++)
 		{
@@ -85,7 +86,7 @@ public class TestClientWorldContextImpl implements TestClientWorldContext
 	private static boolean areChunksRendered(Minecraft client)
 	{
 		ClientLevel world = Objects.requireNonNull(client.level);
-		return ((ClientWorldAccessor)world).getChunkUpdaters().isEmpty()
+		return ((ClientWorldAccessor)world).getLightUpdateQueue().isEmpty()
 			&& client.levelRenderer.hasRenderedAllSections();
 	}
 }

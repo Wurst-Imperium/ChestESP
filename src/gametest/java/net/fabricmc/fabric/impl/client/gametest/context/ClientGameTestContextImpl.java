@@ -27,8 +27,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.google.common.base.Preconditions;
-import com.mojang.blaze3d.platform.NativeImage;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -37,6 +35,10 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.mojang.blaze3d.platform.NativeImage;
+
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotComparisonAlgorithm;
 import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotComparisonOptions;
@@ -99,50 +101,51 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 		// Just annoying
 		options.getSoundSourceOptionInstance(SoundSource.MUSIC).set(0.0);
 		
-		((GameOptionsAccessor)options).invokeAccept(new Options.FieldAccess()
-		{
-			@Override
-			public int process(String key, int current)
+		((GameOptionsAccessor)options)
+			.invokeProcessOptions(new Options.FieldAccess()
 			{
-				DEFAULT_GAME_OPTIONS.put(key, current);
-				return current;
-			}
-			
-			@Override
-			public boolean process(String key, boolean current)
-			{
-				DEFAULT_GAME_OPTIONS.put(key, current);
-				return current;
-			}
-			
-			@Override
-			public String process(String key, String current)
-			{
-				DEFAULT_GAME_OPTIONS.put(key, current);
-				return current;
-			}
-			
-			@Override
-			public float process(String key, float current)
-			{
-				DEFAULT_GAME_OPTIONS.put(key, current);
-				return current;
-			}
-			
-			@Override
-			public <T> T process(String key, T current,
-				Function<String, T> decoder, Function<T, String> encoder)
-			{
-				DEFAULT_GAME_OPTIONS.put(key, current);
-				return current;
-			}
-			
-			@Override
-			public <T> void process(String key, OptionInstance<T> option)
-			{
-				DEFAULT_GAME_OPTIONS.put(key, option.get());
-			}
-		});
+				@Override
+				public int process(String key, int current)
+				{
+					DEFAULT_GAME_OPTIONS.put(key, current);
+					return current;
+				}
+				
+				@Override
+				public boolean process(String key, boolean current)
+				{
+					DEFAULT_GAME_OPTIONS.put(key, current);
+					return current;
+				}
+				
+				@Override
+				public String process(String key, String current)
+				{
+					DEFAULT_GAME_OPTIONS.put(key, current);
+					return current;
+				}
+				
+				@Override
+				public float process(String key, float current)
+				{
+					DEFAULT_GAME_OPTIONS.put(key, current);
+					return current;
+				}
+				
+				@Override
+				public <T> T process(String key, T current,
+					Function<String, T> decoder, Function<T, String> encoder)
+				{
+					DEFAULT_GAME_OPTIONS.put(key, current);
+					return current;
+				}
+				
+				@Override
+				public <T> void process(String key, OptionInstance<T> option)
+				{
+					DEFAULT_GAME_OPTIONS.put(key, option.get());
+				}
+			});
 	}
 	
 	@Override
@@ -273,7 +276,7 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 			Component.translatable(translationKey).getString();
 		final ScreenAccessor screenAccessor = (ScreenAccessor)screen;
 		
-		for(Renderable drawable : screenAccessor.getDrawables())
+		for(Renderable drawable : screenAccessor.getRenderables())
 		{
 			if(drawable instanceof AbstractButton pressableWidget
 				&& pressMatchingButton(pressableWidget, buttonText))
@@ -320,7 +323,7 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 			CyclingButtonWidgetAccessor accessor =
 				(CyclingButtonWidgetAccessor)buttonWidget;
 			
-			if(text.equals(accessor.getOptionText().getString()))
+			if(text.equals(accessor.getName().getString()))
 			{
 				buttonWidget.onPress();
 				return true;
@@ -579,7 +582,7 @@ public final class ClientGameTestContextImpl implements ClientGameTestContext
 		
 		runOnClient(client -> {
 			((GameOptionsAccessor)Minecraft.getInstance().options)
-				.invokeAccept(new Options.FieldAccess()
+				.invokeProcessOptions(new Options.FieldAccess()
 				{
 					@Override
 					public int process(String key, int current)

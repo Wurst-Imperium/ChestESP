@@ -21,9 +21,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.lwjgl.glfw.GLFW;
+
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.platform.InputConstants;
-import org.lwjgl.glfw.GLFW;
+
 import net.fabricmc.fabric.api.client.gametest.v1.TestInput;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.impl.client.gametest.threading.ThreadingImpl;
@@ -217,9 +219,8 @@ public final class TestInputImpl implements TestInput
 			case SCANCODE -> client.keyboardHandler.keyPress(
 				client.getWindow().getWindow(), GLFW.GLFW_KEY_UNKNOWN,
 				key.getValue(), action, 0);
-			case MOUSE -> ((MouseAccessor)client.mouseHandler)
-				.invokeOnMouseButton(client.getWindow().getWindow(),
-					key.getValue(), action, 0);
+			case MOUSE -> ((MouseAccessor)client.mouseHandler).invokeOnPress(
+				client.getWindow().getWindow(), key.getValue(), action, 0);
 		}
 	}
 	
@@ -329,7 +330,7 @@ public final class TestInputImpl implements TestInput
 		ThreadingImpl.checkOnGametestThread("typeChar");
 		
 		context.runOnClient(client -> ((KeyboardAccessor)client.keyboardHandler)
-			.invokeOnChar(client.getWindow().getWindow(), codePoint, 0));
+			.invokeCharTyped(client.getWindow().getWindow(), codePoint, 0));
 	}
 	
 	@Override
@@ -339,8 +340,8 @@ public final class TestInputImpl implements TestInput
 		
 		context.runOnClient(client -> {
 			chars.chars().forEach(codePoint -> {
-				((KeyboardAccessor)client.keyboardHandler)
-					.invokeOnChar(client.getWindow().getWindow(), codePoint, 0);
+				((KeyboardAccessor)client.keyboardHandler).invokeCharTyped(
+					client.getWindow().getWindow(), codePoint, 0);
 			});
 		});
 	}
@@ -358,9 +359,8 @@ public final class TestInputImpl implements TestInput
 	{
 		ThreadingImpl.checkOnGametestThread("scroll");
 		
-		context.runOnClient(
-			client -> ((MouseAccessor)client.mouseHandler).invokeOnMouseScroll(
-				client.getWindow().getWindow(), xAmount, yAmount));
+		context.runOnClient(client -> ((MouseAccessor)client.mouseHandler)
+			.invokeOnScroll(client.getWindow().getWindow(), xAmount, yAmount));
 	}
 	
 	@Override
@@ -369,7 +369,7 @@ public final class TestInputImpl implements TestInput
 		ThreadingImpl.checkOnGametestThread("setCursorPos");
 		
 		context.runOnClient(client -> ((MouseAccessor)client.mouseHandler)
-			.invokeOnCursorPos(client.getWindow().getWindow(), x, y));
+			.invokeOnMove(client.getWindow().getWindow(), x, y));
 	}
 	
 	@Override
@@ -381,7 +381,7 @@ public final class TestInputImpl implements TestInput
 			double newX = client.mouseHandler.xpos() + deltaX;
 			double newY = client.mouseHandler.ypos() + deltaY;
 			((MouseAccessor)client.mouseHandler)
-				.invokeOnCursorPos(client.getWindow().getWindow(), newX, newY);
+				.invokeOnMove(client.getWindow().getWindow(), newX, newY);
 		});
 	}
 	
@@ -399,8 +399,7 @@ public final class TestInputImpl implements TestInput
 	private static InputConstants.Key getBoundKey(KeyMapping keyBinding,
 		String action)
 	{
-		InputConstants.Key boundKey =
-			((KeyBindingAccessor)keyBinding).getBoundKey();
+		InputConstants.Key boundKey = ((KeyBindingAccessor)keyBinding).getKey();
 		
 		if(boundKey == InputConstants.UNKNOWN)
 		{
