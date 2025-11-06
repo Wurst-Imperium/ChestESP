@@ -27,9 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.fabricmc.fabric.api.client.gametest.v1.TestInput;
 import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotComparisonOptions;
 import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
@@ -76,7 +75,7 @@ public interface ClientGameTestContext
 	 *            The predicate to check
 	 * @return The number of ticks waited
 	 */
-	int waitFor(Predicate<MinecraftClient> predicate);
+	int waitFor(Predicate<Minecraft> predicate);
 	
 	/**
 	 * Waits for a predicate to be true. Fails if the predicate is not satisfied
@@ -89,7 +88,7 @@ public interface ClientGameTestContext
 	 *            The number of ticks before timing out
 	 * @return The number of ticks waited
 	 */
-	int waitFor(Predicate<MinecraftClient> predicate, int timeout);
+	int waitFor(Predicate<Minecraft> predicate, int timeout);
 	
 	/**
 	 * Waits for the given screen class to be shown. If {@code screenClass} is
@@ -108,7 +107,7 @@ public interface ClientGameTestContext
 	 *
 	 * @param screen
 	 *            The screen to open
-	 * @see MinecraftClient#setScreen(Screen)
+	 * @see Minecraft#setScreen(Screen)
 	 */
 	void setScreen(Supplier<@Nullable Screen> screen);
 	
@@ -233,7 +232,7 @@ public interface ClientGameTestContext
 	TestWorldBuilder worldBuilder();
 	
 	/**
-	 * Restores all game options in {@link MinecraftClient#options} to their
+	 * Restores all game options in {@link Minecraft#options} to their
 	 * default values for client gametests. This
 	 * is called automatically before each gametest is run, so you only need to
 	 * call this explicitly if you want to do
@@ -253,7 +252,7 @@ public interface ClientGameTestContext
 	 *             When the action throws an exception
 	 */
 	<E extends Throwable> void runOnClient(
-		FailableConsumer<MinecraftClient, E> action) throws E;
+		FailableConsumer<Minecraft, E> action) throws E;
 	
 	/**
 	 * Runs the given function on the render thread (client thread), and returns
@@ -270,5 +269,5 @@ public interface ClientGameTestContext
 	 *             When the function throws an exception
 	 */
 	<T, E extends Throwable> T computeOnClient(
-		FailableFunction<MinecraftClient, T, E> function) throws E;
+		FailableFunction<Minecraft, T, E> function) throws E;
 }

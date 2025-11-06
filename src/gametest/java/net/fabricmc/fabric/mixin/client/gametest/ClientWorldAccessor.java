@@ -17,15 +17,13 @@
 package net.fabricmc.fabric.mixin.client.gametest;
 
 import java.util.Deque;
-
+import net.minecraft.client.multiplayer.ClientLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.client.world.ClientWorld;
-
-@Mixin(ClientWorld.class)
+@Mixin(ClientLevel.class)
 public interface ClientWorldAccessor
 {
 	@Accessor
-	Deque<Runnable> getChunkUpdaters();
+	Deque<Runnable> getLightUpdateQueue();
 }

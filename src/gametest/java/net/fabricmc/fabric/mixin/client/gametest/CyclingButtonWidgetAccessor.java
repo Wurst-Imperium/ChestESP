@@ -16,15 +16,14 @@
 
 package net.fabricmc.fabric.mixin.client.gametest;
 
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.text.Text;
-
-@Mixin(CyclingButtonWidget.class)
+@Mixin(CycleButton.class)
 public interface CyclingButtonWidgetAccessor
 {
 	@Accessor
-	Text getOptionText();
+	Component getName();
 }

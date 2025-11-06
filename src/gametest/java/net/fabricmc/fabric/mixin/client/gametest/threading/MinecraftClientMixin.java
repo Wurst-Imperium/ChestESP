@@ -28,19 +28,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.server.SaveLoader;
-import net.minecraft.util.thread.ThreadExecutor;
-import net.minecraft.world.level.storage.LevelStorage;
-
 import net.fabricmc.fabric.impl.client.gametest.TestSystemProperties;
 import net.fabricmc.fabric.impl.client.gametest.threading.NetworkSynchronizer;
 import net.fabricmc.fabric.impl.client.gametest.threading.ThreadingImpl;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.server.WorldStem;
+import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraft.util.thread.BlockableEventLoop;
+import net.minecraft.world.level.storage.LevelStorageSource;
 
-@Mixin(MinecraftClient.class)
+@Mixin(Minecraft.class)
 public class MinecraftClientMixin
 {
 	@Unique
@@ -73,7 +71,7 @@ public class MinecraftClientMixin
 		}
 	}
 	
-	@Inject(method = "cleanUpAfterCrash", at = @At("HEAD"))
+	@Inject(method = "emergencySave", at = @At("HEAD"))
 	private void deregisterAfterCrash(CallbackInfo ci)
 	{
 		// Deregister a bit earlier than normal to allow for the integrated
@@ -82,9 +80,9 @@ public class MinecraftClientMixin
 		deregisterClient();
 	}
 	
-	@ModifyExpressionValue(method = "render",
+	@ModifyExpressionValue(method = "runTick",
 		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/render/RenderTickCounter$Dynamic;beginRenderTick(JZ)I"))
+			target = "Lnet/minecraft/client/DeltaTracker$Timer;advanceTime(JZ)I"))
 	private int captureTicksPerFrame(int capturedTicksPerFrame,
 		@Share("ticksPerFrame") LocalIntRef ticksPerFrame)
 	{
@@ -99,9 +97,9 @@ public class MinecraftClientMixin
 		return capturedTicksPerFrame;
 	}
 	
-	@Inject(method = "render",
+	@Inject(method = "runTick",
 		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/MinecraftClient;runTasks()V"))
+			target = "Lnet/minecraft/client/Minecraft;runAllTasks()V"))
 	private void preRunTasksHook(CallbackInfo ci)
 	{
 		// "merge" multiple possible iterations of runTasks into one block from
@@ -117,9 +115,9 @@ public class MinecraftClientMixin
 		// observable until the next tick or gametest thread unlock anyway
 	}
 	
-	@Inject(method = "render",
+	@Inject(method = "runTick",
 		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/MinecraftClient;runTasks()V",
+			target = "Lnet/minecraft/client/Minecraft;runAllTasks()V",
 			shift = At.Shift.AFTER))
 	private void postRunTasksHook(CallbackInfo ci,
 		@Share("ticksPerFrame") LocalIntRef ticksPerFrame)
@@ -129,30 +127,30 @@ public class MinecraftClientMixin
 		if(ticksPerFrame.get() > 0)
 		{
 			NetworkSynchronizer.CLIENTBOUND
-				.waitForPacketHandlers((ThreadExecutor<?>)(Object)this);
+				.waitForPacketHandlers((BlockableEventLoop<?>)(Object)this);
 			postRunTasks();
 			inMergedRunTasksLoop = false;
 		}
 	}
 	
-	@Inject(method = "startIntegratedServer",
+	@Inject(method = "doWorldLoad",
 		at = @At("HEAD"),
 		cancellable = true)
-	private void deferStartIntegratedServer(LevelStorage.Session session,
-		ResourcePackManager dataPackManager, SaveLoader saveLoader,
+	private void deferStartIntegratedServer(LevelStorageSource.LevelStorageAccess session,
+		PackRepository dataPackManager, WorldStem saveLoader,
 		boolean newWorld, CallbackInfo ci)
 	{
 		if(ThreadingImpl.taskToRun != null)
 		{
 			// don't start the integrated server (which busywaits) inside a task
 			deferredTask =
-				() -> MinecraftClient.getInstance().startIntegratedServer(
+				() -> Minecraft.getInstance().doWorldLoad(
 					session, dataPackManager, saveLoader, newWorld);
 			ci.cancel();
 		}
 	}
 	
-	@Inject(method = "startIntegratedServer",
+	@Inject(method = "doWorldLoad",
 		at = @At(value = "INVOKE",
 			target = "Ljava/lang/Thread;sleep(J)V",
 			remap = false))
@@ -163,33 +161,33 @@ public class MinecraftClientMixin
 		postRunTasks();
 	}
 	
-	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;Z)V",
+	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;Z)V",
 		at = @At("HEAD"),
 		cancellable = true)
 	private void deferDisconnect(Screen disconnectionScreen,
 		boolean transferring, CallbackInfo ci)
 	{
-		if(MinecraftClient.getInstance().getServer() != null
+		if(Minecraft.getInstance().getSingleplayerServer() != null
 			&& ThreadingImpl.taskToRun != null)
 		{
 			// don't disconnect (which busywaits) inside a task
-			deferredTask = () -> MinecraftClient.getInstance()
+			deferredTask = () -> Minecraft.getInstance()
 				.disconnect(disconnectionScreen, transferring);
 			ci.cancel();
 		}
 	}
 	
-	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;Z)V",
+	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;Z)V",
 		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/MinecraftClient;cancelTasks()V"))
+			target = "Lnet/minecraft/client/Minecraft;dropAllTasks()V"))
 	private void onDisconnectCancelTasks(CallbackInfo ci)
 	{
 		NetworkSynchronizer.CLIENTBOUND.reset();
 	}
 	
-	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;Z)V",
+	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;Z)V",
 		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/MinecraftClient;render(Z)V",
+			target = "Lnet/minecraft/client/Minecraft;runTick(Z)V",
 			shift = At.Shift.AFTER))
 	private void onDisconnectBusyWait(CallbackInfo ci)
 	{
@@ -255,7 +253,7 @@ public class MinecraftClientMixin
 	
 	@Inject(method = "getInstance", at = @At("HEAD"))
 	private static void checkThreadOnGetInstance(
-		CallbackInfoReturnable<MinecraftClient> cir)
+		CallbackInfoReturnable<Minecraft> cir)
 	{
 		Preconditions.checkState(
 			Thread.currentThread() != ThreadingImpl.testThread,

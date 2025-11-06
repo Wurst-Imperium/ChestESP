@@ -20,6 +20,12 @@ import java.util.Optional;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.mojang.blaze3d.platform.DisplayData;
+import com.mojang.blaze3d.platform.Monitor;
+import com.mojang.blaze3d.platform.ScreenManager;
+import com.mojang.blaze3d.platform.VideoMode;
+import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.platform.WindowEventHandler;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,14 +34,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.client.WindowEventHandler;
-import net.minecraft.client.WindowSettings;
-import net.minecraft.client.util.Monitor;
-import net.minecraft.client.util.MonitorTracker;
-import net.minecraft.client.util.VideoMode;
-import net.minecraft.client.util.Window;
-
 import net.fabricmc.fabric.impl.client.gametest.util.WindowHooks;
 
 @Mixin(Window.class)
@@ -68,12 +66,12 @@ public abstract class WindowMixin implements WindowHooks
 	private WindowEventHandler eventHandler;
 	@Shadow
 	@Final
-	private MonitorTracker monitorTracker;
+	private ScreenManager screenManager;
 	@Shadow
-	private Optional<VideoMode> fullscreenVideoMode;
+	private Optional<VideoMode> preferredFullscreenVideoMode;
 	
 	@Shadow
-	protected abstract void updateWindowRegion();
+	protected abstract void setMode();
 	
 	@Unique
 	private int defaultWidth;
@@ -90,7 +88,7 @@ public abstract class WindowMixin implements WindowHooks
 	
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(WindowEventHandler eventHandler,
-		MonitorTracker monitorTracker, WindowSettings settings,
+		ScreenManager monitorTracker, DisplayData settings,
 		@Nullable String fullscreenVideoMode, String title, CallbackInfo ci)
 	{
 		this.defaultWidth = settings.width;
@@ -106,7 +104,7 @@ public abstract class WindowMixin implements WindowHooks
 	}
 	
 	@Inject(
-		method = {"onWindowFocusChanged", "onCursorEnterChanged",
+		method = {"onFocus", "onEnter",
 			"onMinimizeChanged"},
 		at = @At("HEAD"),
 		cancellable = true)
@@ -115,7 +113,7 @@ public abstract class WindowMixin implements WindowHooks
 		ci.cancel();
 	}
 	
-	@Inject(method = "onWindowSizeChanged",
+	@Inject(method = "onResize",
 		at = @At("HEAD"),
 		cancellable = true)
 	private void cancelWindowSizeChanged(long window, int width, int height,
@@ -126,7 +124,7 @@ public abstract class WindowMixin implements WindowHooks
 		ci.cancel();
 	}
 	
-	@Inject(method = "onFramebufferSizeChanged",
+	@Inject(method = "onFramebufferResize",
 		at = @At("HEAD"),
 		cancellable = true)
 	private void cancelFramebufferSizeChanged(long window, int width,
@@ -137,7 +135,7 @@ public abstract class WindowMixin implements WindowHooks
 		ci.cancel();
 	}
 	
-	@WrapMethod(method = "updateWindowRegion")
+	@WrapMethod(method = "setMode")
 	private void wrapUpdateWindowRegion(Operation<Void> original)
 	{
 		int prevWidth = this.width;
@@ -156,7 +154,7 @@ public abstract class WindowMixin implements WindowHooks
 		this.windowedHeight = prevWindowedHeight;
 	}
 	
-	@Inject(method = "setWindowedSize", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "setWindowed", at = @At("HEAD"), cancellable = true)
 	private void setWindowedSize(int width, int height, CallbackInfo ci)
 	{
 		this.fullscreen = false;
@@ -208,35 +206,35 @@ public abstract class WindowMixin implements WindowHooks
 		// Move the top left corner of the window so that the window
 		// expands/contracts from its center, while also
 		// trying to keep the window within the monitor's bounds
-		Monitor monitor = this.monitorTracker.getMonitor((Window)(Object)this);
+		Monitor monitor = this.screenManager.findBestMonitor((Window)(Object)this);
 		
 		if(monitor != null)
 		{
 			VideoMode videoMode =
-				monitor.findClosestVideoMode(this.fullscreenVideoMode);
+				monitor.getPreferredVidMode(this.preferredFullscreenVideoMode);
 			
 			this.x += (this.windowedWidth - width) / 2;
 			this.y += (this.windowedHeight - height) / 2;
 			
-			if(this.x + width > monitor.getViewportX() + videoMode.getWidth())
+			if(this.x + width > monitor.getX() + videoMode.getWidth())
 			{
-				this.x = monitor.getViewportX() + videoMode.getWidth() - width;
+				this.x = monitor.getX() + videoMode.getWidth() - width;
 			}
 			
-			if(this.x < monitor.getViewportX())
+			if(this.x < monitor.getX())
 			{
-				this.x = monitor.getViewportX();
+				this.x = monitor.getX();
 			}
 			
-			if(this.y + height > monitor.getViewportY() + videoMode.getHeight())
+			if(this.y + height > monitor.getY() + videoMode.getHeight())
 			{
 				this.y =
-					monitor.getViewportY() + videoMode.getHeight() - height;
+					monitor.getY() + videoMode.getHeight() - height;
 			}
 			
-			if(this.y < monitor.getViewportY())
+			if(this.y < monitor.getY())
 			{
-				this.y = monitor.getViewportY();
+				this.y = monitor.getY();
 			}
 			
 			this.windowedX = this.x;
@@ -246,7 +244,7 @@ public abstract class WindowMixin implements WindowHooks
 		this.width = this.windowedWidth = this.framebufferWidth = width;
 		this.height = this.windowedHeight = this.framebufferHeight = height;
 		
-		updateWindowRegion();
-		this.eventHandler.onResolutionChanged();
+		setMode();
+		this.eventHandler.resizeDisplay();
 	}
 }

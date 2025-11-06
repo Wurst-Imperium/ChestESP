@@ -20,14 +20,12 @@ import java.util.Objects;
 import java.util.stream.IntStream;
 
 import com.google.common.base.Preconditions;
+import com.mojang.blaze3d.platform.NativeImage;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
-
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.MathHelper;
-
 import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotComparisonAlgorithm;
+import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 
 public class TestScreenshotComparisonAlgorithms
 {
@@ -73,20 +71,20 @@ public class TestScreenshotComparisonAlgorithms
 							haystackData[(needleY + y) * haystackWidth + needleX
 								+ x];
 						int haystackRed =
-							ColorHelper.Argb.getRed(haystackColor);
+							FastColor.ARGB32.red(haystackColor);
 						int haystackGreen =
-							ColorHelper.Argb.getGreen(haystackColor);
+							FastColor.ARGB32.green(haystackColor);
 						int haystackBlue =
-							ColorHelper.Argb.getBlue(haystackColor);
+							FastColor.ARGB32.blue(haystackColor);
 						int needleColor = needleData[y * needleWidth + x];
-						int needleRed = ColorHelper.Argb.getRed(needleColor);
+						int needleRed = FastColor.ARGB32.red(needleColor);
 						int needleGreen =
-							ColorHelper.Argb.getGreen(needleColor);
-						int needleBlue = ColorHelper.Argb.getBlue(needleColor);
+							FastColor.ARGB32.green(needleColor);
+						int needleBlue = FastColor.ARGB32.blue(needleColor);
 						sumSquaredDifference +=
-							MathHelper.square(haystackRed - needleRed)
-								+ MathHelper.square(haystackGreen - needleGreen)
-								+ MathHelper.square(haystackBlue - needleBlue);
+							Mth.square(haystackRed - needleRed)
+								+ Mth.square(haystackGreen - needleGreen)
+								+ Mth.square(haystackBlue - needleBlue);
 						
 						if(sumSquaredDifference >= threshold)
 						{
@@ -135,7 +133,7 @@ public class TestScreenshotComparisonAlgorithms
 								+ x] & 0xff;
 						int needleLuminance =
 							needleData[y * needleWidth + x] & 0xff;
-						sumSquaredDifference += MathHelper
+						sumSquaredDifference += Mth
 							.square(haystackLuminance - needleLuminance);
 						
 						if(sumSquaredDifference >= threshold)

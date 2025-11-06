@@ -17,11 +17,10 @@
 package net.fabricmc.fabric.impl.client.gametest.context;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.client.gui.screen.MessageScreen;
-import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.gui.screens.GenericMessageScreen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.Text;
-
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
@@ -69,19 +68,19 @@ public class TestSingleplayerContextImpl implements TestSingleplayerContext
 		ThreadingImpl.checkOnGametestThread("close");
 		
 		context.runOnClient(client -> {
-			if(client.world == null)
+			if(client.level == null)
 			{
 				throw new IllegalStateException(
 					"Exited the world before closing singleplayer context");
 			}
 			
-			client.world.disconnect();
+			client.level.disconnect();
 			client.disconnect(
-				new MessageScreen(Text.translatable("menu.savingLevel")));
+				new GenericMessageScreen(Component.translatable("menu.savingLevel")));
 		});
 		
 		context.waitFor(
-			client -> !ThreadingImpl.isServerRunning && client.world == null,
+			client -> !ThreadingImpl.isServerRunning && client.level == null,
 			SharedConstants.TICKS_PER_MINUTE);
 		context.setScreen(TitleScreen::new);
 	}

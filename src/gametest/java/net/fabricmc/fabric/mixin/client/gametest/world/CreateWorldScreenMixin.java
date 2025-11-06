@@ -24,33 +24,31 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.client.gui.screen.world.CreateWorldScreen;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
+import net.minecraft.core.LayeredRegistryAccess;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.registry.CombinedDynamicRegistries;
-import net.minecraft.registry.ServerDynamicRegistryType;
-import net.minecraft.world.SaveProperties;
-
+import net.minecraft.server.RegistryLayer;
+import net.minecraft.world.level.storage.WorldData;
 import net.fabricmc.fabric.impl.client.gametest.util.ClientGameTestImpl;
 import net.fabricmc.fabric.impl.client.gametest.util.DedicatedServerImplUtil;
 
 @Mixin(CreateWorldScreen.class)
 public class CreateWorldScreenMixin
 {
-	@Inject(method = "startServer",
+	@Inject(method = "createNewWorld",
 		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/MinecraftClient;createIntegratedServerLoader()Lnet/minecraft/server/integrated/IntegratedServerLoader;"),
+			target = "Lnet/minecraft/client/Minecraft;createWorldOpenFlows()Lnet/minecraft/client/gui/screens/worldselection/WorldOpenFlows;"),
 		cancellable = true)
 	private void createLevelDataForServers(CallbackInfo ci, @Local(
-		argsOnly = true) CombinedDynamicRegistries<ServerDynamicRegistryType> combinedDynamicRegistries,
-		@Local SaveProperties saveProperties)
+		argsOnly = true) LayeredRegistryAccess<RegistryLayer> combinedDynamicRegistries,
+		@Local WorldData saveProperties)
 	{
 		if(DedicatedServerImplUtil.saveLevelDataTo != null)
 		{
-			NbtCompound levelDatInner = saveProperties.cloneWorldNbt(
-				combinedDynamicRegistries.getCombinedRegistryManager(), null);
-			NbtCompound levelDat = new NbtCompound();
+			CompoundTag levelDatInner = saveProperties.createTag(
+				combinedDynamicRegistries.compositeAccess(), null);
+			CompoundTag levelDat = new CompoundTag();
 			levelDat.put("Data", levelDatInner);
 			
 			try

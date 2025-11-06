@@ -8,8 +8,8 @@
 package net.wimods.chestesp.groups;
 
 import me.shedaniel.autoconfig.ConfigHolder;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.DropperBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.DropperBlockEntity;
 import net.wimods.chestesp.ChestEspBlockGroup;
 import net.wimods.chestesp.ChestEspConfig;
 

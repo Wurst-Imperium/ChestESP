@@ -25,8 +25,8 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.world.TestWorldBuilder;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.gui.screen.world.WorldCreator;
-import net.minecraft.world.GameRules;
+import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
+import net.minecraft.world.level.GameRules;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
 
@@ -82,10 +82,10 @@ public final class ChestESPTest implements FabricClientGameTest
 		LOGGER.info("Creating test world");
 		TestWorldBuilder worldBuilder = context.worldBuilder();
 		worldBuilder.adjustSettings(creator -> {
-			String mcVersion = SharedConstants.getGameVersion().getName();
-			creator.setWorldName("E2E Test " + mcVersion);
-			creator.setGameMode(WorldCreator.Mode.CREATIVE);
-			creator.getGameRules().get(GameRules.SEND_COMMAND_FEEDBACK)
+			String mcVersion = SharedConstants.getCurrentVersion().getName();
+			creator.setName("E2E Test " + mcVersion);
+			creator.setGameMode(WorldCreationUiState.SelectedGameMode.CREATIVE);
+			creator.getGameRules().getRule(GameRules.RULE_SENDCOMMANDFEEDBACK)
 				.set(false, null);
 		});
 		
@@ -114,7 +114,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Loading chunks");
 		context.waitTicks(2);
-		context.waitFor(mc -> mc.worldRenderer.getCompletedChunkCount() >= 50);
+		context.waitFor(mc -> mc.levelRenderer.countRenderedSections() >= 50);
 		world.waitForChunksRender(false);
 		
 		assertScreenshotEquals(context, "in_game",

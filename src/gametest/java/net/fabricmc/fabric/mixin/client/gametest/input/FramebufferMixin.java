@@ -19,26 +19,24 @@ package net.fabricmc.fabric.mixin.client.gametest.input;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.Framebuffer;
-import net.minecraft.client.util.Window;
-
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.Window;
 import net.fabricmc.fabric.impl.client.gametest.util.WindowHooks;
+import net.minecraft.client.Minecraft;
 
-@Mixin(Framebuffer.class)
+@Mixin(RenderTarget.class)
 public class FramebufferMixin
 {
-	@ModifyVariable(method = {"draw", "drawInternal"},
+	@ModifyVariable(method = {"blitToScreen", "_blitToScreen"},
 		at = @At("HEAD"),
 		ordinal = 0,
 		argsOnly = true)
 	private int modifyWidth(int width)
 	{
-		Window window = MinecraftClient.getInstance().getWindow();
+		Window window = Minecraft.getInstance().getWindow();
 		
-		if((Object)this == MinecraftClient.getInstance().getFramebuffer()
-			&& width == window.getFramebufferWidth())
+		if((Object)this == Minecraft.getInstance().getMainRenderTarget()
+			&& width == window.getWidth())
 		{
 			return ((WindowHooks)(Object)window)
 				.fabric_getRealFramebufferWidth();
@@ -47,16 +45,16 @@ public class FramebufferMixin
 		return width;
 	}
 	
-	@ModifyVariable(method = {"draw", "drawInternal"},
+	@ModifyVariable(method = {"blitToScreen", "_blitToScreen"},
 		at = @At("HEAD"),
 		ordinal = 1,
 		argsOnly = true)
 	private int modifyHeight(int height)
 	{
-		Window window = MinecraftClient.getInstance().getWindow();
+		Window window = Minecraft.getInstance().getWindow();
 		
-		if((Object)this == MinecraftClient.getInstance().getFramebuffer()
-			&& height == window.getFramebufferHeight())
+		if((Object)this == Minecraft.getInstance().getMainRenderTarget()
+			&& height == window.getHeight())
 		{
 			return ((WindowHooks)(Object)window)
 				.fabric_getRealFramebufferHeight();

@@ -8,8 +8,8 @@
 package net.wimods.chestesp.groups;
 
 import me.shedaniel.autoconfig.ConfigHolder;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.vehicle.ChestBoatEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.vehicle.ChestBoat;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspEntityGroup;
 
@@ -35,6 +35,6 @@ public final class ChestBoatsGroup extends ChestEspEntityGroup
 	@Override
 	protected boolean matches(Entity e)
 	{
-		return e instanceof ChestBoatEntity;
+		return e instanceof ChestBoat;
 	}
 }

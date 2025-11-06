@@ -17,20 +17,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.renderer.GameRenderer;
 import net.wimods.chestesp.ChestEspMod;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin implements AutoCloseable
 {
 	@WrapOperation(at = @At(value = "INVOKE",
-		target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V",
+		target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V",
 		ordinal = 0),
-		method = "renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V")
-	private void onBobView(GameRenderer instance, MatrixStack matrices,
+		method = "renderLevel(Lnet/minecraft/client/DeltaTracker;)V")
+	private void onBobView(GameRenderer instance, PoseStack matrices,
 		float tickDelta, Operation<Void> original)
 	{
 		ChestEspMod chestEsp = ChestEspMod.getInstance();
@@ -41,16 +40,16 @@ public abstract class GameRendererMixin implements AutoCloseable
 	
 	@Inject(
 		at = @At(value = "FIELD",
-			target = "Lnet/minecraft/client/render/GameRenderer;renderHand:Z",
+			target = "Lnet/minecraft/client/renderer/GameRenderer;renderHand:Z",
 			opcode = Opcodes.GETFIELD,
 			ordinal = 0),
-		method = "renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V")
-	private void onRenderWorldHandRendering(RenderTickCounter tickCounter,
+		method = "renderLevel(Lnet/minecraft/client/DeltaTracker;)V")
+	private void onRenderWorldHandRendering(DeltaTracker tickCounter,
 		CallbackInfo ci, @Local(ordinal = 1) Matrix4f matrix4f2,
 		@Local(ordinal = 1) float tickDelta)
 	{
-		MatrixStack matrixStack = new MatrixStack();
-		matrixStack.multiplyPositionMatrix(matrix4f2);
+		PoseStack matrixStack = new PoseStack();
+		matrixStack.mulPose(matrix4f2);
 		ChestEspMod chestEsp = ChestEspMod.getInstance();
 		
 		if(chestEsp != null && chestEsp.isEnabled())

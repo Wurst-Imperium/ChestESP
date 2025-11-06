@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Objects;
 
 import me.shedaniel.autoconfig.ConfigHolder;
-import net.minecraft.util.math.Box;
+import net.minecraft.world.phys.AABB;
 
 public abstract class ChestEspGroup
 {
 	private final ConfigHolder<ChestEspConfig> configHolder;
 	private final String name;
-	protected final ArrayList<Box> boxes = new ArrayList<>();
+	protected final ArrayList<AABB> boxes = new ArrayList<>();
 	
 	public ChestEspGroup(ConfigHolder<ChestEspConfig> configHolder, String name)
 	{
@@ -58,7 +58,7 @@ public abstract class ChestEspGroup
 		return String.format("#%06X", rgb);
 	}
 	
-	public final List<Box> getBoxes()
+	public final List<AABB> getBoxes()
 	{
 		return Collections.unmodifiableList(boxes);
 	}

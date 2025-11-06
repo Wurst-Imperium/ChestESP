@@ -19,8 +19,7 @@ package net.fabricmc.fabric.impl.client.gametest.world;
 import java.nio.file.Path;
 
 import com.google.common.base.Preconditions;
-
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -55,8 +54,8 @@ public final class TestWorldSaveImpl implements TestWorldSave
 			"Cannot open a world when a server is running");
 		
 		context.runOnClient(client -> {
-			client.createIntegratedServerLoader()
-				.start(saveDirectory.getFileName().toString(), () -> {
+			client.createWorldOpenFlows()
+				.openWorld(saveDirectory.getFileName().toString(), () -> {
 					throw new AssertionError(
 						"Level loading should not be canceled");
 				});
@@ -65,7 +64,7 @@ public final class TestWorldSaveImpl implements TestWorldSave
 		ClientGameTestImpl.waitForWorldLoad(context);
 		
 		MinecraftServer server =
-			context.computeOnClient(MinecraftClient::getServer);
+			context.computeOnClient(Minecraft::getSingleplayerServer);
 		return new TestSingleplayerContextImpl(context, this, server);
 	}
 }

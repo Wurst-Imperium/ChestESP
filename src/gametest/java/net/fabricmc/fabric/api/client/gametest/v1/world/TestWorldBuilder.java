@@ -20,11 +20,9 @@ import java.util.Properties;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.ApiStatus;
-
-import net.minecraft.client.gui.screen.world.WorldCreator;
-
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestDedicatedServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
+import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 
 /**
  * A builder used for creating singleplayer worlds and dedicated servers.
@@ -66,7 +64,7 @@ public interface TestWorldBuilder
 	 *            The function to adjust the world settings
 	 * @return This world builder instance
 	 */
-	TestWorldBuilder adjustSettings(Consumer<WorldCreator> settingsAdjuster);
+	TestWorldBuilder adjustSettings(Consumer<WorldCreationUiState> settingsAdjuster);
 	
 	/**
 	 * Creates and joins a singleplayer world with the configured world

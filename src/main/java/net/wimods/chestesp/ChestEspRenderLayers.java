@@ -7,35 +7,34 @@
  */
 package net.wimods.chestesp;
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import java.util.OptionalDouble;
-
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderPhase;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
 
 public enum ChestEspRenderLayers
 {
 	;
 	
 	/**
-	 * Similar to {@link RenderLayer#getLines()}, but with line width 2.
+	 * Similar to {@link RenderType#lines()}, but with line width 2.
 	 */
-	public static final RenderLayer.MultiPhase LINES =
-		RenderLayer.of("chestesp:lines", VertexFormats.LINES,
-			VertexFormat.DrawMode.LINES, 1536, false, true,
-			RenderLayer.MultiPhaseParameters.builder()
-				.program(RenderLayer.LINES_PROGRAM)
-				.lineWidth(new RenderPhase.LineWidth(OptionalDouble.of(2)))
-				.layering(RenderLayer.VIEW_OFFSET_Z_LAYERING)
-				.transparency(RenderLayer.TRANSLUCENT_TRANSPARENCY)
-				.target(RenderLayer.ITEM_ENTITY_TARGET)
-				.writeMaskState(RenderLayer.ALL_MASK)
-				.depthTest(RenderLayer.LEQUAL_DEPTH_TEST)
-				.cull(RenderLayer.DISABLE_CULLING).build(false));
+	public static final RenderType.CompositeRenderType LINES =
+		RenderType.create("chestesp:lines", DefaultVertexFormat.POSITION_COLOR_NORMAL,
+			VertexFormat.Mode.LINES, 1536, false, true,
+			RenderType.CompositeState.builder()
+				.setShaderState(RenderType.RENDERTYPE_LINES_SHADER)
+				.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
+				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+				.setOutputState(RenderType.ITEM_ENTITY_TARGET)
+				.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
+				.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+				.setCullState(RenderType.NO_CULL).createCompositeState(false));
 	
 	/**
-	 * Similar to {@link RenderLayer#getLines()}, but with line width 2 and no
+	 * Similar to {@link RenderType#lines()}, but with line width 2 and no
 	 * depth test.
 	 *
 	 * @apiNote Until 25w08a (1.21.5), turning off depth test has to be done
@@ -45,32 +44,32 @@ public enum ChestEspRenderLayers
 	 *          drawn with depth test set to LEQUAL (only visible if not
 	 *          obstructed).
 	 */
-	public static final RenderLayer.MultiPhase ESP_LINES =
-		RenderLayer.of("chestesp:esp_lines", VertexFormats.LINES,
-			VertexFormat.DrawMode.LINES, 1536, false, true,
-			RenderLayer.MultiPhaseParameters.builder()
-				.program(RenderLayer.LINES_PROGRAM)
-				.lineWidth(new RenderPhase.LineWidth(OptionalDouble.of(2)))
-				.layering(RenderLayer.VIEW_OFFSET_Z_LAYERING)
-				.transparency(RenderLayer.TRANSLUCENT_TRANSPARENCY)
-				.target(RenderLayer.ITEM_ENTITY_TARGET)
-				.writeMaskState(RenderLayer.ALL_MASK)
-				.depthTest(RenderLayer.ALWAYS_DEPTH_TEST)
-				.cull(RenderLayer.DISABLE_CULLING).build(false));
+	public static final RenderType.CompositeRenderType ESP_LINES =
+		RenderType.create("chestesp:esp_lines", DefaultVertexFormat.POSITION_COLOR_NORMAL,
+			VertexFormat.Mode.LINES, 1536, false, true,
+			RenderType.CompositeState.builder()
+				.setShaderState(RenderType.RENDERTYPE_LINES_SHADER)
+				.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
+				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+				.setOutputState(RenderType.ITEM_ENTITY_TARGET)
+				.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
+				.setDepthTestState(RenderType.NO_DEPTH_TEST)
+				.setCullState(RenderType.NO_CULL).createCompositeState(false));
 	
 	/**
-	 * Similar to {@link RenderLayer#getDebugQuads()}, but with culling enabled.
+	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled.
 	 */
-	public static final RenderLayer.MultiPhase QUADS =
-		RenderLayer.of("chestesp:quads", VertexFormats.POSITION_COLOR,
-			VertexFormat.DrawMode.QUADS, 1536, false, true,
-			RenderLayer.MultiPhaseParameters.builder()
-				.program(RenderPhase.COLOR_PROGRAM)
-				.transparency(RenderLayer.TRANSLUCENT_TRANSPARENCY)
-				.depthTest(RenderLayer.LEQUAL_DEPTH_TEST).build(false));
+	public static final RenderType.CompositeRenderType QUADS =
+		RenderType.create("chestesp:quads", DefaultVertexFormat.POSITION_COLOR,
+			VertexFormat.Mode.QUADS, 1536, false, true,
+			RenderType.CompositeState.builder()
+				.setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
+				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+				.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST).createCompositeState(false));
 	
 	/**
-	 * Similar to {@link RenderLayer#getDebugQuads()}, but with culling enabled
+	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled
 	 * and no depth test.
 	 *
 	 * @apiNote Until 25w08a (1.21.5), turning off depth test has to be done
@@ -80,13 +79,13 @@ public enum ChestEspRenderLayers
 	 *          drawn with depth test set to LEQUAL (only visible if not
 	 *          obstructed).
 	 */
-	public static final RenderLayer.MultiPhase ESP_QUADS =
-		RenderLayer.of("chestesp:esp_quads", VertexFormats.POSITION_COLOR,
-			VertexFormat.DrawMode.QUADS, 1536, false, true,
-			RenderLayer.MultiPhaseParameters.builder()
-				.program(RenderPhase.COLOR_PROGRAM)
-				.transparency(RenderLayer.TRANSLUCENT_TRANSPARENCY)
-				.depthTest(RenderLayer.ALWAYS_DEPTH_TEST).build(false));
+	public static final RenderType.CompositeRenderType ESP_QUADS =
+		RenderType.create("chestesp:esp_quads", DefaultVertexFormat.POSITION_COLOR,
+			VertexFormat.Mode.QUADS, 1536, false, true,
+			RenderType.CompositeState.builder()
+				.setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
+				.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+				.setDepthTestState(RenderType.NO_DEPTH_TEST).createCompositeState(false));
 	
 	/**
 	 * Returns either {@link #QUADS} or {@link #ESP_QUADS} depending on the
@@ -99,7 +98,7 @@ public enum ChestEspRenderLayers
 	 *          drawn with depth test set to LEQUAL (only visible if not
 	 *          obstructed).
 	 */
-	public static RenderLayer getQuads(boolean depthTest)
+	public static RenderType getQuads(boolean depthTest)
 	{
 		return depthTest ? QUADS : ESP_QUADS;
 	}
@@ -115,7 +114,7 @@ public enum ChestEspRenderLayers
 	 *          drawn with depth test set to LEQUAL (only visible if not
 	 *          obstructed).
 	 */
-	public static RenderLayer getLines(boolean depthTest)
+	public static RenderType getLines(boolean depthTest)
 	{
 		return depthTest ? LINES : ESP_LINES;
 	}

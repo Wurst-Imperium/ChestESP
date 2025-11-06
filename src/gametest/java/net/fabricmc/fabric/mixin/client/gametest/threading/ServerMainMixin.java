@@ -28,7 +28,7 @@ public class ServerMainMixin
 	@WrapWithCondition(method = "main",
 		remap = false,
 		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/util/Util;startTimerHack()V",
+			target = "Lnet/minecraft/Util;startTimerHackThread()V",
 			remap = true))
 	private static boolean dontStartAnotherTimerHack()
 	{

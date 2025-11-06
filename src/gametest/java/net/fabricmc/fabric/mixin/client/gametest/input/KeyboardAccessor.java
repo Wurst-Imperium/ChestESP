@@ -16,14 +16,13 @@
 
 package net.fabricmc.fabric.mixin.client.gametest.input;
 
+import net.minecraft.client.KeyboardHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.client.Keyboard;
-
-@Mixin(Keyboard.class)
+@Mixin(KeyboardHandler.class)
 public interface KeyboardAccessor
 {
 	@Invoker
-	void invokeOnChar(long window, int codePoint, int modifiers);
+	void invokeCharTyped(long window, int codePoint, int modifiers);
 }

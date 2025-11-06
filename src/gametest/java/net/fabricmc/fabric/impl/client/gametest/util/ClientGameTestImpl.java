@@ -20,13 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ConfirmScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.world.BackupPromptScreen;
-import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
-import net.minecraft.text.TranslatableTextContent;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.BackupConfirmScreen;
+import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.client.gui.screens.LevelLoadingScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 
 public final class ClientGameTestImpl
@@ -42,13 +41,13 @@ public final class ClientGameTestImpl
 		for(int i = 0; i < SharedConstants.TICKS_PER_MINUTE; i++)
 		{
 			if(context.computeOnClient(
-				client -> isExperimentalWarningScreen(client.currentScreen)))
+				client -> isExperimentalWarningScreen(client.screen)))
 			{
 				context.clickScreenButton("gui.yes");
 			}
 			
 			if(context.computeOnClient(
-				client -> client.currentScreen instanceof BackupPromptScreen))
+				client -> client.screen instanceof BackupConfirmScreen))
 			{
 				context.clickScreenButton("selectWorld.backupJoinSkipButton");
 			}
@@ -76,7 +75,7 @@ public final class ClientGameTestImpl
 		}
 		
 		if(!(screen.getTitle()
-			.getContent() instanceof TranslatableTextContent translatableContents))
+			.getContents() instanceof TranslatableContents translatableContents))
 		{
 			return false;
 		}
@@ -85,9 +84,9 @@ public final class ClientGameTestImpl
 			.equals(translatableContents.getKey());
 	}
 	
-	private static boolean isWorldLoadingFinished(MinecraftClient client)
+	private static boolean isWorldLoadingFinished(Minecraft client)
 	{
-		return client.world != null
-			&& !(client.currentScreen instanceof LevelLoadingScreen);
+		return client.level != null
+			&& !(client.screen instanceof LevelLoadingScreen);
 	}
 }

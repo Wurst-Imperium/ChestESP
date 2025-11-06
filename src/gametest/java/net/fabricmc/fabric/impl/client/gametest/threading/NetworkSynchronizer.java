@@ -28,8 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.minecraft.util.Unit;
-import net.minecraft.util.thread.ThreadExecutor;
-
+import net.minecraft.util.thread.BlockableEventLoop;
 import net.fabricmc.fabric.impl.client.gametest.TestSystemProperties;
 
 /**
@@ -152,7 +151,7 @@ public final class NetworkSynchronizer
 		mainThreadPacketHandlers.remove(new RunnableBox(task));
 	}
 	
-	public void waitForPacketHandlers(ThreadExecutor<?> executor)
+	public void waitForPacketHandlers(BlockableEventLoop<?> executor)
 	{
 		if(TestSystemProperties.DISABLE_NETWORK_SYNCHRONIZER)
 		{
@@ -188,7 +187,7 @@ public final class NetworkSynchronizer
 			
 			try
 			{
-				executor.runTasks(() -> {
+				executor.managedBlock(() -> {
 					if(System.nanoTime() - startTime > 10_000_000_000L)
 					{
 						markInvalid();

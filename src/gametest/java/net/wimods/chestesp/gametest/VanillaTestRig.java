@@ -13,7 +13,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.wimods.chestesp.ChestEspStyle;
 
 public enum VanillaTestRig
@@ -67,7 +67,7 @@ public enum VanillaTestRig
 		
 		// Wait for the blocks to appear
 		context.waitFor(
-			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-5, -2, 6))
+			mc -> mc.level.getBlockState(mc.player.blockPosition().offset(-5, -2, 6))
 				.getBlock() == Blocks.SMOOTH_STONE_SLAB);
 		context.waitTick();
 		world.waitForChunksRender(false);

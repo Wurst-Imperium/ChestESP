@@ -7,19 +7,19 @@
  */
 package net.wimods.chestesp.util;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.phys.Vec3;
 
 public enum RotationUtils
 {
 	;
 	
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 	
-	public static Vec3d getClientLookVec(float partialTicks)
+	public static Vec3 getClientLookVec(float partialTicks)
 	{
-		float yaw = MC.player.getYaw(partialTicks);
-		float pitch = MC.player.getPitch(partialTicks);
+		float yaw = MC.player.getViewYRot(partialTicks);
+		float pitch = MC.player.getViewXRot(partialTicks);
 		return new Rotation(yaw, pitch).toLookVec();
 	}
 }
