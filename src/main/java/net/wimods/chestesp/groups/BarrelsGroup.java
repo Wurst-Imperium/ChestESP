@@ -8,8 +8,8 @@
 package net.wimods.chestesp.groups;
 
 import me.shedaniel.autoconfig.ConfigHolder;
-import net.minecraft.block.entity.BarrelBlockEntity;
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.wimods.chestesp.ChestEspBlockGroup;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.util.LootrModCompat;

@@ -8,55 +8,54 @@
 package net.wimods.chestesp;
 
 import java.util.OptionalDouble;
-
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderPhase;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
 
 public enum ChestEspRenderLayers
 {
 	;
 	
 	/**
-	 * Similar to {@link RenderLayer#getLines()}, but with line width 2.
+	 * Similar to {@link RenderType#lines()}, but with line width 2.
 	 */
-	public static final RenderLayer.MultiPhase LINES = RenderLayer.of(
+	public static final RenderType.CompositeRenderType LINES = RenderType.create(
 		"chestesp:lines", 1536, ChestEspPipelines.DEPTH_TEST_LINES,
-		RenderLayer.MultiPhaseParameters.builder()
-			.lineWidth(new RenderPhase.LineWidth(OptionalDouble.of(2)))
-			.layering(RenderLayer.VIEW_OFFSET_Z_LAYERING)
-			.target(RenderLayer.ITEM_ENTITY_TARGET).build(false));
+		RenderType.CompositeState.builder()
+			.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
+			.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+			.setOutputState(RenderType.ITEM_ENTITY_TARGET).createCompositeState(false));
 	
 	/**
-	 * Similar to {@link RenderLayer#getLines()}, but with line width 2 and no
+	 * Similar to {@link RenderType#lines()}, but with line width 2 and no
 	 * depth test.
 	 */
-	public static final RenderLayer.MultiPhase ESP_LINES =
-		RenderLayer.of("chestesp:esp_lines", 1536, ChestEspPipelines.ESP_LINES,
-			RenderLayer.MultiPhaseParameters.builder()
-				.lineWidth(new RenderPhase.LineWidth(OptionalDouble.of(2)))
-				.layering(RenderLayer.VIEW_OFFSET_Z_LAYERING)
-				.target(RenderLayer.ITEM_ENTITY_TARGET).build(false));
+	public static final RenderType.CompositeRenderType ESP_LINES =
+		RenderType.create("chestesp:esp_lines", 1536, ChestEspPipelines.ESP_LINES,
+			RenderType.CompositeState.builder()
+				.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
+				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+				.setOutputState(RenderType.ITEM_ENTITY_TARGET).createCompositeState(false));
 	
 	/**
-	 * Similar to {@link RenderLayer#getDebugQuads()}, but with culling enabled.
+	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled.
 	 */
-	public static final RenderLayer.MultiPhase QUADS = RenderLayer.of(
+	public static final RenderType.CompositeRenderType QUADS = RenderType.create(
 		"chestesp:quads", 1536, false, true, ChestEspPipelines.QUADS,
-		RenderLayer.MultiPhaseParameters.builder().build(false));
+		RenderType.CompositeState.builder().createCompositeState(false));
 	
 	/**
-	 * Similar to {@link RenderLayer#getDebugQuads()}, but with culling enabled
+	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled
 	 * and no depth test.
 	 */
-	public static final RenderLayer.MultiPhase ESP_QUADS = RenderLayer.of(
+	public static final RenderType.CompositeRenderType ESP_QUADS = RenderType.create(
 		"chestesp:esp_quads", 1536, false, true, ChestEspPipelines.ESP_QUADS,
-		RenderLayer.MultiPhaseParameters.builder().build(false));
+		RenderType.CompositeState.builder().createCompositeState(false));
 	
 	/**
 	 * Returns either {@link #QUADS} or {@link #ESP_QUADS} depending on the
 	 * value of {@code depthTest}.
 	 */
-	public static RenderLayer getQuads(boolean depthTest)
+	public static RenderType getQuads(boolean depthTest)
 	{
 		return depthTest ? QUADS : ESP_QUADS;
 	}
@@ -65,7 +64,7 @@ public enum ChestEspRenderLayers
 	 * Returns either {@link #LINES} or {@link #ESP_LINES} depending on the
 	 * value of {@code depthTest}.
 	 */
-	public static RenderLayer getLines(boolean depthTest)
+	public static RenderType getLines(boolean depthTest)
 	{
 		return depthTest ? LINES : ESP_LINES;
 	}

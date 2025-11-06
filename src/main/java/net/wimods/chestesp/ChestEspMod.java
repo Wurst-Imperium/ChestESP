@@ -7,6 +7,8 @@
  */
 package net.wimods.chestesp;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,25 +19,23 @@ import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.wimods.chestesp.util.ChunkUtils;
 import net.wimods.chestesp.util.PlausibleAnalytics;
 import net.wimods.chestesp.util.RenderUtils;
 
 public final class ChestEspMod
 {
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 	public static final Logger LOGGER = LoggerFactory.getLogger("ChestESP");
 	
 	private final ConfigHolder<ChestEspConfig> configHolder;
 	private final PlausibleAnalytics plausible;
 	private final ChestEspGroupManager groups;
-	private final KeyBinding toggleKey;
+	private final KeyMapping toggleKey;
 	
 	private boolean enabled;
 	
@@ -49,12 +49,12 @@ public final class ChestEspMod
 		groups = new ChestEspGroupManager(configHolder);
 		
 		toggleKey = KeyBindingHelper
-			.registerKeyBinding(new KeyBinding("key.chestesp.toggle",
-				InputUtil.UNKNOWN_KEY.getCode(), "ChestESP"));
+			.registerKeyBinding(new KeyMapping("key.chestesp.toggle",
+				InputConstants.UNKNOWN.getValue(), "ChestESP"));
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			boolean enabled = configHolder.get().enable;
-			while(toggleKey.wasPressed())
+			while(toggleKey.consumeClick())
 				setEnabled(!enabled);
 		});
 		
@@ -92,7 +92,7 @@ public final class ChestEspMod
 		ChunkUtils.getLoadedBlockEntities().forEach(
 			be -> groups.blockGroups.forEach(group -> group.addIfMatches(be)));
 		
-		MC.world.getEntities().forEach(
+		MC.level.entitiesForRendering().forEach(
 			e -> groups.entityGroups.forEach(group -> group.addIfMatches(e)));
 	}
 	
@@ -101,7 +101,7 @@ public final class ChestEspMod
 		return enabled && configHolder.get().style.hasLines();
 	}
 	
-	public void onRender(MatrixStack matrixStack, float partialTicks)
+	public void onRender(PoseStack matrixStack, float partialTicks)
 	{
 		groups.entityGroups.stream().filter(ChestEspGroup::isEnabled)
 			.forEach(g -> g.updateBoxes(partialTicks));
@@ -114,14 +114,14 @@ public final class ChestEspMod
 			renderTracers(matrixStack, partialTicks);
 	}
 	
-	private void renderBoxes(MatrixStack matrixStack)
+	private void renderBoxes(PoseStack matrixStack)
 	{
 		for(ChestEspGroup group : groups.allGroups)
 		{
 			if(!group.isEnabled())
 				continue;
 			
-			List<Box> boxes = group.getBoxes();
+			List<AABB> boxes = group.getBoxes();
 			int quadsColor = group.getColorI(0x40);
 			int linesColor = group.getColorI(0x80);
 			
@@ -131,15 +131,15 @@ public final class ChestEspMod
 		}
 	}
 	
-	private void renderTracers(MatrixStack matrixStack, float partialTicks)
+	private void renderTracers(PoseStack matrixStack, float partialTicks)
 	{
 		for(ChestEspGroup group : groups.allGroups)
 		{
 			if(!group.isEnabled())
 				continue;
 			
-			List<Box> boxes = group.getBoxes();
-			List<Vec3d> ends = boxes.stream().map(Box::getCenter).toList();
+			List<AABB> boxes = group.getBoxes();
+			List<Vec3> ends = boxes.stream().map(AABB::getCenter).toList();
 			int color = group.getColorI(0x80);
 			
 			RenderUtils.drawTracers(matrixStack, partialTicks, ends, color,

@@ -30,11 +30,11 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.resource.language.LanguageManager;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.resources.language.LanguageManager;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspGroup;
 import net.wimods.chestesp.ChestEspGroupManager;
@@ -64,14 +64,14 @@ public final class PlausibleAnalytics
 	private final JsonObject sessionProps = new JsonObject();
 	private final ConfigHolder<ChestEspConfig> configHolder;
 	private final ChestEspGroupManager groups;
-	private final KeyBinding toggleKey;
+	private final KeyMapping toggleKey;
 	
 	/**
 	 * Creates a new PlausibleAnalytics instance and starts a background thread
 	 * for sending events.
 	 */
 	public PlausibleAnalytics(ConfigHolder<ChestEspConfig> configHolder,
-		ChestEspGroupManager groups, KeyBinding toggleKey)
+		ChestEspGroupManager groups, KeyMapping toggleKey)
 	{
 		this.configHolder = Objects.requireNonNull(configHolder);
 		this.groups = Objects.requireNonNull(groups);
@@ -111,16 +111,16 @@ public final class PlausibleAnalytics
 		return version;
 	}
 	
-	private void onWorldChange(MinecraftClient client, ClientWorld world)
+	private void onWorldChange(Minecraft client, ClientLevel world)
 	{
 		sessionProp("language", getLanguage(client));
 		
-		String path = getPathForServer(client.getCurrentServerEntry());
+		String path = getPathForServer(client.getCurrentServer());
 		LinkedHashMap<String, String> props = new LinkedHashMap<>();
 		props.put("enabled", "" + configHolder.get().enable);
 		props.put("style", configHolder.get().style.name());
 		if(!toggleKey.isUnbound())
-			props.put("toggle_key", toggleKey.getBoundKeyTranslationKey());
+			props.put("toggle_key", toggleKey.saveString());
 		for(ChestEspGroup group : groups.allGroups)
 		{
 			String key = group.getName() + "_color";
@@ -130,18 +130,18 @@ public final class PlausibleAnalytics
 		pageview(path, props);
 	}
 	
-	private String getLanguage(MinecraftClient client)
+	private String getLanguage(Minecraft client)
 	{
 		return Optional.ofNullable(client.getLanguageManager())
-			.map(LanguageManager::getLanguage).map(String::toLowerCase)
+			.map(LanguageManager::getSelected).map(String::toLowerCase)
 			.orElse(null);
 	}
 	
-	private String getPathForServer(ServerInfo server)
+	private String getPathForServer(ServerData server)
 	{
 		if(server == null)
 			return "/singleplayer";
-		if(server.isLocal())
+		if(server.isLan())
 			return "/lan";
 		if(server.isRealm())
 			return "/realms";

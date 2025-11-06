@@ -7,21 +7,20 @@
  */
 package net.wimods.chestesp.gametest.mixin;
 
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.util.CommonColors;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.gui.AbstractParentElement;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.Colors;
-
 @Mixin(Screen.class)
-public abstract class ScreenMixin extends AbstractParentElement
-	implements Drawable
+public abstract class ScreenMixin extends AbstractContainerEventHandler
+	implements Renderable
 {
 	@Shadow
 	public int width;
@@ -33,12 +32,12 @@ public abstract class ScreenMixin extends AbstractParentElement
 	 * screenshots consistent.
 	 */
 	@Inject(at = @At("HEAD"),
-		method = "renderPanoramaBackground",
+		method = "renderPanorama",
 		cancellable = true)
-	public void renderPanoramaBackground(DrawContext context, float deltaTicks,
+	public void renderPanoramaBackground(GuiGraphics context, float deltaTicks,
 		CallbackInfo ci)
 	{
-		context.fill(0, 0, width, height, Colors.GRAY);
+		context.fill(0, 0, width, height, CommonColors.GRAY);
 		ci.cancel();
 	}
 }
