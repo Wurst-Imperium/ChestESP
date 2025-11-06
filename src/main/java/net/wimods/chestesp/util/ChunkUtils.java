@@ -9,17 +9,16 @@ package net.wimods.chestesp.util;
 
 import java.util.Objects;
 import java.util.stream.Stream;
-
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 public enum ChunkUtils
 {
 	;
 	
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 	
 	public static Stream<BlockEntity> getLoadedBlockEntities()
 	{
@@ -27,16 +26,16 @@ public enum ChunkUtils
 			.flatMap(chunk -> chunk.getBlockEntities().values().stream());
 	}
 	
-	public static Stream<WorldChunk> getLoadedChunks()
+	public static Stream<LevelChunk> getLoadedChunks()
 	{
-		int radius = Math.max(2, MC.options.getClampedViewDistance()) + 3;
+		int radius = Math.max(2, MC.options.getEffectiveRenderDistance()) + 3;
 		int diameter = radius * 2 + 1;
 		
-		ChunkPos center = MC.player.getChunkPos();
+		ChunkPos center = MC.player.chunkPosition();
 		ChunkPos min = new ChunkPos(center.x - radius, center.z - radius);
 		ChunkPos max = new ChunkPos(center.x + radius, center.z + radius);
 		
-		Stream<WorldChunk> stream = Stream.<ChunkPos> iterate(min, pos -> {
+		Stream<LevelChunk> stream = Stream.<ChunkPos> iterate(min, pos -> {
 			
 			int x = pos.x;
 			int z = pos.z;
@@ -54,9 +53,8 @@ public enum ChunkUtils
 			
 			return new ChunkPos(x, z);
 			
-		}).limit(diameter * diameter)
-			.filter(c -> MC.world.isChunkLoaded(c.x, c.z))
-			.map(c -> MC.world.getChunk(c.x, c.z)).filter(Objects::nonNull);
+		}).limit(diameter * diameter).filter(c -> MC.level.hasChunk(c.x, c.z))
+			.map(c -> MC.level.getChunk(c.x, c.z)).filter(Objects::nonNull);
 		
 		return stream;
 	}

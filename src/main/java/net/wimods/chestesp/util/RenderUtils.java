@@ -7,70 +7,69 @@
  */
 package net.wimods.chestesp.util;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.List;
 
 import org.joml.Vector3f;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.Perspective;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.MatrixStack.Entry;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Camera;
+import net.minecraft.client.CameraType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.wimods.chestesp.ChestEspRenderLayers;
 
 public enum RenderUtils
 {
 	;
 	
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 	
-	public static Vec3d getCameraPos()
+	public static Vec3 getCameraPos()
 	{
-		Camera camera = MC.gameRenderer.getCamera();
+		Camera camera = MC.gameRenderer.getMainCamera();
 		if(camera == null)
-			return Vec3d.ZERO;
+			return Vec3.ZERO;
 		
-		return camera.getPos();
+		return camera.getPosition();
 	}
 	
-	public static VertexConsumerProvider.Immediate getVCP()
+	public static MultiBufferSource.BufferSource getVCP()
 	{
-		return MC.getBufferBuilders().getEntityVertexConsumers();
+		return MC.renderBuffers().bufferSource();
 	}
 	
-	private static Vec3d getTracerOrigin(float partialTicks)
+	private static Vec3 getTracerOrigin(float partialTicks)
 	{
-		Vec3d start = RotationUtils.getClientLookVec(partialTicks).multiply(10);
-		if(MC.options.getPerspective() == Perspective.THIRD_PERSON_FRONT)
-			start = start.negate();
+		Vec3 start = RotationUtils.getClientLookVec(partialTicks).scale(10);
+		if(MC.options.getCameraType() == CameraType.THIRD_PERSON_FRONT)
+			start = start.reverse();
 		
 		return start;
 	}
 	
-	public static void drawTracers(MatrixStack matrices, float partialTicks,
-		List<Vec3d> ends, int color, boolean depthTest)
+	public static void drawTracers(PoseStack matrices, float partialTicks,
+		List<Vec3> ends, int color, boolean depthTest)
 	{
-		VertexConsumerProvider.Immediate vcp = getVCP();
-		RenderLayer layer = ChestEspRenderLayers.getLines(depthTest);
+		MultiBufferSource.BufferSource vcp = getVCP();
+		RenderType layer = ChestEspRenderLayers.getLines(depthTest);
 		VertexConsumer buffer = vcp.getBuffer(layer);
 		
-		Vec3d start = getTracerOrigin(partialTicks);
-		Vec3d offset = getCameraPos().negate();
-		for(Vec3d end : ends)
+		Vec3 start = getTracerOrigin(partialTicks);
+		Vec3 offset = getCameraPos().reverse();
+		for(Vec3 end : ends)
 			drawLine(matrices, buffer, start, end.add(offset), color);
 		
-		vcp.draw(layer);
+		vcp.endBatch(layer);
 	}
 	
-	public static void drawLine(MatrixStack matrices, VertexConsumer buffer,
-		Vec3d start, Vec3d end, int color)
+	public static void drawLine(PoseStack matrices, VertexConsumer buffer,
+		Vec3 start, Vec3 end, int color)
 	{
-		Entry entry = matrices.peek();
+		Pose entry = matrices.last();
 		float x1 = (float)start.x;
 		float y1 = (float)start.y;
 		float z1 = (float)start.z;
@@ -80,11 +79,12 @@ public enum RenderUtils
 		drawLine(entry, buffer, x1, y1, z1, x2, y2, z2, color);
 	}
 	
-	public static void drawLine(MatrixStack.Entry entry, VertexConsumer buffer,
+	public static void drawLine(PoseStack.Pose entry, VertexConsumer buffer,
 		float x1, float y1, float z1, float x2, float y2, float z2, int color)
 	{
 		Vector3f normal = new Vector3f(x2, y2, z2).sub(x1, y1, z1).normalize();
-		buffer.vertex(entry, x1, y1, z1).color(color).normal(entry, normal);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry,
+			normal);
 		
 		// If the line goes through the screen, add another vertex there. This
 		// works around a bug in Minecraft's line shader.
@@ -93,31 +93,34 @@ public enum RenderUtils
 		if(t > 0 && t < length)
 		{
 			Vector3f closeToCam = new Vector3f(normal).mul(t).add(x1, y1, z1);
-			buffer.vertex(entry, closeToCam).color(color).normal(entry, normal);
-			buffer.vertex(entry, closeToCam).color(color).normal(entry, normal);
+			buffer.addVertex(entry, closeToCam).setColor(color).setNormal(entry,
+				normal);
+			buffer.addVertex(entry, closeToCam).setColor(color).setNormal(entry,
+				normal);
 		}
 		
-		buffer.vertex(entry, x2, y2, z2).color(color).normal(entry, normal);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry,
+			normal);
 	}
 	
-	public static void drawSolidBoxes(MatrixStack matrices, List<Box> boxes,
+	public static void drawSolidBoxes(PoseStack matrices, List<AABB> boxes,
 		int color, boolean depthTest)
 	{
-		VertexConsumerProvider.Immediate vcp = getVCP();
-		RenderLayer layer = ChestEspRenderLayers.getQuads(depthTest);
+		MultiBufferSource.BufferSource vcp = getVCP();
+		RenderType layer = ChestEspRenderLayers.getQuads(depthTest);
 		VertexConsumer buffer = vcp.getBuffer(layer);
 		
-		Vec3d camOffset = getCameraPos().negate();
-		for(Box box : boxes)
-			drawSolidBox(matrices, buffer, box.offset(camOffset), color);
+		Vec3 camOffset = getCameraPos().reverse();
+		for(AABB box : boxes)
+			drawSolidBox(matrices, buffer, box.move(camOffset), color);
 		
-		vcp.draw(layer);
+		vcp.endBatch(layer);
 	}
 	
-	public static void drawSolidBox(MatrixStack matrices, VertexConsumer buffer,
-		Box box, int color)
+	public static void drawSolidBox(PoseStack matrices, VertexConsumer buffer,
+		AABB box, int color)
 	{
-		MatrixStack.Entry entry = matrices.peek();
+		PoseStack.Pose entry = matrices.last();
 		float x1 = (float)box.minX;
 		float y1 = (float)box.minY;
 		float z1 = (float)box.minZ;
@@ -125,55 +128,55 @@ public enum RenderUtils
 		float y2 = (float)box.maxY;
 		float z2 = (float)box.maxZ;
 		
-		buffer.vertex(entry, x1, y1, z1).color(color);
-		buffer.vertex(entry, x2, y1, z1).color(color);
-		buffer.vertex(entry, x2, y1, z2).color(color);
-		buffer.vertex(entry, x1, y1, z2).color(color);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color);
+		buffer.addVertex(entry, x2, y1, z1).setColor(color);
+		buffer.addVertex(entry, x2, y1, z2).setColor(color);
+		buffer.addVertex(entry, x1, y1, z2).setColor(color);
 		
-		buffer.vertex(entry, x1, y2, z1).color(color);
-		buffer.vertex(entry, x1, y2, z2).color(color);
-		buffer.vertex(entry, x2, y2, z2).color(color);
-		buffer.vertex(entry, x2, y2, z1).color(color);
+		buffer.addVertex(entry, x1, y2, z1).setColor(color);
+		buffer.addVertex(entry, x1, y2, z2).setColor(color);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color);
+		buffer.addVertex(entry, x2, y2, z1).setColor(color);
 		
-		buffer.vertex(entry, x1, y1, z1).color(color);
-		buffer.vertex(entry, x1, y2, z1).color(color);
-		buffer.vertex(entry, x2, y2, z1).color(color);
-		buffer.vertex(entry, x2, y1, z1).color(color);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color);
+		buffer.addVertex(entry, x1, y2, z1).setColor(color);
+		buffer.addVertex(entry, x2, y2, z1).setColor(color);
+		buffer.addVertex(entry, x2, y1, z1).setColor(color);
 		
-		buffer.vertex(entry, x2, y1, z1).color(color);
-		buffer.vertex(entry, x2, y2, z1).color(color);
-		buffer.vertex(entry, x2, y2, z2).color(color);
-		buffer.vertex(entry, x2, y1, z2).color(color);
+		buffer.addVertex(entry, x2, y1, z1).setColor(color);
+		buffer.addVertex(entry, x2, y2, z1).setColor(color);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color);
+		buffer.addVertex(entry, x2, y1, z2).setColor(color);
 		
-		buffer.vertex(entry, x1, y1, z2).color(color);
-		buffer.vertex(entry, x2, y1, z2).color(color);
-		buffer.vertex(entry, x2, y2, z2).color(color);
-		buffer.vertex(entry, x1, y2, z2).color(color);
+		buffer.addVertex(entry, x1, y1, z2).setColor(color);
+		buffer.addVertex(entry, x2, y1, z2).setColor(color);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color);
+		buffer.addVertex(entry, x1, y2, z2).setColor(color);
 		
-		buffer.vertex(entry, x1, y1, z1).color(color);
-		buffer.vertex(entry, x1, y1, z2).color(color);
-		buffer.vertex(entry, x1, y2, z2).color(color);
-		buffer.vertex(entry, x1, y2, z1).color(color);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color);
+		buffer.addVertex(entry, x1, y1, z2).setColor(color);
+		buffer.addVertex(entry, x1, y2, z2).setColor(color);
+		buffer.addVertex(entry, x1, y2, z1).setColor(color);
 	}
 	
-	public static void drawOutlinedBoxes(MatrixStack matrices, List<Box> boxes,
+	public static void drawOutlinedBoxes(PoseStack matrices, List<AABB> boxes,
 		int color, boolean depthTest)
 	{
-		VertexConsumerProvider.Immediate vcp = getVCP();
-		RenderLayer layer = ChestEspRenderLayers.getLines(depthTest);
+		MultiBufferSource.BufferSource vcp = getVCP();
+		RenderType layer = ChestEspRenderLayers.getLines(depthTest);
 		VertexConsumer buffer = vcp.getBuffer(layer);
 		
-		Vec3d camOffset = getCameraPos().negate();
-		for(Box box : boxes)
-			drawOutlinedBox(matrices, buffer, box.offset(camOffset), color);
+		Vec3 camOffset = getCameraPos().reverse();
+		for(AABB box : boxes)
+			drawOutlinedBox(matrices, buffer, box.move(camOffset), color);
 		
-		vcp.draw(layer);
+		vcp.endBatch(layer);
 	}
 	
-	public static void drawOutlinedBox(MatrixStack matrices,
-		VertexConsumer buffer, Box box, int color)
+	public static void drawOutlinedBox(PoseStack matrices,
+		VertexConsumer buffer, AABB box, int color)
 	{
-		MatrixStack.Entry entry = matrices.peek();
+		PoseStack.Pose entry = matrices.last();
 		float x1 = (float)box.minX;
 		float y1 = (float)box.minY;
 		float z1 = (float)box.minZ;
@@ -182,33 +185,57 @@ public enum RenderUtils
 		float z2 = (float)box.maxZ;
 		
 		// bottom lines
-		buffer.vertex(entry, x1, y1, z1).color(color).normal(entry, 1, 0, 0);
-		buffer.vertex(entry, x2, y1, z1).color(color).normal(entry, 1, 0, 0);
-		buffer.vertex(entry, x1, y1, z1).color(color).normal(entry, 0, 0, 1);
-		buffer.vertex(entry, x1, y1, z2).color(color).normal(entry, 0, 0, 1);
-		buffer.vertex(entry, x2, y1, z1).color(color).normal(entry, 0, 0, 1);
-		buffer.vertex(entry, x2, y1, z2).color(color).normal(entry, 0, 0, 1);
-		buffer.vertex(entry, x1, y1, z2).color(color).normal(entry, 1, 0, 0);
-		buffer.vertex(entry, x2, y1, z2).color(color).normal(entry, 1, 0, 0);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x2, y1, z1).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x1, y1, z2).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x2, y1, z1).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x2, y1, z2).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x1, y1, z2).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x2, y1, z2).setColor(color).setNormal(entry, 1,
+			0, 0);
 		
 		// top lines
-		buffer.vertex(entry, x1, y2, z1).color(color).normal(entry, 1, 0, 0);
-		buffer.vertex(entry, x2, y2, z1).color(color).normal(entry, 1, 0, 0);
-		buffer.vertex(entry, x1, y2, z1).color(color).normal(entry, 0, 0, 1);
-		buffer.vertex(entry, x1, y2, z2).color(color).normal(entry, 0, 0, 1);
-		buffer.vertex(entry, x2, y2, z1).color(color).normal(entry, 0, 0, 1);
-		buffer.vertex(entry, x2, y2, z2).color(color).normal(entry, 0, 0, 1);
-		buffer.vertex(entry, x1, y2, z2).color(color).normal(entry, 1, 0, 0);
-		buffer.vertex(entry, x2, y2, z2).color(color).normal(entry, 1, 0, 0);
+		buffer.addVertex(entry, x1, y2, z1).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x2, y2, z1).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x1, y2, z1).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x1, y2, z2).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x2, y2, z1).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry, 0,
+			0, 1);
+		buffer.addVertex(entry, x1, y2, z2).setColor(color).setNormal(entry, 1,
+			0, 0);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry, 1,
+			0, 0);
 		
 		// side lines
-		buffer.vertex(entry, x1, y1, z1).color(color).normal(entry, 0, 1, 0);
-		buffer.vertex(entry, x1, y2, z1).color(color).normal(entry, 0, 1, 0);
-		buffer.vertex(entry, x2, y1, z1).color(color).normal(entry, 0, 1, 0);
-		buffer.vertex(entry, x2, y2, z1).color(color).normal(entry, 0, 1, 0);
-		buffer.vertex(entry, x1, y1, z2).color(color).normal(entry, 0, 1, 0);
-		buffer.vertex(entry, x1, y2, z2).color(color).normal(entry, 0, 1, 0);
-		buffer.vertex(entry, x2, y1, z2).color(color).normal(entry, 0, 1, 0);
-		buffer.vertex(entry, x2, y2, z2).color(color).normal(entry, 0, 1, 0);
+		buffer.addVertex(entry, x1, y1, z1).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x1, y2, z1).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x2, y1, z1).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x2, y2, z1).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x1, y1, z2).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x1, y2, z2).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x2, y1, z2).setColor(color).setNormal(entry, 0,
+			1, 0);
+		buffer.addVertex(entry, x2, y2, z2).setColor(color).setNormal(entry, 0,
+			1, 0);
 	}
 }

@@ -1,13 +1,13 @@
 accessWidener	v1	named
-accessible	class	net/minecraft/client/gui/widget/OptionListWidget$WidgetEntry
-accessible	method	net/minecraft/client/gl/RenderPipelines	register	(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
-accessible	method	net/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder	build	(Z)Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters;
-accessible	method	net/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder	layering	(Lnet/minecraft/client/render/RenderPhase$Layering;)Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder;
-accessible	method	net/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder	lineWidth	(Lnet/minecraft/client/render/RenderPhase$LineWidth;)Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder;
-accessible	method	net/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder	target	(Lnet/minecraft/client/render/RenderPhase$Target;)Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder;
-accessible	field	net/minecraft/client/gl/RenderPipelines	POSITION_COLOR_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
-accessible	field	net/minecraft/client/gl/RenderPipelines	RENDERTYPE_LINES_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
-accessible	field	net/minecraft/client/gui/screen/Screen	drawables	Ljava/util/List;
-accessible	field	net/minecraft/client/gui/screen/TitleScreen	doBackgroundFade	Z
-accessible	field	net/minecraft/client/gui/widget/CyclingButtonWidget	optionText	Lnet/minecraft/text/Text;
-accessible	field	net/minecraft/client/gui/widget/OptionListWidget$WidgetEntry	widgets	Ljava/util/List;
+accessible	class	net/minecraft/client/gui/components/OptionsList$Entry
+accessible	method	net/minecraft/client/renderer/RenderPipelines	register	(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
+accessible	method	net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder	createCompositeState	(Z)Lnet/minecraft/client/renderer/RenderType$CompositeState;
+accessible	method	net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder	setLayeringState	(Lnet/minecraft/client/renderer/RenderStateShard$LayeringStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
+accessible	method	net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder	setLineState	(Lnet/minecraft/client/renderer/RenderStateShard$LineStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
+accessible	method	net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder	setOutputState	(Lnet/minecraft/client/renderer/RenderStateShard$OutputStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
+accessible	field	net/minecraft/client/renderer/RenderPipelines	DEBUG_FILLED_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible	field	net/minecraft/client/renderer/RenderPipelines	LINES_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible	field	net/minecraft/client/gui/screens/Screen	renderables	Ljava/util/List;
+accessible	field	net/minecraft/client/gui/screens/TitleScreen	fading	Z
+accessible	field	net/minecraft/client/gui/components/CycleButton	name	Lnet/minecraft/network/chat/Component;
+accessible	field	net/minecraft/client/gui/components/OptionsList$Entry	children	Ljava/util/List;

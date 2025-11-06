@@ -13,7 +13,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.wimods.chestesp.ChestEspStyle;
 
 public enum CopperTestRig
@@ -33,9 +33,9 @@ public enum CopperTestRig
 		runCommand(server, "kill @e[type=!player]");
 		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
 		ChestESPTest.resetConfig(context);
-		context.waitFor(
-			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-4, 0, 6))
-				.getBlock() == Blocks.AIR);
+		context.waitFor(mc -> mc.level
+			.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
+			.getBlock() == Blocks.AIR);
 		
 		// Top row: new copper chests
 		runCommand(server, "setblock ~4 ~4 ~7 copper_chest");
@@ -87,9 +87,9 @@ public enum CopperTestRig
 		runCommand(server, "fill ~4 ~-2 ~6 ~-4 ~-2 ~6 smooth_stone_slab");
 		
 		// Wait for the blocks to appear
-		context.waitFor(
-			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-4, 0, 6))
-				.getBlock() == Blocks.SMOOTH_STONE_SLAB);
+		context.waitFor(mc -> mc.level
+			.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
+			.getBlock() == Blocks.SMOOTH_STONE_SLAB);
 		context.waitTick();
 		world.waitForChunksRender();
 	}
