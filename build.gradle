@@ -74,9 +74,9 @@ minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/
 //minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
 
 sourceSets {
-    gametest {
-        depends.on sourceSets.main
-    }
+	gametest {
+		depends.on sourceSets.main
+	}
 }
 
 // Default run configurations.

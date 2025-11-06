@@ -2,7 +2,7 @@
 
 This mod highlights nearby chests so you can see them through walls. It's based on a Wurst Client feature of the same name.
 
-![A screenshot showing all of the different containers that ChestESP supports](https://img.wimods.net/github.com/Wurst-Imperium/ChestESP?to=https://images.wurstclient.net/_media/update/chestesp/chestesp_1.3_540p.webp)
+![A screenshot showing all of the different containers that ChestESP supports](https://img.wimods.net/github.com/Wurst-Imperium/ChestESP?to=https://images.wurstclient.net/_media/update/chestesp/chestesp_1.4.1_540p.webp)
 
 ## Downloads
 
