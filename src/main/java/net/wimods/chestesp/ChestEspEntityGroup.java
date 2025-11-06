@@ -10,7 +10,7 @@ package net.wimods.chestesp;
 import java.util.ArrayList;
 
 import me.shedaniel.autoconfig.ConfigHolder;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.wimods.chestesp.util.EntityUtils;
 
 public abstract class ChestEspEntityGroup extends ChestEspGroup

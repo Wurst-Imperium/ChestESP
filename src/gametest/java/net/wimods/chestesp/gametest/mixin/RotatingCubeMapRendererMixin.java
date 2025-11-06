@@ -7,16 +7,15 @@
  */
 package net.wimods.chestesp.gametest.mixin;
 
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.PanoramaRenderer;
+import net.minecraft.util.CommonColors;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.RotatingCubeMapRenderer;
-import net.minecraft.util.Colors;
-
-@Mixin(RotatingCubeMapRenderer.class)
+@Mixin(PanoramaRenderer.class)
 public abstract class RotatingCubeMapRendererMixin
 {
 	/**
@@ -24,10 +23,10 @@ public abstract class RotatingCubeMapRendererMixin
 	 * screenshots consistent.
 	 */
 	@Inject(at = @At("HEAD"), method = "render", cancellable = true)
-	public void render(DrawContext context, int width, int height, float alpha,
+	public void render(GuiGraphics context, int width, int height, float alpha,
 		float tickDelta, CallbackInfo ci)
 	{
-		context.fill(0, 0, width, height, Colors.GRAY);
+		context.fill(0, 0, width, height, CommonColors.GRAY);
 		ci.cancel();
 	}
 }

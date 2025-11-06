@@ -13,7 +13,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.wimods.chestesp.ChestEspStyle;
 
 public enum LootrTestRig
@@ -31,7 +31,7 @@ public enum LootrTestRig
 		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
 		ChestESPTest.resetConfig(context);
 		context.waitFor(
-			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-4, 0, 6))
+			mc -> mc.level.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
 				.getBlock() == Blocks.AIR);
 		
 		// Top row: lootr chests
@@ -58,7 +58,7 @@ public enum LootrTestRig
 		
 		// Wait for the blocks to appear
 		context.waitFor(
-			mc -> mc.world.getBlockState(mc.player.getBlockPos().add(-4, 0, 6))
+			mc -> mc.level.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
 				.getBlock() == Blocks.SMOOTH_STONE_SLAB);
 		context.waitTick();
 		world.waitForChunksRender();
