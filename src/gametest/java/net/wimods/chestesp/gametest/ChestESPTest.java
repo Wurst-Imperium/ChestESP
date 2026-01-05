@@ -24,6 +24,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.world.TestWorldBuilder;
+import net.fabricmc.fabric.impl.client.gametest.TestSystemProperties;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.world.level.GameRules;
@@ -41,6 +42,9 @@ public final class ChestESPTest implements FabricClientGameTest
 	@Override
 	public void runTest(ClientGameTestContext context)
 	{
+		if(!TestSystemProperties.DISABLE_NETWORK_SYNCHRONIZER)
+			throw new RuntimeException("Network synchronizer is not disabled");
+		
 		LOGGER.info("Starting ChestESP Client GameTest");
 		hideSplashTexts(context);
 		waitForTitleScreenFade(context);
