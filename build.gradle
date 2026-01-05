@@ -101,41 +101,58 @@ loom {
 	accessWidenerPath = file("src/main/resources/chestesp.accesswidener")
 	
 	runs {
-		clientGameTestWithLootr {
+		clientWithMods {
+			inherit client
+		}
+		clientGameTestWithMods {
 			inherit client
 			source = sourceSets.gametest
-			runDir = "build/run/clientGameTestWithLootr"
+			runDir = "build/run/clientGameTestWithMods"
 			vmArgs.add("-Dfabric.client.gametest")
-			vmArgs.add("-Dchestesp.withLootr=true")
+			vmArgs.add("-Dchestesp.withMods=true")
 			programArgs.add("--username=Wurst-Bot")
 		}
 	}
 }
 
 configurations {
-	lootrMod {
+	testMods {
 		transitive = false
 	}
 }
 
 dependencies {
-	lootrMod "maven.modrinth:lootr:${project.lootr_version}"
+	testMods "maven.modrinth:lootr:${project.lootr_version}"
 }
 
-def cleanClientGameTestWithLootr = tasks.register("cleanClientGameTestWithLootr", Delete) {
-	delete layout.buildDirectory.dir("run/clientGameTestWithLootr")
+def cleanClientWithMods = tasks.register("cleanClientWithMods", Delete) {
+	delete "run/mods"
 }
 
-def prepareClientGameTestWithLootr = tasks.register("prepareClientGameTestWithLootr", Sync) {
-	dependsOn cleanClientGameTestWithLootr
-	from configurations.lootrMod
-	into layout.buildDirectory.dir("run/clientGameTestWithLootr/mods")
+def prepareClientWithMods = tasks.register("prepareClientWithMods", Sync) {
+	from configurations.testMods
+	into "run/mods"
 }
 
-def doLootrTest = providers.gradleProperty("do_lootr_test").map { it.toBoolean() }.orElse(false)
-tasks.named("runClientGameTestWithLootr") {
-	onlyIf { doLootrTest.get() }
-	dependsOn prepareClientGameTestWithLootr
+tasks.named("runClientWithMods") {
+	dependsOn prepareClientWithMods
+	finalizedBy cleanClientWithMods
+}
+
+def cleanClientGameTestWithMods = tasks.register("cleanClientGameTestWithMods", Delete) {
+	delete layout.buildDirectory.dir("run/clientGameTestWithMods")
+}
+
+def prepareClientGameTestWithMods = tasks.register("prepareClientGameTestWithMods", Sync) {
+	dependsOn cleanClientGameTestWithMods
+	from configurations.testMods
+	into layout.buildDirectory.dir("run/clientGameTestWithMods/mods")
+}
+
+def doModCompatTest = providers.gradleProperty("do_mod_compat_test").map { it.toBoolean() }.orElse(false)
+tasks.named("runClientGameTestWithMods") {
+	onlyIf { doModCompatTest.get() }
+	dependsOn prepareClientGameTestWithMods
 }
 
 processResources {
