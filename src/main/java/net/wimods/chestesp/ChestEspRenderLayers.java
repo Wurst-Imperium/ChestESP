@@ -7,55 +7,49 @@
  */
 package net.wimods.chestesp;
 
-import java.util.OptionalDouble;
-
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.LayeringTransform;
+import net.minecraft.client.renderer.rendertype.OutputTarget;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
 
 public enum ChestEspRenderLayers
 {
 	;
 	
 	/**
-	 * Similar to {@link RenderType#lines()}, but with line width 2.
+	 * Similar to {@link RenderType#getLines()}, but with line width 2.
 	 */
-	public static final RenderType.CompositeRenderType LINES = RenderType
-		.create("chestesp:lines", 1536, ChestEspPipelines.DEPTH_TEST_LINES,
-			RenderType.CompositeState.builder()
-				.setLineState(
-					new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
-				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
-				.setOutputState(RenderType.ITEM_ENTITY_TARGET)
-				.createCompositeState(false));
+	public static final RenderType LINES = RenderType.create("chestesp:lines",
+		RenderSetup.builder(ChestEspPipelines.DEPTH_TEST_LINES)
+			.setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
+			.setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+			.createRenderSetup());
 	
 	/**
-	 * Similar to {@link RenderType#lines()}, but with line width 2 and no
+	 * Similar to {@link RenderType#getLines()}, but with line width 2 and no
 	 * depth test.
 	 */
-	public static final RenderType.CompositeRenderType ESP_LINES = RenderType
-		.create("chestesp:esp_lines", 1536, ChestEspPipelines.ESP_LINES,
-			RenderType.CompositeState.builder()
-				.setLineState(
-					new RenderStateShard.LineStateShard(OptionalDouble.of(2)))
-				.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
-				.setOutputState(RenderType.ITEM_ENTITY_TARGET)
-				.createCompositeState(false));
+	public static final RenderType ESP_LINES =
+		RenderType.create("chestesp:esp_lines",
+			RenderSetup.builder(ChestEspPipelines.ESP_LINES)
+				.setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
+				.setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+				.createRenderSetup());
 	
 	/**
-	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled.
+	 * Similar to {@link RenderType#getDebugQuads()}, but with culling enabled.
 	 */
-	public static final RenderType.CompositeRenderType QUADS = RenderType
-		.create("chestesp:quads", 1536, false, true, ChestEspPipelines.QUADS,
-			RenderType.CompositeState.builder().createCompositeState(false));
+	public static final RenderType QUADS = RenderType.create("chestesp:quads",
+		RenderSetup.builder(ChestEspPipelines.QUADS).sortOnUpload()
+			.createRenderSetup());
 	
 	/**
-	 * Similar to {@link RenderType#debugQuads()}, but with culling enabled
+	 * Similar to {@link RenderType#getDebugQuads()}, but with culling enabled
 	 * and no depth test.
 	 */
-	public static final RenderType.CompositeRenderType ESP_QUADS =
-		RenderType.create("chestesp:esp_quads", 1536, false, true,
-			ChestEspPipelines.ESP_QUADS,
-			RenderType.CompositeState.builder().createCompositeState(false));
+	public static final RenderType ESP_QUADS = RenderType.create(
+		"chestesp:esp_quads", RenderSetup.builder(ChestEspPipelines.ESP_QUADS)
+			.sortOnUpload().createRenderSetup());
 	
 	/**
 	 * Returns either {@link #QUADS} or {@link #ESP_QUADS} depending on the

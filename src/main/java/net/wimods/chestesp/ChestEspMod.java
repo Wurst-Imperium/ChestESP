@@ -16,11 +16,12 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfigClient;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
@@ -66,14 +67,14 @@ public final class ChestEspMod
 		container.registerExtensionPoint(IConfigScreenFactory.class,
 			(mc, screen) -> {
 				ChestEspMod.getInstance().getPlausible().pageview("/config");
-				return AutoConfig.getConfigScreen(ChestEspConfig.class, screen)
-					.get();
+				return AutoConfigClient
+					.getConfigScreen(ChestEspConfig.class, screen).get();
 			});
 		
 		groups = new ChestEspGroupManager(configHolder);
 		
 		kbCategory = new KeyMapping.Category(
-			ResourceLocation.fromNamespaceAndPath("chestesp", "chestesp"));
+			Identifier.fromNamespaceAndPath("chestesp", "chestesp"));
 		toggleKey = new KeyMapping("key.chestesp.toggle",
 			InputConstants.UNKNOWN.getValue(), kbCategory);
 		

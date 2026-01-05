@@ -33,7 +33,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraft.world.level.levelgen.presets.WorldPresets;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -166,11 +166,8 @@ public class TestWorldBuilderImpl implements TestWorldBuilder
 			.setWorldType(new WorldCreationUiState.WorldTypeEntry(flatPreset));
 		creator.setSeed("1");
 		creator.setGenerateStructures(false);
-		creator.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false,
-			null);
-		creator.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false,
-			null);
-		creator.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(false,
-			null);
+		creator.getGameRules().set(GameRules.ADVANCE_TIME, false, null);
+		creator.getGameRules().set(GameRules.ADVANCE_WEATHER, false, null);
+		creator.getGameRules().set(GameRules.SPAWN_MOBS, false, null);
 	}
 }

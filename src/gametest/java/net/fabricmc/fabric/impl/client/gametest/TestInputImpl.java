@@ -37,7 +37,7 @@ import net.minecraft.client.Options;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonInfo;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 
 public final class TestInputImpl implements TestInput
 {

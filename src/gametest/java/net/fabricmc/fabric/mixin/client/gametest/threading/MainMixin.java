@@ -27,7 +27,7 @@ public class MainMixin
 {
 	@WrapWithCondition(method = "main",
 		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/Util;startTimerHackThread()V"))
+			target = "Lnet/minecraft/util/Util;startTimerHackThread()V"))
 	private static boolean dontStartAnotherTimerHack()
 	{
 		return false;

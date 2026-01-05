@@ -27,7 +27,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.world.TestWorldBuilder;
 import net.fabricmc.fabric.impl.client.gametest.TestSystemProperties;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
 
@@ -49,13 +49,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		hideSplashTexts(context);
 		TestInput input = context.getInput();
 		
-		System.out.println("Skipping cloth config warning");
 		input.pressKey(GLFW.GLFW_KEY_TAB);
-		input.pressKey(GLFW.GLFW_KEY_TAB);
-		input.pressKey(GLFW.GLFW_KEY_TAB);
-		input.pressKey(GLFW.GLFW_KEY_TAB);
-		input.pressKey(GLFW.GLFW_KEY_ENTER);
-		
 		waitForTitleScreenFade(context);
 		LOGGER.info("Reached title screen");
 		assertScreenshotEquals(context, "title_screen",
@@ -72,6 +66,8 @@ public final class ChestESPTest implements FabricClientGameTest
 		context.clickScreenButton("fml.menu.mods");
 		
 		System.out.println("Selecting ChestESP entry");
+		input.pressKey(GLFW.GLFW_KEY_UP);
+		input.pressKey(GLFW.GLFW_KEY_DOWN);
 		input.pressKey(GLFW.GLFW_KEY_DOWN);
 		context.takeScreenshot("mod_list");
 		
@@ -90,8 +86,8 @@ public final class ChestESPTest implements FabricClientGameTest
 			String mcVersion = SharedConstants.getCurrentVersion().name();
 			creator.setName("E2E Test " + mcVersion);
 			creator.setGameMode(WorldCreationUiState.SelectedGameMode.CREATIVE);
-			creator.getGameRules().getRule(GameRules.RULE_SENDCOMMANDFEEDBACK)
-				.set(false, null);
+			creator.getGameRules().set(GameRules.SEND_COMMAND_FEEDBACK, false,
+				null);
 		});
 		
 		try(TestSingleplayerContext spContext = worldBuilder.create())

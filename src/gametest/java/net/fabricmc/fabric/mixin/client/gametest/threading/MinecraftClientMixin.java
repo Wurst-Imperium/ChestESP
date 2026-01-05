@@ -158,11 +158,11 @@ public class MinecraftClientMixin
 		postRunTasks();
 	}
 	
-	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;Z)V",
+	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V",
 		at = @At("HEAD"),
 		cancellable = true)
 	private void deferDisconnect(Screen disconnectionScreen,
-		boolean transferring, CallbackInfo ci)
+		boolean transferring, boolean shouldStopSounds, CallbackInfo ci)
 	{
 		if(Minecraft.getInstance().getSingleplayerServer() != null
 			&& ThreadingImpl.taskToRun != null)
@@ -174,7 +174,7 @@ public class MinecraftClientMixin
 		}
 	}
 	
-	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;Z)V",
+	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V",
 		at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/client/Minecraft;dropAllTasks()V"))
 	private void onDisconnectCancelTasks(CallbackInfo ci)
@@ -182,7 +182,7 @@ public class MinecraftClientMixin
 		NetworkSynchronizer.CLIENTBOUND.reset();
 	}
 	
-	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;Z)V",
+	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V",
 		at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/client/Minecraft;runTick(Z)V",
 			shift = At.Shift.AFTER))

@@ -29,7 +29,7 @@ import java.util.concurrent.TimeoutException;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.server.Main;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;

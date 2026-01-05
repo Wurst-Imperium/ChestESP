@@ -9,7 +9,7 @@ package net.wimods.chestesp.groups;
 
 import me.shedaniel.autoconfig.ConfigHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.vehicle.AbstractChestBoat;
+import net.minecraft.world.entity.vehicle.boat.AbstractChestBoat;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspEntityGroup;
 
