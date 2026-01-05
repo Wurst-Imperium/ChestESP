@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Wurst-Imperium and contributors.
+ * Copyright (c) 2023-2026 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -24,6 +24,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.world.TestWorldBuilder;
+import net.fabricmc.fabric.impl.client.gametest.TestSystemProperties;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.world.level.GameRules;
@@ -35,12 +36,15 @@ public final class ChestESPTest implements FabricClientGameTest
 	public static final Logger LOGGER =
 		LoggerFactory.getLogger("ChestESP Test");
 	
-	public static final boolean IS_LOOTR_TEST =
-		System.getProperty("chestesp.withLootr") != null;
+	public static final boolean IS_MOD_COMPAT_TEST =
+		System.getProperty("chestesp.withMods") != null;
 	
 	@Override
 	public void runTest(ClientGameTestContext context)
 	{
+		if(!TestSystemProperties.DISABLE_NETWORK_SYNCHRONIZER)
+			throw new RuntimeException("Network synchronizer is not disabled");
+		
 		LOGGER.info("Starting ChestESP Client GameTest");
 		hideSplashTexts(context);
 		TestInput input = context.getInput();
@@ -55,7 +59,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		waitForTitleScreenFade(context);
 		LOGGER.info("Reached title screen");
 		assertScreenshotEquals(context, "title_screen",
-			"https://i.imgur.com/Asj9iIx.png");
+			"https://i.imgur.com/ageBVca.png");
 		
 		// Check config values that aren't visible in screenshots
 		withConfig(context, config -> {
@@ -127,7 +131,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Opening inventory");
 		input.pressKey(GLFW.GLFW_KEY_E);
-		if(IS_LOOTR_TEST)
+		if(IS_MOD_COMPAT_TEST)
 			assertScreenshotEquals(context, "inventory",
 				"https://i.imgur.com/Z9vk4B8.png");
 		else
@@ -149,7 +153,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		CopperTestRig.build(context, spContext);
 		CopperTestRig.test(context);
 		
-		if(IS_LOOTR_TEST)
+		if(IS_MOD_COMPAT_TEST)
 		{
 			LOGGER.info("Building lootr test rig");
 			LootrTestRig.build(context, spContext);
