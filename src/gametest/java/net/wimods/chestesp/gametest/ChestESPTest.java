@@ -58,17 +58,17 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Clicking mods button");
 		context.clickScreenButton("modmenu.title");
-		if(IS_LOOTR_TEST)
-			assertScreenshotEquals(context, "mod_menu",
-				"https://i.imgur.com/1bYR8j0.png");
-		else
-			assertScreenshotEquals(context, "mod_menu",
-				"https://i.imgur.com/EY2sFws.png");
-		
-		LOGGER.info("Clicking configure button");
 		TestInput input = context.getInput();
 		input.pressKey(GLFW.GLFW_KEY_TAB);
 		input.pressKey(GLFW.GLFW_KEY_TAB);
+		if(IS_LOOTR_TEST)
+			assertScreenshotEquals(context, "mod_menu",
+				"https://i.imgur.com/6cXunHs.png");
+		else
+			assertScreenshotEquals(context, "mod_menu",
+				"https://i.imgur.com/FxYOalw.png");
+		
+		LOGGER.info("Clicking configure button");
 		input.pressKey(GLFW.GLFW_KEY_TAB);
 		input.pressKey(GLFW.GLFW_KEY_ENTER);
 		assertScreenshotEquals(context, "cloth_config",
