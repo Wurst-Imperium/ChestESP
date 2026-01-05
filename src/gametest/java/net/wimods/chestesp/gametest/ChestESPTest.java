@@ -47,7 +47,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Reached title screen");
 		assertScreenshotEquals(context, "title_screen",
-			"https://i.imgur.com/egw0IEv.png");
+			"https://i.imgur.com/MlnLgz2.png");
 		
 		// Check config values that aren't visible in screenshots
 		withConfig(context, config -> {
