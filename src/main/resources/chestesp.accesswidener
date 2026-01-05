@@ -1,12 +1,6 @@
 accessWidener	v1	named
 accessible	class	net/minecraft/client/gui/components/OptionsList$Entry
 accessible	method	net/minecraft/client/renderer/RenderPipelines	register	(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
-accessible	method	net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder	createCompositeState	(Z)Lnet/minecraft/client/renderer/RenderType$CompositeState;
-accessible	method	net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder	setLayeringState	(Lnet/minecraft/client/renderer/RenderStateShard$LayeringStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
-accessible	method	net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder	setLineState	(Lnet/minecraft/client/renderer/RenderStateShard$LineStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
-accessible	method	net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder	setOutputState	(Lnet/minecraft/client/renderer/RenderStateShard$OutputStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
-accessible	field	net/minecraft/client/renderer/RenderPipelines	DEBUG_FILLED_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
-accessible	field	net/minecraft/client/renderer/RenderPipelines	LINES_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
 accessible	field	net/minecraft/client/gui/screens/Screen	renderables	Ljava/util/List;
 accessible	field	net/minecraft/client/gui/screens/TitleScreen	fading	Z
 accessible	field	net/minecraft/client/gui/components/CycleButton	name	Lnet/minecraft/network/chat/Component;

@@ -21,7 +21,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.wimods.chestesp.util.ChunkUtils;
@@ -49,8 +49,8 @@ public final class ChestEspMod
 		
 		groups = new ChestEspGroupManager(configHolder);
 		
-		KeyMapping.Category kbCategory = KeyMapping.Category.register(
-			ResourceLocation.fromNamespaceAndPath("chestesp", "chestesp"));
+		KeyMapping.Category kbCategory = KeyMapping.Category
+			.register(Identifier.fromNamespaceAndPath("chestesp", "chestesp"));
 		toggleKey = KeyBindingHelper
 			.registerKeyBinding(new KeyMapping("key.chestesp.toggle",
 				InputConstants.UNKNOWN.getValue(), kbCategory));
