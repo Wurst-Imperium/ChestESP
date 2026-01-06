@@ -10,7 +10,7 @@ package net.wimods.chestesp;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 
-import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfigClient;
 
 public final class ChestEspModMenuApi implements ModMenuApi
 {
@@ -19,8 +19,8 @@ public final class ChestEspModMenuApi implements ModMenuApi
 	{
 		return parent -> {
 			ChestEspMod.getInstance().getPlausible().pageview("/config");
-			return AutoConfig.getConfigScreen(ChestEspConfig.class, parent)
-				.get();
+			return AutoConfigClient
+				.getConfigScreen(ChestEspConfig.class, parent).get();
 		};
 	}
 }
