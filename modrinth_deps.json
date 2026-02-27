@@ -1,0 +1,7 @@
+{
+  "cloth_config_version": "cloth-config",
+  "lootr_version": {
+    "slug": "lootr",
+    "use_id": true
+  }
+}
