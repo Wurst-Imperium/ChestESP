@@ -84,7 +84,7 @@ public enum LootrTestRig
 			config.style = ChestEspStyle.LINES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_lines",
-			"https://i.imgur.com/A14Tgu2.png");
+			"https://i.imgur.com/LImNhH3.png");
 		
 		ChestESPTest.LOGGER
 			.info("Changing style to lines and boxes for Lootr test");
