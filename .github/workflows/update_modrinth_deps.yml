@@ -17,12 +17,8 @@ jobs:
       matrix:
         branch: ['master', '1.21.11-neoforge']
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ matrix.branch }}
-
       - name: Update Modrinth Dependencies
         uses: Wurst-Imperium/update-modrinth-deps@v1
         with:
+          ref: ${{ matrix.branch }}
           token: ${{ secrets.UMD_PR_TOKEN }}
