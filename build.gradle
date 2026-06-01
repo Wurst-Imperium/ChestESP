@@ -313,13 +313,13 @@ spotless {
 		eclipse().configFile(file("codestyle/formatter.xml"))
 	}
 	format("licenseHeader") {
-		target("src/main/java/**/*.java", "src/test/java/**/*.java", "src/gametest/java/net/wimods/**/*.java")
+		target("src/main/java/**/*.java", "src/gametest/java/net/wimods/**/*.java")
 		def header_file = file("codestyle/license_header.txt")
 		def delimiter = LicenseHeaderStep.DEFAULT_JAVA_HEADER_DELIMITER
 		licenseHeaderFile(header_file, delimiter).updateYearWithLatest(true)
 	}
 	json {
-		target "src/**/*.json"
+		target("src/**/*.json", "src/**/*.mcmeta")
 		gson().indentWithSpaces(2).version("2.11.0")
 	}
 }
