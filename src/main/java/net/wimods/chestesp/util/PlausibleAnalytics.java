@@ -25,7 +25,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import me.shedaniel.autoconfig.ConfigHolder;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.Version;
@@ -91,7 +91,7 @@ public final class PlausibleAnalytics
 		Thread.ofPlatform().daemon().name("Plausible")
 			.start(this::runBackgroundLoop);
 		
-		ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE
+		ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE
 			.register(this::onWorldChange);
 	}
 	

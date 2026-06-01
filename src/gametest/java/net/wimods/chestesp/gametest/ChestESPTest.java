@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.TestInput;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientLevelContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.world.TestWorldBuilder;
@@ -70,7 +70,7 @@ public final class ChestESPTest implements FabricClientGameTest
 				"https://i.imgur.com/6cXunHs.png");
 		else
 			assertScreenshotEquals(context, "mod_menu",
-				"https://i.imgur.com/FxYOalw.png");
+				"https://i.imgur.com/9Kt5AId.png");
 		
 		LOGGER.info("Clicking configure button");
 		input.pressKey(GLFW.GLFW_KEY_TAB);
@@ -105,7 +105,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		TestSingleplayerContext spContext)
 	{
 		TestInput input = context.getInput();
-		TestClientWorldContext world = spContext.getClientWorld();
+		TestClientLevelContext world = spContext.getClientLevel();
 		TestServerContext server = spContext.getServer();
 		
 		LOGGER.info("Setting up test background");

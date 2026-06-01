@@ -14,21 +14,22 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.wimods.chestesp.ChestEspMod;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin implements AutoCloseable
 {
 	@WrapOperation(at = @At(value = "INVOKE",
-		target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V",
+		target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;)V",
 		ordinal = 0),
 		method = "renderLevel(Lnet/minecraft/client/DeltaTracker;)V")
-	private void onBobView(GameRenderer instance, PoseStack matrices,
-		float tickDelta, Operation<Void> original)
+	private void onBobView(GameRenderer instance, CameraRenderState cameraState,
+		PoseStack matrices, Operation<Void> original)
 	{
 		ChestEspMod chestEsp = ChestEspMod.getInstance();
 		
 		if(chestEsp == null || !chestEsp.shouldCancelViewBobbing())
-			original.call(instance, matrices, tickDelta);
+			original.call(instance, cameraState, matrices);
 	}
 }

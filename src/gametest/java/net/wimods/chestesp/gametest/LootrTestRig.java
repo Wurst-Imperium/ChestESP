@@ -10,7 +10,7 @@ package net.wimods.chestesp.gametest;
 import static net.wimods.chestesp.gametest.WiModsTestHelper.*;
 
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientLevelContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.minecraft.world.level.block.Blocks;
@@ -23,7 +23,7 @@ public enum LootrTestRig
 	public static void build(ClientGameTestContext context,
 		TestSingleplayerContext spContext)
 	{
-		TestClientWorldContext world = spContext.getClientWorld();
+		TestClientLevelContext world = spContext.getClientLevel();
 		TestServerContext server = spContext.getServer();
 		
 		// Remove previous test rig and reset config
@@ -35,25 +35,19 @@ public enum LootrTestRig
 			.getBlock() == Blocks.AIR);
 		
 		// Top row: lootr chests
-		runCommand(server, "setblock ~4 ~2 ~7 lootr:lootr_chest");
-		runCommand(server, "setblock ~2 ~2 ~7 lootr:lootr_chest[type=right]");
-		runCommand(server, "setblock ~1 ~2 ~7 lootr:lootr_chest[type=left]");
-		runCommand(server, "setblock ~-1 ~2 ~7 lootr:lootr_trapped_chest");
+		runCommand(server, "setblock ~4 ~2 ~7 lootr:chest");
+		runCommand(server, "setblock ~2 ~2 ~7 lootr:chest[type=right]");
+		runCommand(server, "setblock ~1 ~2 ~7 lootr:chest[type=left]");
+		runCommand(server, "setblock ~-1 ~2 ~7 lootr:trapped_chest");
 		runCommand(server,
-			"setblock ~-3 ~2 ~7 lootr:lootr_trapped_chest[type=right]");
-		runCommand(server,
-			"setblock ~-4 ~2 ~7 lootr:lootr_trapped_chest[type=left]");
+			"setblock ~-3 ~2 ~7 lootr:trapped_chest[type=right]");
+		runCommand(server, "setblock ~-4 ~2 ~7 lootr:trapped_chest[type=left]");
 		runCommand(server,
 			"fill ~4 ~2 ~6 ~-4 ~2 ~6 smooth_stone_slab[type=top]");
 		
 		// Second row: other lootr containers
-		runCommand(server, "setblock ~4 ~ ~7 lootr:lootr_barrel");
-		runCommand(server, "setblock ~2 ~ ~7 lootr:lootr_shulker");
-		runCommand(server, "setblock ~ ~ ~7 lootr:lootr_inventory");
-		runCommand(server,
-			"setblock ~-2 ~ ~7 lootr:lootr_inventory[type=right]");
-		runCommand(server,
-			"setblock ~-3 ~ ~7 lootr:lootr_inventory[type=left]");
+		runCommand(server, "setblock ~4 ~ ~7 lootr:barrel");
+		runCommand(server, "setblock ~2 ~ ~7 lootr:shulker_box");
 		runCommand(server, "fill ~4 ~ ~6 ~-4 ~ ~6 smooth_stone_slab");
 		
 		// Wait for the blocks to appear
@@ -77,14 +71,14 @@ public enum LootrTestRig
 			config.include_furnaces = true;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_boxes",
-			"https://i.imgur.com/g5gbEAa.png");
+			"https://i.imgur.com/2rPHCHV.png");
 		
 		ChestESPTest.LOGGER.info("Changing style to lines for Lootr test");
 		ChestESPTest.withConfig(context, config -> {
 			config.style = ChestEspStyle.LINES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_lines",
-			"https://i.imgur.com/LImNhH3.png");
+			"https://i.imgur.com/Rr8vkkh.png");
 		
 		ChestESPTest.LOGGER
 			.info("Changing style to lines and boxes for Lootr test");
@@ -92,11 +86,11 @@ public enum LootrTestRig
 			config.style = ChestEspStyle.LINES_AND_BOXES;
 		});
 		assertScreenshotEquals(context, "ChestESP_lootr_lines_and_boxes",
-			"https://i.imgur.com/arRfGL2.png");
+			"https://i.imgur.com/cqzWrnm.png");
 		
 		ChestESPTest.LOGGER.info("Changing all color settings for Lootr test");
 		ChestESPTest.setRainbowColors(context);
 		assertScreenshotEquals(context, "ChestESP_lootr_custom_colors",
-			"https://i.imgur.com/PqiNVf0.png");
+			"https://i.imgur.com/cypSFCl.png");
 	}
 }

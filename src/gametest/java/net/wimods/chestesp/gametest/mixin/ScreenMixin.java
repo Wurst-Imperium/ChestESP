@@ -7,7 +7,7 @@
  */
 package net.wimods.chestesp.gametest.mixin;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.screens.Screen;
@@ -31,9 +31,9 @@ public abstract class ScreenMixin extends AbstractContainerEventHandler
 	 * Replaces the panorama background with a gray background to make test
 	 * screenshots consistent.
 	 */
-	@Inject(at = @At("HEAD"), method = "renderPanorama", cancellable = true)
-	public void renderPanoramaBackground(GuiGraphics context, float deltaTicks,
-		CallbackInfo ci)
+	@Inject(method = "extractPanorama", at = @At("HEAD"), cancellable = true)
+	public void renderPanoramaBackground(GuiGraphicsExtractor context,
+		float deltaTicks, CallbackInfo ci)
 	{
 		context.fill(0, 0, width, height, CommonColors.GRAY);
 		ci.cancel();

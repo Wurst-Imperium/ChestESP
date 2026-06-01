@@ -18,7 +18,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
@@ -51,8 +51,8 @@ public final class ChestEspMod
 		
 		KeyMapping.Category kbCategory = KeyMapping.Category
 			.register(Identifier.fromNamespaceAndPath("chestesp", "chestesp"));
-		toggleKey = KeyBindingHelper
-			.registerKeyBinding(new KeyMapping("key.chestesp.toggle",
+		toggleKey = KeyMappingHelper
+			.registerKeyMapping(new KeyMapping("key.chestesp.toggle",
 				InputConstants.UNKNOWN.getValue(), kbCategory));
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {

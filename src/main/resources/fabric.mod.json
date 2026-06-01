@@ -28,12 +28,12 @@
   ],
   "accessWidener": "chestesp.accesswidener",
   "depends": {
-    "fabricloader": ">=0.17.3",
-    "fabric-api": ">=0.140.0",
-    "modmenu": "^17.0.0-alpha.1",
-    "cloth-config": "^21.11.150",
-    "minecraft": "~1.21.11-beta.1",
-    "java": ">=21"
+    "fabricloader": ">=0.18.3",
+    "fabric-api": ">=0.143.12",
+    "modmenu": "^18.0.0-alpha.7",
+    "cloth-config": "^26.1.154",
+    "minecraft": "~26.1-pre.1",
+    "java": ">=25"
   },
   "suggests": {
     "wi_zoom": "*",
