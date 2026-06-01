@@ -6,16 +6,5 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        exclusiveContent {
-            forRepository {
-                maven {
-                    name = 'WIMods'
-                    url = 'https://maven.wimods.net/releases'
-                }
-            }
-            filter {
-                includeGroupByRegex 'net\\.wimods(\\..*)?'
-            }
-        }
     }
 }
