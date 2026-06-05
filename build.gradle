@@ -11,6 +11,7 @@ plugins {
 	// NeoGradle. Check the latest version at:
 	// https://projects.neoforged.net/neoforged/neogradle
 	id "net.neoforged.gradle.userdev" version "7.1.36"
+	id "net.wimods.neoforge-client-gametest-api" version "$neoforge_client_gametest_api_version"
 	id "me.modmuss50.mod-publish-plugin" version "2.0.0-beta.2"
 	id "com.diffplug.spotless" version "8.6.0"
 }
@@ -23,6 +24,17 @@ group = project.mod_group_id
 repositories {
 	mavenLocal()
 	maven {url = "https://maven.shedaniel.me/"}
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "WIMods"
+				url = "https://maven.wimods.net/releases"
+			}
+		}
+		filter {
+			includeGroupByRegex "net\\.wimods(\\..*)?"
+		}
+	}
 	exclusiveContent {
 		forRepository {
 			maven {
@@ -72,12 +84,6 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 //minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
-
-sourceSets {
-	gametest {
-		depends.on sourceSets.main
-	}
-}
 
 // Default run configurations.
 // These can be tweaked, removed, or duplicated as needed.
@@ -131,25 +137,19 @@ runs {
 	}
 	
 	clientGameTest {
-		runType("client")
 		jvmArguments("-Dchestesp.e2eTest", "-Dmixin.debug.verify=true", "-Dmixin.debug.countInjections=true")
 		systemProperties("fabric.client.gametest.disableNetworkSynchronizer": "true")
 		arguments("--username", "Wurst-Bot")
-		workingDirectory(file("build/run/clientGameTest"))
-		modSource project.sourceSets.gametest
-		arguments("--mixin.config", "fabric_api.mixins.json")
-		arguments("--mixin.config", "client_gametest.mixins.json")
 	}
 	
 	clientGameTestWithMods {
 		runType("client")
 		jvmArguments("-Dchestesp.e2eTest", "-Dchestesp.withMods=true", "-Dmixin.debug.verify=true", "-Dmixin.debug.countInjections=true")
-		systemProperties("fabric.client.gametest.disableNetworkSynchronizer": "true")
+		systemProperties("fabric.client.gametest": "true", "fabric.client.gametest.disableNetworkSynchronizer": "true")
 		arguments("--username", "Wurst-Bot")
 		workingDirectory(file("build/run/clientGameTestWithMods"))
-		modSource project.sourceSets.gametest
-		arguments("--mixin.config", "fabric_api.mixins.json")
-		arguments("--mixin.config", "client_gametest.mixins.json")
+		runtimeClasspath tasks.named("clientGameTestJar")
+		runtimeClasspath configurations.gametestRuntimeClasspath
 	}
 }
 
@@ -218,23 +218,6 @@ dependencies {
 // Enable jarJar feature so Cloth Config can be embedded in the final jar
 jarJar.enable()
 
-def cleanClientGameTest = tasks.register("cleanClientGameTest", Delete) {
-	delete layout.buildDirectory.dir("run/clientGameTest")
-}
-
-def prepareClientGameTest = tasks.register("prepareClientGameTest") {
-	dependsOn cleanClientGameTest
-	def outputDir = layout.buildDirectory.dir("run/clientGameTest")
-	outputs.dir(outputDir)
-	doLast {
-		outputDir.get().asFile.mkdirs()
-	}
-}
-
-tasks.matching { it.name == "runClientGameTest" }.configureEach {
-	dependsOn prepareClientGameTest
-}
-
 def cleanClientWithMods = tasks.register("cleanClientWithMods", Delete) {
 	delete "run/mods"
 }
@@ -262,6 +245,7 @@ def prepareClientGameTestWithMods = tasks.register("prepareClientGameTestWithMod
 def doModCompatTest = providers.gradleProperty("do_mod_compat_test").map { it.toBoolean() }.orElse(false)
 tasks.matching { it.name == "runClientGameTestWithMods" }.configureEach {
 	onlyIf { doModCompatTest.get() }
+	dependsOn tasks.named("clientGameTestJar")
 	dependsOn prepareClientGameTestWithMods
 }
 

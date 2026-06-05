@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}_gametest"
+version="1.0.0"
+displayName="${mod_name} Client GameTests"
+description="""Client gametests for ${mod_name}."""
+
+[[mixins]]
+config="client_gametest.mixins.json"
+
+[modproperties.${mod_id}_gametest]
+fabric-client-gametest = [
+	"net.wimods.chestesp.gametest.ChestESPTest"
+]
+
+[[dependencies.${mod_id}_gametest]]
+modId="${mod_id}"
+type="required"
+versionRange="[0,)"
+ordering="AFTER"
+side="CLIENT"
+
+[[dependencies.${mod_id}_gametest]]
+modId="fabric_client_gametest_api_v1"
+type="required"
+versionRange="[0,)"
+ordering="AFTER"
+side="CLIENT"
