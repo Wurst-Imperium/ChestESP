@@ -27,9 +27,10 @@ public class ClientPlayerEntityMixin extends AbstractClientPlayer
 		super(world, profile);
 	}
 	
-	@Inject(at = @At(value = "INVOKE",
-		target = "Lnet/minecraft/client/player/AbstractClientPlayer;tick()V",
-		ordinal = 0), method = "tick()V")
+	@Inject(method = "tick()V",
+		at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/client/player/AbstractClientPlayer;tick()V",
+			ordinal = 0))
 	private void onTick(CallbackInfo ci)
 	{
 		ChestEspMod chestEsp = ChestEspMod.getInstance();
