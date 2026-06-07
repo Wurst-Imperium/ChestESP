@@ -19,7 +19,7 @@ public enum LootrModCompat
 	private static final Class<?> lootrBarrelClass = getClassIfExists(
 		"noobanidus.mods.lootr.common.block.entity.LootrBarrelBlockEntity");
 	private static final Class<?> lootrShulkerBoxClass = getClassIfExists(
-		"noobanidus.mods.lootr.common.block.entity.LootrShulkerBlockEntity");
+		"noobanidus.mods.lootr.common.block.entity.LootrShulkerBoxBlockEntity");
 	private static final Class<?> lootrTrappedChestClass = getClassIfExists(
 		"noobanidus.mods.lootr.common.block.entity.LootrTrappedChestBlockEntity");
 	

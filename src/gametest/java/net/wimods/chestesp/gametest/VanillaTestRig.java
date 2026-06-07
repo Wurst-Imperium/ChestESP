@@ -10,7 +10,7 @@ package net.wimods.chestesp.gametest;
 import static net.wimods.chestesp.gametest.WiModsTestHelper.*;
 
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientLevelContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.minecraft.world.level.block.Blocks;
@@ -23,7 +23,7 @@ public enum VanillaTestRig
 	public static void build(ClientGameTestContext context,
 		TestSingleplayerContext spContext)
 	{
-		TestClientWorldContext world = spContext.getClientWorld();
+		TestClientLevelContext world = spContext.getClientLevel();
 		TestServerContext server = spContext.getServer();
 		
 		// Top row: normal chests
