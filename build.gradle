@@ -107,8 +107,24 @@ configurations {
 	}
 }
 
+def optionalCompatMods = [
+	lootr: [artifact: "lootr", property: "lootr_version"]
+]
+
+def compatModVersions = optionalCompatMods.collectEntries { id, mod ->
+	[(id): providers.gradleProperty(mod.property).orElse("")]
+}
+
 dependencies {
-	testMods "maven.modrinth:lootr:${project.lootr_version}"
+	optionalCompatMods.each { id, mod ->
+		def version = compatModVersions[id].get().trim()
+		if(!version.isEmpty())
+			testMods "maven.modrinth:${mod.artifact}:${version}"
+	}
+}
+
+def hasCompatMods = providers.provider {
+	compatModVersions.values().any { !it.get().trim().isEmpty() }
 }
 
 def cleanClientWithMods = tasks.register("cleanClientWithMods", Delete) {
@@ -121,6 +137,7 @@ def prepareClientWithMods = tasks.register("prepareClientWithMods", Sync) {
 }
 
 tasks.named("runClientWithMods") {
+	onlyIf { hasCompatMods.get() }
 	dependsOn prepareClientWithMods
 	finalizedBy cleanClientWithMods
 }
@@ -135,9 +152,8 @@ def prepareClientGameTestWithMods = tasks.register("prepareClientGameTestWithMod
 	into layout.buildDirectory.dir("run/clientGameTestWithMods/mods")
 }
 
-def doModCompatTest = providers.gradleProperty("do_mod_compat_test").map { it.toBoolean() }.orElse(false)
 tasks.named("runClientGameTestWithMods") {
-	onlyIf { doModCompatTest.get() }
+	onlyIf { hasCompatMods.get() }
 	dependsOn prepareClientGameTestWithMods
 }
 
