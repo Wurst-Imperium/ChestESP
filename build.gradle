@@ -168,6 +168,14 @@ configurations {
 	}
 }
 
+def optionalCompatMods = [
+	lootr: [artifact: "lootr", property: "lootr_version"]
+]
+
+def compatModVersions = optionalCompatMods.collectEntries { id, mod ->
+	[(id): providers.gradleProperty(mod.property).orElse("")]
+}
+
 dependencies {
 	// Specify the version of Minecraft to use.
 	// Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.
@@ -203,8 +211,11 @@ dependencies {
 	api("me.shedaniel.cloth:cloth-config-neoforge:${project.cloth_config_version}")
 	jarJar("me.shedaniel.cloth:cloth-config-neoforge:${project.cloth_config_version}")
 	
-	// Lootr for testing
-	testMods "maven.modrinth:lootr:${project.lootr_version}"
+	optionalCompatMods.each { id, mod ->
+		def version = compatModVersions[id].get().trim()
+		if(!version.isEmpty())
+			testMods "maven.modrinth:${mod.artifact}:${version}"
+	}
 	
 	constraints {
 		api("org.yaml:snakeyaml:2.2") {
@@ -214,6 +225,10 @@ dependencies {
 			because "version 2.8.1 pulled from cloth-config has security vulnerabilities"
 		}
 	}
+}
+
+def hasCompatMods = providers.provider {
+	compatModVersions.values().any { !it.get().trim().isEmpty() }
 }
 
 // Enable jarJar feature so Cloth Config can be embedded in the final jar
@@ -229,6 +244,7 @@ def prepareClientWithMods = tasks.register("prepareClientWithMods", Sync) {
 }
 
 tasks.matching { it.name == "runClientWithMods" }.configureEach {
+	onlyIf { hasCompatMods.get() }
 	dependsOn prepareClientWithMods
 	finalizedBy cleanClientWithMods
 }
@@ -243,9 +259,8 @@ def prepareClientGameTestWithMods = tasks.register("prepareClientGameTestWithMod
 	into layout.buildDirectory.dir("run/clientGameTestWithMods/mods")
 }
 
-def doModCompatTest = providers.gradleProperty("do_mod_compat_test").map { it.toBoolean() }.orElse(false)
 tasks.matching { it.name == "runClientGameTestWithMods" }.configureEach {
-	onlyIf { doModCompatTest.get() }
+	onlyIf { hasCompatMods.get() }
 	dependsOn tasks.named("clientGameTestJar")
 	dependsOn prepareClientGameTestWithMods
 }
