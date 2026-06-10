@@ -107,7 +107,7 @@ public enum CopperTestRig
 			config.include_crafters = true;
 			config.include_furnaces = true;
 		});
-		assertScreenshotEquals(context, "ChestESP_copper_boxes",
+		waitForScreenshotMatch(context, "ChestESP_copper_boxes",
 			"https://i.imgur.com/OKmAwt9.png");
 		
 		ChestESPTest.LOGGER.info("Changing style to lines for Lootr test");
