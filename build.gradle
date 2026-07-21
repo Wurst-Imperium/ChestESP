@@ -10,10 +10,10 @@ plugins {
 	id "idea"
 	// NeoGradle. Check the latest version at:
 	// https://projects.neoforged.net/neoforged/neogradle
-	id "net.neoforged.gradle.userdev" version "7.1.36"
+	id "net.neoforged.gradle.userdev" version "7.1.38"
 	id "net.wimods.neoforge-client-gametest-api" version "$neoforge_client_gametest_api_version"
-	id "me.modmuss50.mod-publish-plugin" version "2.0.0-beta.2"
-	id "com.diffplug.spotless" version "8.6.0"
+	id "me.modmuss50.mod-publish-plugin" version "2.1.1"
+	id "com.diffplug.spotless" version "8.8.0"
 	id "net.wimods.github-compile-summary" version "0.1.1"
 }
 

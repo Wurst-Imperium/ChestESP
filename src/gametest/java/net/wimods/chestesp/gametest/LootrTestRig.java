@@ -70,7 +70,7 @@ public enum LootrTestRig
 			config.include_crafters = true;
 			config.include_furnaces = true;
 		});
-		assertScreenshotEquals(context, "ChestESP_lootr_boxes",
+		waitForScreenshotMatch(context, "ChestESP_lootr_boxes",
 			"https://i.imgur.com/2rPHCHV.png");
 		
 		ChestESPTest.LOGGER.info("Changing style to lines for Lootr test");
