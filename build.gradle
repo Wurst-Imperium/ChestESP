@@ -6,8 +6,8 @@ buildscript {
 
 plugins {
 	id "net.fabricmc.fabric-loom" version "${loom_version}"
-	id "me.modmuss50.mod-publish-plugin" version "2.0.0-beta.2"
-	id "com.diffplug.spotless" version "8.6.0"
+	id "me.modmuss50.mod-publish-plugin" version "2.1.1"
+	id "com.diffplug.spotless" version "8.8.0"
 	id "net.wimods.github-compile-summary" version "0.1.1"
 }
 
@@ -84,7 +84,7 @@ loom {
 	
 	runs {
 		clientGameTest {
-			vmArgs.add("-Dfabric.client.gametest.disableNetworkSynchronizer=true")
+			jvmArguments.add("-Dfabric.client.gametest.disableNetworkSynchronizer=true")
 		}
 		clientWithMods {
 			inherit client
@@ -93,10 +93,9 @@ loom {
 			inherit client
 			source = sourceSets.gametest
 			runDir = "build/run/clientGameTestWithMods"
-			vmArgs.add("-Dfabric.client.gametest")
-			vmArgs.add("-Dfabric.client.gametest.disableNetworkSynchronizer=true")
-			vmArgs.add("-Dchestesp.withMods=true")
-			programArgs.add("--username=Wurst-Bot")
+			jvmArguments.add("-Dfabric.client.gametest")
+			jvmArguments.add("-Dfabric.client.gametest.disableNetworkSynchronizer=true")
+			programArguments.add("--username=Wurst-Bot")
 		}
 	}
 }
