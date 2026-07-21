@@ -25,6 +25,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.world.TestWorldBuilder;
 import net.fabricmc.fabric.impl.client.gametest.TestSystemProperties;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.world.level.gamerules.GameRules;
@@ -36,8 +37,8 @@ public final class ChestESPTest implements FabricClientGameTest
 	public static final Logger LOGGER =
 		LoggerFactory.getLogger("ChestESP Test");
 	
-	public static final boolean IS_MOD_COMPAT_TEST =
-		System.getProperty("chestesp.withMods") != null;
+	public static final boolean IS_LOOTR_INSTALLED =
+		FabricLoader.getInstance().isModLoaded("lootr");
 	
 	@Override
 	public void runTest(ClientGameTestContext context)
@@ -65,7 +66,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		TestInput input = context.getInput();
 		input.pressKey(GLFW.GLFW_KEY_TAB);
 		input.pressKey(GLFW.GLFW_KEY_TAB);
-		if(IS_MOD_COMPAT_TEST)
+		if(IS_LOOTR_INSTALLED)
 			assertScreenshotEquals(context, "mod_menu",
 				"https://i.imgur.com/6cXunHs.png");
 		else
@@ -129,7 +130,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Opening inventory");
 		input.pressKey(GLFW.GLFW_KEY_E);
-		if(IS_MOD_COMPAT_TEST)
+		if(IS_LOOTR_INSTALLED)
 			assertScreenshotEquals(context, "inventory",
 				"https://i.imgur.com/8T8FDmg.png");
 		else
@@ -151,7 +152,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		CopperTestRig.build(context, spContext);
 		CopperTestRig.test(context);
 		
-		if(IS_MOD_COMPAT_TEST)
+		if(IS_LOOTR_INSTALLED)
 		{
 			LOGGER.info("Building lootr test rig");
 			LootrTestRig.build(context, spContext);

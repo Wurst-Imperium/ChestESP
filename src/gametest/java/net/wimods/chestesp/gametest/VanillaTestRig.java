@@ -75,7 +75,7 @@ public enum VanillaTestRig
 	
 	public static void test(ClientGameTestContext context)
 	{
-		assertScreenshotEquals(context, "ChestESP_default_settings",
+		waitForScreenshotMatch(context, "ChestESP_default_settings",
 			"https://i.imgur.com/5SS5W2T.png");
 		
 		ChestESPTest.LOGGER.info("Enabling all ChestESP groups");
