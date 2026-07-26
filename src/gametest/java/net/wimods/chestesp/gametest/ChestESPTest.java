@@ -118,8 +118,10 @@ public final class ChestESPTest implements FabricClientGameTest
 		LOGGER.info("Setting up test background");
 		runCommand(server, "time set noon");
 		runCommand(server, "tp 0 -57 0");
-		runCommand(server, "fill 0 -60 0 0 -58 0 smooth_stone");
-		runCommand(server, "fill -12 -60 10 12 -48 10 smooth_stone");
+		BlockTestHelper.setBlocksAndWait(context, spContext, blocks -> {
+			blocks.fill(0, -60, 0, 0, -58, 0, Blocks.SMOOTH_STONE);
+			blocks.fill(-12, -60, 10, 12, -48, 10, Blocks.SMOOTH_STONE);
+		});
 		
 		LOGGER.info("Loading chunks");
 		context.waitTicks(2);
@@ -149,20 +151,11 @@ public final class ChestESPTest implements FabricClientGameTest
 			"https://i.imgur.com/5mMgnXc.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
-		LOGGER.info("Building vanilla test rig");
-		VanillaTestRig.build(context, spContext);
-		VanillaTestRig.test(context);
-		
-		LOGGER.info("Building copper test rig");
-		CopperTestRig.build(context, spContext);
-		CopperTestRig.test(context);
+		new VanillaContainersTest(context, spContext).run();
+		new CopperChestsTest(context, spContext).run();
 		
 		if(IS_LOOTR_INSTALLED)
-		{
-			LOGGER.info("Building lootr test rig");
-			LootrTestRig.build(context, spContext);
-			LootrTestRig.test(context);
-		}
+			new LootrCompatTest(context, spContext).run();
 		
 		LOGGER.info("Checking for broken mixins");
 		MixinEnvironment.getCurrentEnvironment().audit();
