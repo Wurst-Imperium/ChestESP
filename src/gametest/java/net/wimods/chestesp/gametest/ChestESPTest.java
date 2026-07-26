@@ -10,6 +10,7 @@ package net.wimods.chestesp.gametest;
 import static net.wimods.chestesp.gametest.WiModsTestHelper.*;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.lwjgl.glfw.GLFW;
@@ -28,7 +29,11 @@ import net.fabricmc.fabric.impl.client.gametest.TestSystemProperties;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.levelgen.FlatLevelSource;
+import net.minecraft.world.level.levelgen.flat.FlatLayerInfo;
+import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
 
@@ -91,6 +96,7 @@ public final class ChestESPTest implements FabricClientGameTest
 			creator.setGameMode(WorldCreationUiState.SelectedGameMode.CREATIVE);
 			creator.getGameRules().set(GameRules.SEND_COMMAND_FEEDBACK, false,
 				null);
+			applyFlatPresetWithSmoothStone(creator);
 		});
 		
 		try(TestSingleplayerContext spContext = worldBuilder.create())
@@ -113,7 +119,6 @@ public final class ChestESPTest implements FabricClientGameTest
 		runCommand(server, "time set noon");
 		runCommand(server, "tp 0 -57 0");
 		runCommand(server, "fill 0 -60 0 0 -58 0 smooth_stone");
-		runCommand(server, "fill -12 -61 0 12 -61 10 smooth_stone");
 		runCommand(server, "fill -12 -60 10 12 -48 10 smooth_stone");
 		
 		LOGGER.info("Loading chunks");
@@ -161,6 +166,23 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Checking for broken mixins");
 		MixinEnvironment.getCurrentEnvironment().audit();
+	}
+	
+	// because the grass texture is randomized and smooth stone isn't
+	private void applyFlatPresetWithSmoothStone(WorldCreationUiState creator)
+	{
+		FlatLevelGeneratorSettings config = ((FlatLevelSource)creator
+			.getSettings().selectedDimensions().overworld()).settings();
+		
+		List<FlatLayerInfo> layers =
+			List.of(new FlatLayerInfo(1, Blocks.BEDROCK),
+				new FlatLayerInfo(2, Blocks.DIRT),
+				new FlatLayerInfo(1, Blocks.SMOOTH_STONE));
+		
+		creator.updateDimensions(
+			(drm, dorHolder) -> dorHolder.replaceOverworldGenerator(drm,
+				new FlatLevelSource(config.withBiomeAndLayers(layers,
+					config.structureOverrides(), config.getBiome()))));
 	}
 	
 	public static void withConfig(ClientGameTestContext context,
