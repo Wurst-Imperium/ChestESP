@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientLevelContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.wimods.chestesp.ChestEspStyle;
 
@@ -31,64 +32,59 @@ public enum CopperTestRig
 		
 		// Remove previous test rig and reset config
 		runCommand(server, "kill @e[type=!player]");
-		runCommand(server, "fill ~-12 ~-3 ~1 ~12 ~9 ~9 air");
+		runCommand(server, "fill -12 -60 1 12 -48 9 air");
 		ChestESPTest.resetConfig(context);
-		context.waitFor(mc -> mc.level
-			.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
-			.getBlock() == Blocks.AIR);
+		BlockPos lastSlabPos = new BlockPos(-4, -57, 6);
+		context.waitFor(
+			mc -> mc.level.getBlockState(lastSlabPos).getBlock() == Blocks.AIR);
 		
 		// Top row: new copper chests
-		runCommand(server, "setblock ~4 ~4 ~7 copper_chest");
-		runCommand(server, "setblock ~2 ~4 ~7 copper_chest[type=right]");
-		runCommand(server, "setblock ~1 ~4 ~7 copper_chest[type=left]");
-		runCommand(server, "setblock ~-1 ~4 ~7 waxed_copper_chest");
-		runCommand(server, "setblock ~-3 ~4 ~7 waxed_copper_chest[type=right]");
-		runCommand(server, "setblock ~-4 ~4 ~7 waxed_copper_chest[type=left]");
-		runCommand(server,
-			"fill ~4 ~4 ~6 ~-4 ~4 ~6 smooth_stone_slab[type=top]");
+		runCommand(server, "setblock 4 -53 7 copper_chest");
+		runCommand(server, "setblock 2 -53 7 copper_chest[type=right]");
+		runCommand(server, "setblock 1 -53 7 copper_chest[type=left]");
+		runCommand(server, "setblock -1 -53 7 waxed_copper_chest");
+		runCommand(server, "setblock -3 -53 7 waxed_copper_chest[type=right]");
+		runCommand(server, "setblock -4 -53 7 waxed_copper_chest[type=left]");
+		runCommand(server, "fill 4 -53 6 -4 -53 6 smooth_stone_slab[type=top]");
 		
 		// Second row: exposed copper chests
-		runCommand(server, "setblock ~4 ~2 ~7 exposed_copper_chest");
+		runCommand(server, "setblock 4 -55 7 exposed_copper_chest");
+		runCommand(server, "setblock 2 -55 7 exposed_copper_chest[type=right]");
+		runCommand(server, "setblock 1 -55 7 exposed_copper_chest[type=left]");
+		runCommand(server, "setblock -1 -55 7 waxed_exposed_copper_chest");
 		runCommand(server,
-			"setblock ~2 ~2 ~7 exposed_copper_chest[type=right]");
-		runCommand(server, "setblock ~1 ~2 ~7 exposed_copper_chest[type=left]");
-		runCommand(server, "setblock ~-1 ~2 ~7 waxed_exposed_copper_chest");
+			"setblock -3 -55 7 waxed_exposed_copper_chest[type=right]");
 		runCommand(server,
-			"setblock ~-3 ~2 ~7 waxed_exposed_copper_chest[type=right]");
-		runCommand(server,
-			"setblock ~-4 ~2 ~7 waxed_exposed_copper_chest[type=left]");
-		runCommand(server,
-			"fill ~4 ~2 ~6 ~-4 ~2 ~6 smooth_stone_slab[type=top]");
+			"setblock -4 -55 7 waxed_exposed_copper_chest[type=left]");
+		runCommand(server, "fill 4 -55 6 -4 -55 6 smooth_stone_slab[type=top]");
 		
 		// Third row: weathered copper chests
-		runCommand(server, "setblock ~4 ~ ~7 weathered_copper_chest");
+		runCommand(server, "setblock 4 -57 7 weathered_copper_chest");
 		runCommand(server,
-			"setblock ~2 ~ ~7 weathered_copper_chest[type=right]");
+			"setblock 2 -57 7 weathered_copper_chest[type=right]");
 		runCommand(server,
-			"setblock ~1 ~ ~7 weathered_copper_chest[type=left]");
-		runCommand(server, "setblock ~-1 ~ ~7 waxed_weathered_copper_chest");
+			"setblock 1 -57 7 weathered_copper_chest[type=left]");
+		runCommand(server, "setblock -1 -57 7 waxed_weathered_copper_chest");
 		runCommand(server,
-			"setblock ~-3 ~ ~7 waxed_weathered_copper_chest[type=right]");
+			"setblock -3 -57 7 waxed_weathered_copper_chest[type=right]");
 		runCommand(server,
-			"setblock ~-4 ~ ~7 waxed_weathered_copper_chest[type=left]");
-		runCommand(server, "fill ~4 ~ ~6 ~-4 ~ ~6 smooth_stone_slab");
+			"setblock -4 -57 7 waxed_weathered_copper_chest[type=left]");
+		runCommand(server, "fill 4 -57 6 -4 -57 6 smooth_stone_slab");
 		
 		// Fourth row: oxidized copper chests
-		runCommand(server, "setblock ~4 ~-2 ~7 oxidized_copper_chest");
+		runCommand(server, "setblock 4 -59 7 oxidized_copper_chest");
 		runCommand(server,
-			"setblock ~2 ~-2 ~7 oxidized_copper_chest[type=right]");
+			"setblock 2 -59 7 oxidized_copper_chest[type=right]");
+		runCommand(server, "setblock 1 -59 7 oxidized_copper_chest[type=left]");
+		runCommand(server, "setblock -1 -59 7 waxed_oxidized_copper_chest");
 		runCommand(server,
-			"setblock ~1 ~-2 ~7 oxidized_copper_chest[type=left]");
-		runCommand(server, "setblock ~-1 ~-2 ~7 waxed_oxidized_copper_chest");
+			"setblock -3 -59 7 waxed_oxidized_copper_chest[type=right]");
 		runCommand(server,
-			"setblock ~-3 ~-2 ~7 waxed_oxidized_copper_chest[type=right]");
-		runCommand(server,
-			"setblock ~-4 ~-2 ~7 waxed_oxidized_copper_chest[type=left]");
-		runCommand(server, "fill ~4 ~-2 ~6 ~-4 ~-2 ~6 smooth_stone_slab");
+			"setblock -4 -59 7 waxed_oxidized_copper_chest[type=left]");
+		runCommand(server, "fill 4 -59 6 -4 -59 6 smooth_stone_slab");
 		
 		// Wait for the blocks to appear
-		context.waitFor(mc -> mc.level
-			.getBlockState(mc.player.blockPosition().offset(-4, 0, 6))
+		context.waitFor(mc -> mc.level.getBlockState(lastSlabPos)
 			.getBlock() == Blocks.SMOOTH_STONE_SLAB);
 		context.waitTick();
 		world.waitForChunksRender();

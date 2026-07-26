@@ -112,9 +112,9 @@ public final class ChestESPTest implements FabricClientGameTest
 		LOGGER.info("Setting up test background");
 		runCommand(server, "time set noon");
 		runCommand(server, "tp 0 -57 0");
-		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ smooth_stone");
-		runCommand(server, "fill ^-12 ^-4 ^ ^12 ^-4 ^10 smooth_stone");
-		runCommand(server, "fill ^-12 ^-3 ^10 ^12 ^9 ^10 smooth_stone");
+		runCommand(server, "fill 0 -60 0 0 -58 0 smooth_stone");
+		runCommand(server, "fill -12 -61 0 12 -61 10 smooth_stone");
+		runCommand(server, "fill -12 -60 10 12 -48 10 smooth_stone");
 		
 		LOGGER.info("Loading chunks");
 		context.waitTicks(2);
