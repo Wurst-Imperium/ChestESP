@@ -10,6 +10,7 @@ package net.wimods.chestesp.gametest;
 import static net.wimods.chestesp.gametest.WiModsTestHelper.*;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.lwjgl.glfw.GLFW;
@@ -28,7 +29,11 @@ import net.fabricmc.fabric.impl.client.gametest.TestSystemProperties;
 import net.neoforged.fml.ModList;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.levelgen.FlatLevelSource;
+import net.minecraft.world.level.levelgen.flat.FlatLayerInfo;
+import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings;
 import net.wimods.chestesp.ChestEspConfig;
 import net.wimods.chestesp.ChestEspMod;
 
@@ -89,6 +94,7 @@ public final class ChestESPTest implements FabricClientGameTest
 			creator.setGameMode(WorldCreationUiState.SelectedGameMode.CREATIVE);
 			creator.getGameRules().set(GameRules.SEND_COMMAND_FEEDBACK, false,
 				null);
+			applyFlatPresetWithSmoothStone(creator);
 		});
 		
 		try(TestSingleplayerContext spContext = worldBuilder.create())
@@ -110,9 +116,10 @@ public final class ChestESPTest implements FabricClientGameTest
 		LOGGER.info("Setting up test background");
 		runCommand(server, "time set noon");
 		runCommand(server, "tp 0 -57 0");
-		runCommand(server, "fill ^ ^-3 ^ ^ ^-1 ^ smooth_stone");
-		runCommand(server, "fill ^-12 ^-4 ^ ^12 ^-4 ^10 smooth_stone");
-		runCommand(server, "fill ^-12 ^-3 ^10 ^12 ^9 ^10 smooth_stone");
+		BlockTestHelper.setBlocksAndWait(context, spContext, blocks -> {
+			blocks.fill(0, -60, 0, 0, -58, 0, Blocks.SMOOTH_STONE);
+			blocks.fill(-12, -60, 10, 12, -48, 10, Blocks.SMOOTH_STONE);
+		});
 		
 		LOGGER.info("Loading chunks");
 		context.waitTicks(2);
@@ -142,23 +149,31 @@ public final class ChestESPTest implements FabricClientGameTest
 			"https://i.imgur.com/esZkMHn.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
-		LOGGER.info("Building vanilla test rig");
-		VanillaTestRig.build(context, spContext);
-		VanillaTestRig.test(context);
-		
-		LOGGER.info("Building copper test rig");
-		CopperTestRig.build(context, spContext);
-		CopperTestRig.test(context);
+		new VanillaContainersTest(context, spContext).run();
+		new CopperChestsTest(context, spContext).run();
 		
 		if(IS_LOOTR_INSTALLED)
-		{
-			LOGGER.info("Building lootr test rig");
-			LootrTestRig.build(context, spContext);
-			LootrTestRig.test(context);
-		}
+			new LootrCompatTest(context, spContext).run();
 		
 		LOGGER.info("Checking for broken mixins");
 		MixinEnvironment.getCurrentEnvironment().audit();
+	}
+	
+	// because the grass texture is randomized and smooth stone isn't
+	private void applyFlatPresetWithSmoothStone(WorldCreationUiState creator)
+	{
+		FlatLevelGeneratorSettings config = ((FlatLevelSource)creator
+			.getSettings().selectedDimensions().overworld()).settings();
+		
+		List<FlatLayerInfo> layers =
+			List.of(new FlatLayerInfo(1, Blocks.BEDROCK),
+				new FlatLayerInfo(2, Blocks.DIRT),
+				new FlatLayerInfo(1, Blocks.SMOOTH_STONE));
+		
+		creator.updateDimensions(
+			(drm, dorHolder) -> dorHolder.replaceOverworldGenerator(drm,
+				new FlatLevelSource(config.withBiomeAndLayers(layers,
+					config.structureOverrides(), config.getBiome()))));
 	}
 	
 	public static void withConfig(ClientGameTestContext context,
