@@ -137,12 +137,8 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Opening inventory");
 		input.pressKey(GLFW.GLFW_KEY_E);
-		if(IS_LOOTR_INSTALLED)
-			assertScreenshotEquals(context, "inventory",
-				"https://i.imgur.com/8T8FDmg.png");
-		else
-			assertScreenshotEquals(context, "inventory",
-				"https://i.imgur.com/GP74ZNS.png");
+		assertScreenshotEquals(context, "inventory",
+			"https://i.imgur.com/GP74ZNS.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		LOGGER.info("Opening game menu");
