@@ -152,7 +152,6 @@ public final class ChestESPTest implements FabricClientGameTest
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		new VanillaContainersTest(context, spContext).run();
-		new CopperChestsTest(context, spContext).run();
 		
 		if(IS_LOOTR_INSTALLED)
 			new LootrCompatTest(context, spContext).run();

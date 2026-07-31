@@ -37,7 +37,7 @@ public final class VanillaContainersTest extends SingleplayerTest
 		List<Entity> vehicles = buildTestRig();
 		
 		waitForScreenshotMatch("ChestESP_default_settings",
-			"https://i.imgur.com/5SS5W2T.png");
+			"https://i.imgur.com/1iX7tQH.png");
 		
 		logger.info("Enabling all ChestESP groups");
 		ChestESPTest.withConfig(context, config -> {
@@ -50,26 +50,26 @@ public final class VanillaContainersTest extends SingleplayerTest
 			config.include_furnaces = true;
 		});
 		assertScreenshotEquals("ChestESP_boxes",
-			"https://i.imgur.com/lRMaLRU.png");
+			"https://i.imgur.com/9MGwjkd.png");
 		
 		logger.info("Changing style to lines");
 		ChestESPTest.withConfig(context, config -> {
 			config.style = ChestEspStyle.LINES;
 		});
 		assertScreenshotEquals("ChestESP_lines",
-			"https://i.imgur.com/jhVL1Ne.png");
+			"https://i.imgur.com/GwDsmWi.png");
 		
 		logger.info("Changing style to lines and boxes");
 		ChestESPTest.withConfig(context, config -> {
 			config.style = ChestEspStyle.LINES_AND_BOXES;
 		});
 		assertScreenshotEquals("ChestESP_lines_and_boxes",
-			"https://i.imgur.com/XiFiGvh.png");
+			"https://i.imgur.com/TGvNEnY.png");
 		
 		logger.info("Changing all color settings");
 		ChestESPTest.setRainbowColors(context);
 		assertScreenshotEquals("ChestESP_custom_colors",
-			"https://i.imgur.com/TBsz8Eq.png");
+			"https://i.imgur.com/oRXCAdW.png");
 		
 		logger.info("Cleaning up vanilla container test");
 		ChestESPTest.resetConfig(context);
@@ -110,6 +110,7 @@ public final class VanillaContainersTest extends SingleplayerTest
 			blocks.set(3, -57, 7, Blocks.DROPPER);
 			blocks.set(1, -57, 7, Blocks.HOPPER);
 			blocks.set(-1, -57, 7, Blocks.CRAFTER);
+			blocks.set(-3, -57, 7, Blocks.WAXED_EXPOSED_COPPER_CHEST);
 			blocks.fill(5, -57, 6, -5, -57, 6, Blocks.SMOOTH_STONE_SLAB);
 			
 			// Fourth row: vehicle background
