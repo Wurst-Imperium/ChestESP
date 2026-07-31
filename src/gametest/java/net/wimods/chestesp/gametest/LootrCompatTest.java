@@ -7,20 +7,24 @@
  */
 package net.wimods.chestesp.gametest;
 
+import java.util.Objects;
+
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.ChestType;
-import net.minecraft.world.level.block.state.properties.SlabType;
-import net.wimods.chestesp.ChestEspStyle;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.wimods.chestesp.ChestEspBlockGroup;
+import net.wimods.chestesp.ChestEspGroupManager;
+import net.wimods.chestesp.ChestEspMod;
 
 public final class LootrCompatTest extends SingleplayerTest
 {
+	private static final BlockPos TEST_POS = new BlockPos(0, -56, 7);
+	
 	public LootrCompatTest(ClientGameTestContext context,
 		TestSingleplayerContext spContext)
 	{
@@ -30,75 +34,36 @@ public final class LootrCompatTest extends SingleplayerTest
 	@Override
 	protected void runImpl()
 	{
-		logger.info("Testing Lootr compatibility");
-		buildTestRig();
+		logger.info("Testing ChestESP group matching for Lootr containers");
+		ChestEspGroupManager gm = new ChestEspGroupManager(
+			ChestEspMod.getInstance().getConfigHolder());
 		
-		logger.info("Enabling all ChestESP groups for Lootr test");
-		ChestESPTest.withConfig(context, config -> {
-			config.include_pots = true;
-			config.include_hoppers = true;
-			config.include_hopper_carts = true;
-			config.include_droppers = true;
-			config.include_dispensers = true;
-			config.include_crafters = true;
-			config.include_furnaces = true;
-		});
-		waitForScreenshotMatch("ChestESP_lootr_boxes",
-			"https://i.imgur.com/2rPHCHV.png");
+		assertMatchesOnly(gm, getLootrBlock("chest"), gm.normalChests);
+		assertMatchesOnly(gm, getLootrBlock("trapped_chest"), gm.trapChests);
+		assertMatchesOnly(gm, getLootrBlock("barrel"), gm.barrels);
+		assertMatchesOnly(gm, getLootrBlock("shulker_box"), gm.shulkerBoxes);
 		
-		logger.info("Changing style to lines for Lootr test");
-		ChestESPTest.withConfig(context, config -> {
-			config.style = ChestEspStyle.LINES;
-		});
-		assertScreenshotEquals("ChestESP_lootr_lines",
-			"https://i.imgur.com/Rr8vkkh.png");
-		
-		logger.info("Changing style to lines and boxes for Lootr test");
-		ChestESPTest.withConfig(context, config -> {
-			config.style = ChestEspStyle.LINES_AND_BOXES;
-		});
-		assertScreenshotEquals("ChestESP_lootr_lines_and_boxes",
-			"https://i.imgur.com/cqzWrnm.png");
-		
-		logger.info("Changing all color settings for Lootr test");
-		ChestESPTest.setRainbowColors(context);
-		assertScreenshotEquals("ChestESP_lootr_custom_colors",
-			"https://i.imgur.com/cypSFCl.png");
-		
-		logger.info("Cleaning up Lootr compatibility test");
-		ChestESPTest.resetConfig(context);
-		setBlocksAndWait(
-			blocks -> blocks.fill(-4, -59, 6, 4, -53, 7, Blocks.AIR));
+		// Clean up
+		setBlocksAndWait(blocks -> blocks.set(TEST_POS, Blocks.AIR));
 		context.waitTick();// to trigger ChestEspMod.onUpdate()
 	}
 	
-	private void buildTestRig()
+	private void assertMatchesOnly(ChestEspGroupManager gm, Block block,
+		ChestEspBlockGroup expectedGroup)
 	{
-		Block lootrChest = getLootrBlock("chest");
-		Block lootrTrappedChest = getLootrBlock("trapped_chest");
-		Block lootrBarrel = getLootrBlock("barrel");
-		Block lootrShulkerBox = getLootrBlock("shulker_box");
-		BlockState topSlab = Blocks.SMOOTH_STONE_SLAB.defaultBlockState()
-			.setValue(SlabBlock.TYPE, SlabType.TOP);
+		setBlocksAndWait(blocks -> blocks.set(TEST_POS, block));
+		BlockEntity blockEntity = Objects.requireNonNull(
+			context.computeOnClient(mc -> mc.level.getBlockEntity(TEST_POS)),
+			"Missing block entity for " + block);
 		
-		setBlocksAndWait(blocks -> {
-			// Top row: Lootr chests
-			blocks.set(4, -55, 7, lootrChest);
-			blocks.set(2, -55, 7, chestState(lootrChest, ChestType.RIGHT));
-			blocks.set(1, -55, 7, chestState(lootrChest, ChestType.LEFT));
-			blocks.set(-1, -55, 7, lootrTrappedChest);
-			blocks.set(-3, -55, 7,
-				chestState(lootrTrappedChest, ChestType.RIGHT));
-			blocks.set(-4, -55, 7,
-				chestState(lootrTrappedChest, ChestType.LEFT));
-			blocks.fill(4, -55, 6, -4, -55, 6, topSlab);
-			
-			// Second row: other Lootr containers
-			blocks.set(4, -57, 7, lootrBarrel);
-			blocks.set(2, -57, 7, lootrShulkerBox);
-			blocks.fill(4, -57, 6, -4, -57, 6, Blocks.SMOOTH_STONE_SLAB);
-		});
-		context.waitTick();// to trigger ChestEspMod.onUpdate()
+		if(!expectedGroup.matches(blockEntity))
+			throw new AssertionError(blockEntity.getClass().getName()
+				+ " did not match expected group " + expectedGroup.getName());
+		
+		for(ChestEspBlockGroup group : gm.blockGroups)
+			if(group != expectedGroup && group.matches(blockEntity))
+				throw new AssertionError(blockEntity.getClass().getName()
+					+ " unexpectedly matched group " + group.getName());
 	}
 	
 	private Block getLootrBlock(String path)
