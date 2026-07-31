@@ -22,9 +22,9 @@ import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.wimods.chestesp.ChestEspStyle;
 
-public final class VanillaContainersTest extends SingleplayerTest
+public final class ChestEspRenderingTest extends SingleplayerTest
 {
-	public VanillaContainersTest(ClientGameTestContext context,
+	public ChestEspRenderingTest(ClientGameTestContext context,
 		TestSingleplayerContext spContext)
 	{
 		super(context, spContext);
@@ -33,13 +33,12 @@ public final class VanillaContainersTest extends SingleplayerTest
 	@Override
 	protected void runImpl()
 	{
-		logger.info("Testing vanilla containers");
+		logger.info("Testing ChestESP rendering");
 		List<Entity> vehicles = buildTestRig();
 		
 		waitForScreenshotMatch("ChestESP_default_settings",
 			"https://i.imgur.com/1iX7tQH.png");
 		
-		logger.info("Enabling all ChestESP groups");
 		ChestESPTest.withConfig(context, config -> {
 			config.include_pots = true;
 			config.include_hoppers = true;
@@ -52,26 +51,23 @@ public final class VanillaContainersTest extends SingleplayerTest
 		assertScreenshotEquals("ChestESP_boxes",
 			"https://i.imgur.com/9MGwjkd.png");
 		
-		logger.info("Changing style to lines");
 		ChestESPTest.withConfig(context, config -> {
 			config.style = ChestEspStyle.LINES;
 		});
 		assertScreenshotEquals("ChestESP_lines",
 			"https://i.imgur.com/GwDsmWi.png");
 		
-		logger.info("Changing style to lines and boxes");
 		ChestESPTest.withConfig(context, config -> {
 			config.style = ChestEspStyle.LINES_AND_BOXES;
 		});
 		assertScreenshotEquals("ChestESP_lines_and_boxes",
 			"https://i.imgur.com/TGvNEnY.png");
 		
-		logger.info("Changing all color settings");
 		ChestESPTest.setRainbowColors(context);
 		assertScreenshotEquals("ChestESP_custom_colors",
 			"https://i.imgur.com/oRXCAdW.png");
 		
-		logger.info("Cleaning up vanilla container test");
+		// Clean up
 		ChestESPTest.resetConfig(context);
 		removeVehicles(vehicles);
 		setBlocksAndWait(
