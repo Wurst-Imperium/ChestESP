@@ -19,6 +19,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.wimods.chestesp.ChestEspBlockGroup;
 import net.wimods.chestesp.ChestEspEntityGroup;
@@ -27,8 +28,6 @@ import net.wimods.chestesp.ChestEspMod;
 
 public final class ChestEspGroupTest extends SingleplayerTest
 {
-	private static final BlockPos TEST_POS = new BlockPos(0, -56, 7);
-	
 	public ChestEspGroupTest(ClientGameTestContext context,
 		TestSingleplayerContext spContext)
 	{
@@ -70,27 +69,21 @@ public final class ChestEspGroupTest extends SingleplayerTest
 		assertMatchesOnly(gm, EntityType.BAMBOO_CHEST_RAFT, gm.chestBoats);
 		assertMatchesOnly(gm, EntityType.HOPPER_MINECART, gm.hopperCarts);
 		
-		if(ChestESPTest.IS_LOOTR_INSTALLED)
-		{
-			assertMatchesOnly(gm, getLootrBlock("chest"), gm.normalChests);
-			assertMatchesOnly(gm, getLootrBlock("trapped_chest"),
-				gm.trapChests);
-			assertMatchesOnly(gm, getLootrBlock("barrel"), gm.barrels);
-			assertMatchesOnly(gm, getLootrBlock("shulker_box"),
-				gm.shulkerBoxes);
-		}
+		if(!ChestESPTest.IS_LOOTR_INSTALLED)
+			return;
 		
-		// Clean up
-		setBlocksAndWait(blocks -> blocks.set(TEST_POS, Blocks.AIR));
-		context.waitTick();// to trigger ChestEspMod.onUpdate()
+		assertMatchesOnly(gm, getLootrBlock("chest"), gm.normalChests);
+		assertMatchesOnly(gm, getLootrBlock("trapped_chest"), gm.trapChests);
+		assertMatchesOnly(gm, getLootrBlock("barrel"), gm.barrels);
+		assertMatchesOnly(gm, getLootrBlock("shulker_box"), gm.shulkerBoxes);
 	}
 	
 	private void assertMatchesOnly(ChestEspGroupManager gm, Block block,
 		ChestEspBlockGroup expectedGroup)
 	{
-		setBlocksAndWait(blocks -> blocks.set(TEST_POS, block));
 		BlockEntity blockEntity = Objects.requireNonNull(
-			context.computeOnClient(mc -> mc.level.getBlockEntity(TEST_POS)),
+			((EntityBlock)block).newBlockEntity(BlockPos.ZERO,
+				block.defaultBlockState()),
 			"Missing block entity for " + block);
 		
 		if(!expectedGroup.matches(blockEntity))
