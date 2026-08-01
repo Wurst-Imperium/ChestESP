@@ -21,11 +21,11 @@ import net.wimods.chestesp.ChestEspBlockGroup;
 import net.wimods.chestesp.ChestEspGroupManager;
 import net.wimods.chestesp.ChestEspMod;
 
-public final class LootrCompatTest extends SingleplayerTest
+public final class ChestEspGroupTest extends SingleplayerTest
 {
 	private static final BlockPos TEST_POS = new BlockPos(0, -56, 7);
 	
-	public LootrCompatTest(ClientGameTestContext context,
+	public ChestEspGroupTest(ClientGameTestContext context,
 		TestSingleplayerContext spContext)
 	{
 		super(context, spContext);
@@ -34,14 +34,42 @@ public final class LootrCompatTest extends SingleplayerTest
 	@Override
 	protected void runImpl()
 	{
-		logger.info("Testing ChestESP group matching for Lootr containers");
+		logger.info("Testing ChestESP group matching");
 		ChestEspGroupManager gm = new ChestEspGroupManager(
 			ChestEspMod.getInstance().getConfigHolder());
 		
-		assertMatchesOnly(gm, getLootrBlock("chest"), gm.normalChests);
-		assertMatchesOnly(gm, getLootrBlock("trapped_chest"), gm.trapChests);
-		assertMatchesOnly(gm, getLootrBlock("barrel"), gm.barrels);
-		assertMatchesOnly(gm, getLootrBlock("shulker_box"), gm.shulkerBoxes);
+		assertMatchesOnly(gm, Blocks.CHEST, gm.normalChests);
+		assertMatchesOnly(gm, Blocks.COPPER_CHEST, gm.normalChests);
+		assertMatchesOnly(gm, Blocks.WAXED_COPPER_CHEST, gm.normalChests);
+		assertMatchesOnly(gm, Blocks.EXPOSED_COPPER_CHEST, gm.normalChests);
+		assertMatchesOnly(gm, Blocks.WAXED_EXPOSED_COPPER_CHEST,
+			gm.normalChests);
+		assertMatchesOnly(gm, Blocks.WEATHERED_COPPER_CHEST, gm.normalChests);
+		assertMatchesOnly(gm, Blocks.WAXED_WEATHERED_COPPER_CHEST,
+			gm.normalChests);
+		assertMatchesOnly(gm, Blocks.OXIDIZED_COPPER_CHEST, gm.normalChests);
+		assertMatchesOnly(gm, Blocks.WAXED_OXIDIZED_COPPER_CHEST,
+			gm.normalChests);
+		assertMatchesOnly(gm, Blocks.TRAPPED_CHEST, gm.trapChests);
+		assertMatchesOnly(gm, Blocks.ENDER_CHEST, gm.enderChests);
+		assertMatchesOnly(gm, Blocks.BARREL, gm.barrels);
+		assertMatchesOnly(gm, Blocks.DECORATED_POT, gm.pots);
+		assertMatchesOnly(gm, Blocks.SHULKER_BOX, gm.shulkerBoxes);
+		assertMatchesOnly(gm, Blocks.HOPPER, gm.hoppers);
+		assertMatchesOnly(gm, Blocks.DROPPER, gm.droppers);
+		assertMatchesOnly(gm, Blocks.DISPENSER, gm.dispensers);
+		assertMatchesOnly(gm, Blocks.CRAFTER, gm.crafters);
+		assertMatchesOnly(gm, Blocks.FURNACE, gm.furnaces);
+		
+		if(ChestESPTest.IS_LOOTR_INSTALLED)
+		{
+			assertMatchesOnly(gm, getLootrBlock("chest"), gm.normalChests);
+			assertMatchesOnly(gm, getLootrBlock("trapped_chest"),
+				gm.trapChests);
+			assertMatchesOnly(gm, getLootrBlock("barrel"), gm.barrels);
+			assertMatchesOnly(gm, getLootrBlock("shulker_box"),
+				gm.shulkerBoxes);
+		}
 		
 		// Clean up
 		setBlocksAndWait(blocks -> blocks.set(TEST_POS, Blocks.AIR));

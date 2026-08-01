@@ -148,9 +148,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		new ChestEspRenderingTest(context, spContext).run();
-		
-		if(IS_LOOTR_INSTALLED)
-			new LootrCompatTest(context, spContext).run();
+		new ChestEspGroupTest(context, spContext).run();
 		
 		LOGGER.info("Checking for broken mixins");
 		MixinEnvironment.getCurrentEnvironment().audit();
