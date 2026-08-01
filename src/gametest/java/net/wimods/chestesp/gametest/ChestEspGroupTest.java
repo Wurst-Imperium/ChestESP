@@ -14,10 +14,14 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContex
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.wimods.chestesp.ChestEspBlockGroup;
+import net.wimods.chestesp.ChestEspEntityGroup;
 import net.wimods.chestesp.ChestEspGroupManager;
 import net.wimods.chestesp.ChestEspMod;
 
@@ -61,6 +65,11 @@ public final class ChestEspGroupTest extends SingleplayerTest
 		assertMatchesOnly(gm, Blocks.CRAFTER, gm.crafters);
 		assertMatchesOnly(gm, Blocks.FURNACE, gm.furnaces);
 		
+		assertMatchesOnly(gm, EntityType.CHEST_MINECART, gm.chestCarts);
+		assertMatchesOnly(gm, EntityType.OAK_CHEST_BOAT, gm.chestBoats);
+		assertMatchesOnly(gm, EntityType.BAMBOO_CHEST_RAFT, gm.chestBoats);
+		assertMatchesOnly(gm, EntityType.HOPPER_MINECART, gm.hopperCarts);
+		
 		if(ChestESPTest.IS_LOOTR_INSTALLED)
 		{
 			assertMatchesOnly(gm, getLootrBlock("chest"), gm.normalChests);
@@ -91,6 +100,24 @@ public final class ChestEspGroupTest extends SingleplayerTest
 		for(ChestEspBlockGroup group : gm.blockGroups)
 			if(group != expectedGroup && group.matches(blockEntity))
 				throw new AssertionError(blockEntity.getClass().getName()
+					+ " unexpectedly matched group " + group.getName());
+	}
+	
+	private void assertMatchesOnly(ChestEspGroupManager gm,
+		EntityType<?> entityType, ChestEspEntityGroup expectedGroup)
+	{
+		Entity entity = Objects.requireNonNull(
+			context.computeOnClient(
+				mc -> entityType.create(mc.level, EntitySpawnReason.COMMAND)),
+			"Could not create entity " + entityType);
+		
+		if(!expectedGroup.matches(entity))
+			throw new AssertionError(entity.getClass().getName()
+				+ " did not match expected group " + expectedGroup.getName());
+		
+		for(ChestEspEntityGroup group : gm.entityGroups)
+			if(group != expectedGroup && group.matches(entity))
+				throw new AssertionError(entity.getClass().getName()
 					+ " unexpectedly matched group " + group.getName());
 	}
 	
