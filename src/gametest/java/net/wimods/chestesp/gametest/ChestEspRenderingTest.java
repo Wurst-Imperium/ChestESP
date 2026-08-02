@@ -15,7 +15,9 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContex
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -122,6 +124,11 @@ public final class ChestEspRenderingTest extends SingleplayerTest
 			.allMatch(vehicle -> mc.level.getEntity(vehicle.getId()) != null));
 		context.waitTick();// to trigger ChestEspMod.onUpdate()
 		return vehicles;
+	}
+	
+	protected final BlockState chestState(Block block, ChestType type)
+	{
+		return block.defaultBlockState().setValue(ChestBlock.TYPE, type);
 	}
 	
 	private <T extends Entity> T spawnEntity(EntityType<T> type, int x, int y,
