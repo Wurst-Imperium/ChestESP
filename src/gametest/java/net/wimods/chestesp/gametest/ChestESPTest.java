@@ -149,11 +149,8 @@ public final class ChestESPTest implements FabricClientGameTest
 			"https://i.imgur.com/esZkMHn.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
-		new VanillaContainersTest(context, spContext).run();
-		new CopperChestsTest(context, spContext).run();
-		
-		if(IS_LOOTR_INSTALLED)
-			new LootrCompatTest(context, spContext).run();
+		new ChestEspGroupTest(context, spContext).run();
+		new ChestEspRenderingTest(context, spContext).run();
 		
 		LOGGER.info("Checking for broken mixins");
 		MixinEnvironment.getCurrentEnvironment().audit();
