@@ -15,10 +15,6 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientWorldContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.ChestType;
 import net.wimods.chestesp.gametest.BlockTestHelper.BlockBatch;
 
 public abstract class SingleplayerTest
@@ -74,11 +70,6 @@ public abstract class SingleplayerTest
 	protected final void setBlocksAndWait(Consumer<BlockBatch> batchBuilder)
 	{
 		BlockTestHelper.setBlocksAndWait(context, spContext, batchBuilder);
-	}
-	
-	protected final BlockState chestState(Block block, ChestType type)
-	{
-		return block.defaultBlockState().setValue(ChestBlock.TYPE, type);
 	}
 	
 	protected final void assertScreenshotEquals(String fileName,

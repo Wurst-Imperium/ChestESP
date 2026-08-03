@@ -58,7 +58,7 @@ public enum ChestEspPipelines
 		.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
 			.withLocation(Identifier.parse("chestesp:pipeline/quads"))
 			.withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
-			.build());
+			.withCull(true).build());
 	
 	/**
 	 * Similar to the DEBUG_QUADS ShaderPipeline, but with culling enabled
@@ -67,5 +67,6 @@ public enum ChestEspPipelines
 	public static final RenderPipeline ESP_QUADS = RenderPipelines
 		.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
 			.withLocation(Identifier.parse("chestesp:pipeline/esp_quads"))
-			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST).build());
+			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+			.withCull(true).build());
 }
