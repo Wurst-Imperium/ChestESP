@@ -7,6 +7,7 @@
  */
 package net.wimods.chestesp.gametest;
 
+import java.util.List;
 import java.util.Objects;
 
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -42,17 +43,13 @@ public final class ChestEspGroupTest extends SingleplayerTest
 			ChestEspMod.getInstance().getConfigHolder());
 		
 		assertMatchesOnly(gm, Blocks.CHEST, gm.normalChests);
-		assertMatchesOnly(gm, Blocks.COPPER_CHEST, gm.normalChests);
-		assertMatchesOnly(gm, Blocks.WAXED_COPPER_CHEST, gm.normalChests);
-		assertMatchesOnly(gm, Blocks.EXPOSED_COPPER_CHEST, gm.normalChests);
-		assertMatchesOnly(gm, Blocks.WAXED_EXPOSED_COPPER_CHEST,
-			gm.normalChests);
-		assertMatchesOnly(gm, Blocks.WEATHERED_COPPER_CHEST, gm.normalChests);
-		assertMatchesOnly(gm, Blocks.WAXED_WEATHERED_COPPER_CHEST,
-			gm.normalChests);
-		assertMatchesOnly(gm, Blocks.OXIDIZED_COPPER_CHEST, gm.normalChests);
-		assertMatchesOnly(gm, Blocks.WAXED_OXIDIZED_COPPER_CHEST,
-			gm.normalChests);
+		for(Block copperChest : List.of(Blocks.COPPER_CHEST,
+			Blocks.EXPOSED_COPPER_CHEST, Blocks.WEATHERED_COPPER_CHEST,
+			Blocks.OXIDIZED_COPPER_CHEST, Blocks.WAXED_COPPER_CHEST,
+			Blocks.WAXED_EXPOSED_COPPER_CHEST,
+			Blocks.WAXED_WEATHERED_COPPER_CHEST,
+			Blocks.WAXED_OXIDIZED_COPPER_CHEST))
+			assertMatchesOnly(gm, copperChest, gm.normalChests);
 		assertMatchesOnly(gm, Blocks.TRAPPED_CHEST, gm.trapChests);
 		assertMatchesOnly(gm, Blocks.ENDER_CHEST, gm.enderChests);
 		assertMatchesOnly(gm, Blocks.BARREL, gm.barrels);
