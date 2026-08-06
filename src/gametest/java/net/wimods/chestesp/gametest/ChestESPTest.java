@@ -21,11 +21,10 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.TestInput;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientLevelContext;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerConnection;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.world.TestWorldBuilder;
-import net.fabricmc.fabric.impl.client.gametest.TestSystemProperties;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
@@ -48,16 +47,13 @@ public final class ChestESPTest implements FabricClientGameTest
 	@Override
 	public void runTest(ClientGameTestContext context)
 	{
-		if(!TestSystemProperties.DISABLE_NETWORK_SYNCHRONIZER)
-			throw new RuntimeException("Network synchronizer is not disabled");
-		
 		LOGGER.info("Starting ChestESP Client GameTest");
 		hideSplashTexts(context);
 		waitForTitleScreenFade(context);
 		
 		LOGGER.info("Reached title screen");
 		assertScreenshotEquals(context, "title_screen",
-			"https://i.imgur.com/MlnLgz2.png");
+			"https://i.imgur.com/XNxO6HC.png");
 		
 		// Check config values that aren't visible in screenshots
 		withConfig(context, config -> {
@@ -73,10 +69,10 @@ public final class ChestESPTest implements FabricClientGameTest
 		input.pressKey(GLFW.GLFW_KEY_TAB);
 		if(IS_LOOTR_INSTALLED)
 			assertScreenshotEquals(context, "mod_menu",
-				"https://i.imgur.com/6cXunHs.png");
+				"https://i.imgur.com/5vodehk.png");
 		else
 			assertScreenshotEquals(context, "mod_menu",
-				"https://i.imgur.com/9Kt5AId.png");
+				"https://i.imgur.com/wrWnl5p.png");
 		
 		LOGGER.info("Clicking configure button");
 		input.pressKey(GLFW.GLFW_KEY_TAB);
@@ -112,7 +108,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		TestSingleplayerContext spContext)
 	{
 		TestInput input = context.getInput();
-		TestClientLevelContext world = spContext.getClientLevel();
+		TestServerConnection connection = spContext.getConnection();
 		TestServerContext server = spContext.getServer();
 		
 		LOGGER.info("Setting up test background");
@@ -125,7 +121,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		
 		LOGGER.info("Loading chunks");
 		context.waitTicks(2);
-		world.waitForChunksRender();
+		connection.waitForChunksRender();
 		
 		assertScreenshotEquals(context, "in_game",
 			"https://i.imgur.com/i2Nr9is.png");
@@ -144,7 +140,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		LOGGER.info("Opening game menu");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		assertScreenshotEquals(context, "game_menu",
-			"https://i.imgur.com/5mMgnXc.png");
+			"https://i.imgur.com/CYqSTU3.png");
 		input.pressKey(GLFW.GLFW_KEY_ESCAPE);
 		
 		new ChestEspGroupTest(context, spContext).run();

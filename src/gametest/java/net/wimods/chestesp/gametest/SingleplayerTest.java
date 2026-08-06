@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestClientLevelContext;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerConnection;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.wimods.chestesp.gametest.BlockTestHelper.BlockBatch;
@@ -21,7 +21,7 @@ public abstract class SingleplayerTest
 {
 	protected final ClientGameTestContext context;
 	protected final TestSingleplayerContext spContext;
-	protected final TestClientLevelContext world;
+	protected final TestServerConnection connection;
 	protected final TestServerContext server;
 	protected final Logger logger = ChestESPTest.LOGGER;
 	
@@ -30,7 +30,7 @@ public abstract class SingleplayerTest
 	{
 		this.context = context;
 		this.spContext = spContext;
-		this.world = spContext.getClientLevel();
+		this.connection = spContext.getConnection();
 		this.server = spContext.getServer();
 	}
 	

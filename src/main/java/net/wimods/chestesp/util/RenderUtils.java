@@ -16,7 +16,6 @@ import org.joml.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -30,16 +29,11 @@ public enum RenderUtils
 	
 	public static Vec3 getCameraPos()
 	{
-		Camera camera = MC.gameRenderer.getMainCamera();
+		Camera camera = MC.gameRenderer.mainCamera();
 		if(camera == null)
 			return Vec3.ZERO;
 		
 		return camera.position();
-	}
-	
-	public static MultiBufferSource.BufferSource getVCP()
-	{
-		return MC.renderBuffers().bufferSource();
 	}
 	
 	private static Vec3 getTracerOrigin(float partialTicks)
@@ -54,16 +48,16 @@ public enum RenderUtils
 	public static void drawTracers(PoseStack matrices, float partialTicks,
 		List<Vec3> ends, int color, boolean depthTest)
 	{
-		MultiBufferSource.BufferSource vcp = getVCP();
+		WiModsBufferSource bs = new WiModsBufferSource();
 		RenderType layer = ChestEspRenderLayers.getLines(depthTest);
-		VertexConsumer buffer = vcp.getBuffer(layer);
+		VertexConsumer buffer = bs.getBuffer(layer);
 		
 		Vec3 start = getTracerOrigin(partialTicks);
 		Vec3 offset = getCameraPos().reverse();
 		for(Vec3 end : ends)
 			drawLine(matrices, buffer, start, end.add(offset), color);
 		
-		vcp.endBatch(layer);
+		bs.uploadAndDraw();
 	}
 	
 	public static void drawLine(PoseStack matrices, VertexConsumer buffer,
@@ -106,15 +100,15 @@ public enum RenderUtils
 	public static void drawSolidBoxes(PoseStack matrices, List<AABB> boxes,
 		int color, boolean depthTest)
 	{
-		MultiBufferSource.BufferSource vcp = getVCP();
+		WiModsBufferSource bs = new WiModsBufferSource();
 		RenderType layer = ChestEspRenderLayers.getQuads(depthTest);
-		VertexConsumer buffer = vcp.getBuffer(layer);
+		VertexConsumer buffer = bs.getBuffer(layer);
 		
 		Vec3 camOffset = getCameraPos().reverse();
 		for(AABB box : boxes)
 			drawSolidBox(matrices, buffer, box.move(camOffset), color);
 		
-		vcp.endBatch(layer);
+		bs.uploadAndDraw();
 	}
 	
 	public static void drawSolidBox(PoseStack matrices, VertexConsumer buffer,
@@ -162,15 +156,15 @@ public enum RenderUtils
 	public static void drawOutlinedBoxes(PoseStack matrices, List<AABB> boxes,
 		int color, boolean depthTest)
 	{
-		MultiBufferSource.BufferSource vcp = getVCP();
+		WiModsBufferSource bs = new WiModsBufferSource();
 		RenderType layer = ChestEspRenderLayers.getLines(depthTest);
-		VertexConsumer buffer = vcp.getBuffer(layer);
+		VertexConsumer buffer = bs.getBuffer(layer);
 		
 		Vec3 camOffset = getCameraPos().reverse();
 		for(AABB box : boxes)
 			drawOutlinedBox(matrices, buffer, box.move(camOffset), color);
 		
-		vcp.endBatch(layer);
+		bs.uploadAndDraw();
 	}
 	
 	public static void drawOutlinedBox(PoseStack matrices,

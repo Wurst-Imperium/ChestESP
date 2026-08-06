@@ -7,7 +7,6 @@
  */
 package net.wimods.chestesp.gametest;
 
-import java.util.List;
 import java.util.Objects;
 
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -18,6 +17,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
@@ -43,12 +43,7 @@ public final class ChestEspGroupTest extends SingleplayerTest
 			ChestEspMod.getInstance().getConfigHolder());
 		
 		assertMatchesOnly(gm, Blocks.CHEST, gm.normalChests);
-		for(Block copperChest : List.of(Blocks.COPPER_CHEST,
-			Blocks.EXPOSED_COPPER_CHEST, Blocks.WEATHERED_COPPER_CHEST,
-			Blocks.OXIDIZED_COPPER_CHEST, Blocks.WAXED_COPPER_CHEST,
-			Blocks.WAXED_EXPOSED_COPPER_CHEST,
-			Blocks.WAXED_WEATHERED_COPPER_CHEST,
-			Blocks.WAXED_OXIDIZED_COPPER_CHEST))
+		for(Block copperChest : Blocks.COPPER_CHEST.asList())
 			assertMatchesOnly(gm, copperChest, gm.normalChests);
 		assertMatchesOnly(gm, Blocks.TRAPPED_CHEST, gm.trapChests);
 		assertMatchesOnly(gm, Blocks.ENDER_CHEST, gm.enderChests);
@@ -61,10 +56,10 @@ public final class ChestEspGroupTest extends SingleplayerTest
 		assertMatchesOnly(gm, Blocks.CRAFTER, gm.crafters);
 		assertMatchesOnly(gm, Blocks.FURNACE, gm.furnaces);
 		
-		assertMatchesOnly(gm, EntityType.CHEST_MINECART, gm.chestCarts);
-		assertMatchesOnly(gm, EntityType.OAK_CHEST_BOAT, gm.chestBoats);
-		assertMatchesOnly(gm, EntityType.BAMBOO_CHEST_RAFT, gm.chestBoats);
-		assertMatchesOnly(gm, EntityType.HOPPER_MINECART, gm.hopperCarts);
+		assertMatchesOnly(gm, EntityTypes.CHEST_MINECART, gm.chestCarts);
+		assertMatchesOnly(gm, EntityTypes.OAK_CHEST_BOAT, gm.chestBoats);
+		assertMatchesOnly(gm, EntityTypes.BAMBOO_CHEST_RAFT, gm.chestBoats);
+		assertMatchesOnly(gm, EntityTypes.HOPPER_MINECART, gm.hopperCarts);
 		
 		if(!ChestESPTest.IS_LOOTR_INSTALLED)
 			return;
