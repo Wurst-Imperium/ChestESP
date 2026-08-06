@@ -25,7 +25,7 @@ public abstract class ChestEspBlockGroup extends ChestEspGroup
 		super(configHolder, name);
 	}
 	
-	protected abstract boolean matches(BlockEntity be);
+	public abstract boolean matches(BlockEntity be);
 	
 	public final void addIfMatches(BlockEntity be)
 	{

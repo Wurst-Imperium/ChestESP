@@ -23,7 +23,7 @@ public abstract class ChestEspEntityGroup extends ChestEspGroup
 		super(configHolder, name);
 	}
 	
-	protected abstract boolean matches(Entity e);
+	public abstract boolean matches(Entity e);
 	
 	public final void addIfMatches(Entity e)
 	{
