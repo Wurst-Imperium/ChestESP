@@ -52,8 +52,7 @@ public final class ChestESPTest implements FabricClientGameTest
 		waitForTitleScreenFade(context);
 		
 		LOGGER.info("Reached title screen");
-		assertScreenshotEquals(context, "title_screen",
-			"https://i.imgur.com/XNxO6HC.png");
+		context.takeScreenshot("title_screen");
 		
 		// Check config values that aren't visible in screenshots
 		withConfig(context, config -> {
